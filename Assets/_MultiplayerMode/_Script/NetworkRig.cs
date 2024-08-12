@@ -68,6 +68,7 @@ public class NetworkRig : NetworkBehaviour
                 Runner.Spawn(bulletPrefab, spawnPosition, spawnRotation, Object.InputAuthority);
             }
         }
+          
         /*if (IsLocalNetworkRig)
         {
             Debug.Log("dev_Fire1");

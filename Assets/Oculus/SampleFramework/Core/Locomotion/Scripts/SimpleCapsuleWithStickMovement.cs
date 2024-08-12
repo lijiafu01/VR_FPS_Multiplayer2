@@ -1,10 +1,13 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
 
 public class SimpleCapsuleWithStickMovement : MonoBehaviour
 {
+    public float JumpForce = 5.0f; // Lực nhảy, có thể tùy chỉnh trong Inspector
+    private bool canJump = true; // Kiểm soát xem người chơi có thể nhảy hay không
+
     public bool EnableLinearMovement = true;
     public bool EnableRotation = true;
     public bool HMDRotatesPlayer = true;
@@ -37,6 +40,29 @@ public class SimpleCapsuleWithStickMovement : MonoBehaviour
         if (HMDRotatesPlayer) RotatePlayerToHMD();
         if (EnableLinearMovement) StickMovement();
         if (EnableRotation) SnapTurn();
+
+        if(OVRInputState.Instance.AButtonPressed)
+        {
+            PlayerJump();
+        }
+    }
+
+    private void PlayerJump()
+    {
+        if (canJump)
+        {
+            _rigidbody.AddForce(Vector3.up * JumpForce, ForceMode.VelocityChange); // Thêm lực nhảy
+            canJump = false; // Sau khi nhảy, đặt lại không thể nhảy
+        }
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Ground")) // Kiểm tra va chạm với đối tượng được tag là Ground
+        {
+            Debug.Log("dev_co va cham voi Ground");
+            canJump = true; // Nếu chạm đất, người chơi có thể nhảy lại
+        }
     }
 
     void RotatePlayerToHMD()
@@ -93,4 +119,5 @@ public class SimpleCapsuleWithStickMovement : MonoBehaviour
             ReadyToSnapTurn = true;
         }
     }
+
 }
