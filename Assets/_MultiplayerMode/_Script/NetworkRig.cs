@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using Oculus.Platform;
 
 public class NetworkRig : NetworkBehaviour
 {
+    [SerializeField]
+    private GameObject _visuals;
     [SerializeField]
     private Transform shotPoint;
     [SerializeField]
@@ -27,6 +30,8 @@ public class NetworkRig : NetworkBehaviour
 
     HardwareRig hardwareRig;
     private NetworkButtons _previousButton { get; set; }
+
+
     public override void Spawned()
     {
         base.Spawned();
@@ -37,8 +42,20 @@ public class NetworkRig : NetworkBehaviour
             hardwareRig = FindObjectOfType<HardwareRig>();
             if (hardwareRig == null)
                 Debug.LogError("Missing HardwareRig in the scene");
+
+            if (_visuals != null)
+            {
+                MeshRenderer[] renderers = _visuals.GetComponentsInChildren<MeshRenderer>();
+                foreach (MeshRenderer renderer in renderers)
+                {
+                    renderer.enabled = false;
+                }
+            }
         }
-        // else nó là một client
+        /*if (Object.HasInputAuthority)
+        {
+            
+        }*/
     }
     public override void FixedUpdateNetwork()
     {
@@ -47,7 +64,13 @@ public class NetworkRig : NetworkBehaviour
         if (GetInput<RigState>(out var input))
         {
             playerTransform.transform.SetPositionAndRotation(input.PlayerPosition, input.PlayerRotation);
-            headTransform.transform.SetPositionAndRotation(input.HeadsetPosition, input.HeadsetRotation);
+
+            // Xử lý riêng cho rotation của head chỉ trên trục Y
+            Vector3 headPosition = input.HeadsetPosition;
+            Quaternion headRotation = Quaternion.Euler(0, input.HeadsetRotation.eulerAngles.y, 0);
+
+            headTransform.transform.SetPositionAndRotation(headPosition, headRotation);
+
             leftHandTransform.transform.SetPositionAndRotation(input.LeftHandPosition, input.LeftHandRotation);
             rightHandTransform.transform.SetPositionAndRotation(input.RightHandPosition, input.RightHandRotation);
 
