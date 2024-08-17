@@ -64,7 +64,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     public async Task LoadScene()
     {
         // Tải scene không đồng bộ, chờ đến khi hoàn tất
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(2);
 
         while (!asyncLoad.isDone)
         {
@@ -80,7 +80,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             GameMode = GameMode.Shared, // Chế độ game chia sẻ
             SessionName = SessionName,  // Tên phiên
             SceneManager = GetComponent<NetworkSceneManagerDefault>(), // Quản lý scene mạng
-            Scene = 1 // Scene đầu tiên (có thể là scene chính)
+            Scene = 2 // Scene đầu tiên (có thể là scene chính)
         };
         await Runner.StartGame(args);
     }

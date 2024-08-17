@@ -12,7 +12,6 @@ public class NetworkRig : NetworkBehaviour
     private Transform shotPoint;
     [SerializeField]
     private Bullet bulletPrefab;
-    // Xác định xem đây có phải là bản sao cục bộ hay không
     public bool IsLocalNetworkRig => Object.HasStateAuthority;
 
     [Header("RigComponents")]
@@ -31,12 +30,11 @@ public class NetworkRig : NetworkBehaviour
     HardwareRig hardwareRig;
     private NetworkButtons _previousButton { get; set; }
 
-
+    [SerializeField]
+    private WeaponHandler _weaponHandler;
     public override void Spawned()
     {
         base.Spawned();
-
-        // Nếu là bản sao cục bộ, tìm kiếm và gán HardwareRig
         if (IsLocalNetworkRig)
         {
             hardwareRig = FindObjectOfType<HardwareRig>();
@@ -52,10 +50,6 @@ public class NetworkRig : NetworkBehaviour
                 }
             }
         }
-        /*if (Object.HasInputAuthority)
-        {
-            
-        }*/
     }
     public override void FixedUpdateNetwork()
     {
@@ -75,77 +69,9 @@ public class NetworkRig : NetworkBehaviour
             rightHandTransform.transform.SetPositionAndRotation(input.RightHandPosition, input.RightHandRotation);
 
             var buttonPressed = input.Button.GetPressed(_previousButton);
-            _previousButton = input.Button;
-
-
-            if (buttonPressed.IsSet(InputButton.Fire))
-            {
-                Debug.Log("dev_Fire");
-                // Vị trí bắn đạn được điều chỉnh để phù hợp hơn với vị trí của controller
-                Vector3 spawnPosition = shotPoint.position + shotPoint.forward * 0.1f;
-
-                // Sử dụng cả vector 'up' hiện tại của controller để đảm bảo rằng đạn sẽ bay theo đúng hướng
-                // kể cả khi controller được nghiêng lên hoặc xuống
-                Quaternion spawnRotation = Quaternion.LookRotation(shotPoint.forward, shotPoint.up);
-
-                Runner.Spawn(bulletPrefab, spawnPosition, spawnRotation, Object.InputAuthority);
-            }
+            _previousButton = input.Button;      
         }
-          
-        /*if (IsLocalNetworkRig)
-        {
-            Debug.Log("dev_Fire1");
-            ProcessInputs();
-        }*/
-        /*if (GetInput(out InputData data))
-        {
-
-            var buttonPressed = data.Button.GetPressed(_previousButton);
-            _previousButton = data.Button;
-
-
-            if (buttonPressed.IsSet(InputButton.Fire))
-            {
-                Debug.Log("dev_Fire");
-                // Vị trí bắn đạn được điều chỉnh để phù hợp hơn với vị trí của controller
-                Vector3 spawnPosition = shotPoint.position + shotPoint.forward * 0.1f;
-
-                // Sử dụng cả vector 'up' hiện tại của controller để đảm bảo rằng đạn sẽ bay theo đúng hướng
-                // kể cả khi controller được nghiêng lên hoặc xuống
-                Quaternion spawnRotation = Quaternion.LookRotation(shotPoint.forward, shotPoint.up);
-
-                Runner.Spawn(bulletPrefab, spawnPosition, spawnRotation, Object.InputAuthority);
-            }
-
-        }*/
     }
-   /* private void ProcessInputs()
-    {
-        if (GetInput(out InputData data))
-        {
-            var buttonPressed = data.Button.GetPressed(_previousButton);
-            _previousButton = data.Button;
-
-            
-            if (buttonPressed.IsSet(InputButton.Fire))
-            {
-                FireWeapon();
-            }
-        }
-
-    }*/
-   /* private void FireWeapon()
-    {
-        Debug.Log("dev_Fire4");
-        // Vị trí bắn đạn được điều chỉnh để phù hợp hơn với vị trí của controller
-        Vector3 spawnPosition = shotPoint.position + shotPoint.forward * 0.1f;
-
-        // Sử dụng cả vector 'up' hiện tại của controller để đảm bảo rằng đạn sẽ bay theo đúng hướng
-        // kể cả khi controller được nghiêng lên hoặc xuống
-        Quaternion spawnRotation = Quaternion.LookRotation(shotPoint.forward, shotPoint.up);
-
-        Runner.Spawn(bulletPrefab, spawnPosition, spawnRotation, Object.InputAuthority);
-    }*/
     public override void Render()
     {
         base.Render();

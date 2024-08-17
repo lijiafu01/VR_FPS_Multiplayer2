@@ -41,6 +41,7 @@ public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
         // Ghi nhận trạng thái vào NetworkInput để truyền qua mạng
 
         xrRigState.Button.Set(InputButton.Fire, OVRInputState.Instance.TriggerPressed);
+        xrRigState.Button.Set(InputButton.Fire2, OVRInputState.Instance.LeftTriggerPressed);
         //xrRigState.Button.Set(InputButton.Jump, OVRInputState.Instance.AButtonPressed);
 
         input.Set(xrRigState);

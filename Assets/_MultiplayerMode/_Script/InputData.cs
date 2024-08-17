@@ -4,7 +4,8 @@ using UnityEngine;
 public enum InputButton
 {
     Jump,
-    Fire
+    Fire,
+    Fire2
 }
 
 public struct InputData : INetworkInput
