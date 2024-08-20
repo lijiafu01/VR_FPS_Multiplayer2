@@ -141,9 +141,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _playerNameText: {fileID: 5409353169610258498}
-  _playerName: 
   _maxHp: 100
   __currentHp: 0
+  _PlayerNames:
+    _items: []
   _weaponHandler: {fileID: 7465314911950937190}
   _fireSound: {fileID: 8300000, guid: fa17815383223a847a277c7ee60cc106, type: 3}
   _muzzleFlash: {fileID: 739861965924411854}
@@ -4096,6 +4097,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4935169396572118256, guid: 26b6e21e7118c5f4a98fe77a10c43aca, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4935169396572118256, guid: 26b6e21e7118c5f4a98fe77a10c43aca, type: 3}
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
@@ -4168,6 +4173,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2353623881072690747, guid: 26b6e21e7118c5f4a98fe77a10c43aca, type: 3}
       propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4935169396572118256, guid: 26b6e21e7118c5f4a98fe77a10c43aca, type: 3}
+      propertyPath: looping
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4935169396572118256, guid: 26b6e21e7118c5f4a98fe77a10c43aca, type: 3}

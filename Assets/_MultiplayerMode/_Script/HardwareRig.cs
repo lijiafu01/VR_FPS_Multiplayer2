@@ -95,23 +95,7 @@ public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
         UpdateLeaderboard();
     }
 
-    // Hàm để thêm người chơi với điểm số và sinh template ra bảng xếp hạng
-    /*public void AddPlayerToLeaderboard(string playerName, int playerScore)
-    {
-        Debug.Log("dev_AddPlayerToLeaderboard____" + playerName + "____" + playerScore);
-        // Thêm hoặc cập nhật điểm số của người chơi trong từ điển
-        if (_playerScores.ContainsKey(playerName))
-        {
-            _playerScores[playerName] = playerScore;  // Cập nhật điểm số cụ thể cho người chơi
-        }
-        else
-        {
-            _playerScores.Add(playerName, playerScore);  // Thêm người chơi mới với điểm số cụ thể
-        }
-        Debug.Log("dev"+_playerScores);
-        // Cập nhật bảng xếp hạng
-        UpdateLeaderboard();
-    }*/
+   
 
 
     void Start()

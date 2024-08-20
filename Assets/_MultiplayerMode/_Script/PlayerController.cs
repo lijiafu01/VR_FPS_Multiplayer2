@@ -42,9 +42,6 @@ public class PlayerController : NetworkBehaviour
     private PlayerRef _playerRef;
     [Networked, Capacity(30)]
     public NetworkDictionary<PlayerRef, string> PlayerNames => default;
-
-   /* [Networked, Capacity(10)] // Thiết lập dung lượng tối đa là 10
-    public NetworkDictionary<int, float> syncedDict => default;*/
     public override void Spawned()
     {
         _playerRef = Object.InputAuthority;
@@ -86,12 +83,7 @@ public class PlayerController : NetworkBehaviour
         }
         if (Object.HasStateAuthority)
         {
-            //playerName = GameManager.Instance.PlayerData.playerName;
-            //_playerNameText.text = playerName;
-            // Gửi tên người chơi tới tất cả các client khác
-            //UpdatePlayerName_RPC(playerName);
-            // Gán tên người chơi từ GameManager hoặc từ nguồn lưu trữ tên người chơi
-
+            
             //----------------------------------------------------------------
             hardwareRig = FindObjectOfType<HardwareRig>();
             _currentHp = _maxHp; 
@@ -106,19 +98,7 @@ public class PlayerController : NetworkBehaviour
         _audioSource.clip = _fireSound;
 
     }
-    /*[Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void Rpc_SetNickname(string nickname)
-    {
-        Debug.Log("dev_3: Rpc_SetNickname called");
-        NickName = nickname;
-        Host_AddPlayerToList_RPC(Object.StateAuthority, nickname);
-    }
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void Host_AddPlayerToList_RPC(PlayerRef playerRef, string nickname)
-    {
-        Debug.Log("dev_4: Host_AddPlayerToList_RPC called");
-        _playerNameText.text = nickname;
-    }*/
+    
     public PlayerRef GetHostPlayerRef()
     {
         PlayerRef host = PlayerRef.None;
@@ -133,22 +113,15 @@ public class PlayerController : NetworkBehaviour
 
         return host;
     }
-    
-
-
-    
-
     [Rpc(RpcSources.All, RpcTargets.All)]
     private void SendPlayerDataToAll_RPC(string playerName, int playerScore)
     {
-        Debug.Log("dev_5: SendPlayerDataToAll_RPC received " + playerName + " " + playerScore);
 
         // Gọi hàm trong HardwareRig để cập nhật bảng xếp hạng
         HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
         if (hardwareRig != null)
         {
             hardwareRig.AddOrUpdatePlayerOnLeaderboardWithScore(playerName, playerScore);
-            Debug.Log("dev_6: Player " + playerName + " updated with score " + playerScore);
         }
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
@@ -206,7 +179,6 @@ public class PlayerController : NetworkBehaviour
 
     private void FireWeapon(bool isRight)
     {
-        Debug.Log("dev_fire_weapon");
         _weaponHandler.Fire(isRight);
 
         // Gọi hàm để chơi âm thanh và hiển thị hiệu ứng tóe lửa
@@ -216,11 +188,9 @@ public class PlayerController : NetworkBehaviour
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     private void FireWeaponEffects_RPC()
     {
-        Debug.Log("dev_fire_weapon_effects_rpc");
         if (_audioSource != null && _fireSound != null)
         {
             _audioSource.Play();
-            Debug.Log("dev_fire_sound_played");
         }
 
         if (isRight)
@@ -243,7 +213,7 @@ public class PlayerController : NetworkBehaviour
         {
             _muzzleFlash.Stop();
         }
-        if (_muzzleFlash != null)
+        if(!isRight)
         {
             _leftMuzzleFlash.Stop();
         }
@@ -259,13 +229,11 @@ public class PlayerController : NetworkBehaviour
         int randomIndex = Random.Range(0, positions.Length);
         hardwareRig.gameObject.transform.position = positions[randomIndex];
 
-        Debug.Log("dev3_player moved to new position: " + positions[randomIndex]);
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void TakeDamage_RPC(int damage, Vector3 hitPosition, Vector3 hitNormal,string shooterName)
     {
-        Debug.Log("dev_take_damage_rpc_called");
         TakeDamage(damage, hitPosition, hitNormal, shooterName);
     }
 

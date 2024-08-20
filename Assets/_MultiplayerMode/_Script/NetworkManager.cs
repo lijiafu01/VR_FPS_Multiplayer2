@@ -8,9 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
-    //public Dictionary<string, int> PlayerScores = new Dictionary<string, int>();
-    /*[Networked, Capacity(100)]
-    public NetworkDictionary<PlayerRef, string> PlayerNames { get; set; }*/
+    
     
 
     // Tạo một singleton để dễ dàng truy cập từ mọi nơi trong mã
@@ -21,8 +19,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public NetworkRunner Runner { get; private set; } // Runner dùng để quản lý mạng
 
-    //public Dictionary<PlayerRef, PlayerData> playersDict = new Dictionary<PlayerRef, PlayerData>();
-    //public NetworkDictionary<PlayerRef, PlayerData> playersDict = new NetworkDictionary<PlayerRef, PlayerData>();
     private void Awake()
     {
         // Đảm bảo chỉ có một thể hiện duy nhất của NetworkManager
@@ -118,26 +114,12 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         
     }
 
-     /* [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-      private void SendPlayerDataToAllPlayers_RPC(string playerName, int playerScore)
-      {
-          // Tìm HardwareRig và cập nhật bảng xếp hạng cho tất cả người chơi
-          HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
-          if (hardwareRig != null)
-          {
-              hardwareRig.AddPlayerToLeaderboard(playerName, playerScore);
-          }
-      }*/
+    
 
 
-        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-       /* if (playersDict.ContainsKey(player))
-        {
-            playersDict.Remove(player);
-            HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
-            hardwareRig.UpdateLeaderboard();
-        }*/
+       
     }
 
 
