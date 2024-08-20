@@ -10,8 +10,9 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
     //public Dictionary<string, int> PlayerScores = new Dictionary<string, int>();
     /*[Networked, Capacity(100)]
-    public NetworkDictionary<string, int> PlayerScores { get; set; }
-*/
+    public NetworkDictionary<PlayerRef, string> PlayerNames { get; set; }*/
+    
+
     // Tạo một singleton để dễ dàng truy cập từ mọi nơi trong mã
     public static NetworkManager Instance { get; private set; }
 
@@ -114,38 +115,22 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-       /* Debug.Log("dev_Player joined: " + player);
-        if (Runner.LocalPlayer == GetHostPlayerRef() && NetworkManager.Instance.PlayerScores.Count != 0)
-        {
-            Debug.Log("This player is the host!");
-
-            // Gửi thông tin bảng xếp hạng hiện tại cho người chơi mới
-            foreach (var entry in NetworkManager.Instance.PlayerScores)
-            {
-                Debug.Log("dev_Player data: " + entry.Key + " - " + entry.Value);
-                // Gọi RPC để gửi tên và điểm số của người chơi tới tất cả người chơi
-                SendPlayerDataToAllPlayers_RPC(entry.Key, entry.Value);
-            }
-        }
-        else
-        {
-            Debug.Log("This player is not the host.");
-        }*/
+        
     }
 
-   /* [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void SendPlayerDataToAllPlayers_RPC(string playerName, int playerScore)
-    {
-        // Tìm HardwareRig và cập nhật bảng xếp hạng cho tất cả người chơi
-        HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
-        if (hardwareRig != null)
-        {
-            hardwareRig.AddPlayerToLeaderboard(playerName, playerScore);
-        }
-    }*/
+     /* [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+      private void SendPlayerDataToAllPlayers_RPC(string playerName, int playerScore)
+      {
+          // Tìm HardwareRig và cập nhật bảng xếp hạng cho tất cả người chơi
+          HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
+          if (hardwareRig != null)
+          {
+              hardwareRig.AddPlayerToLeaderboard(playerName, playerScore);
+          }
+      }*/
 
 
-    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
        /* if (playersDict.ContainsKey(player))
         {

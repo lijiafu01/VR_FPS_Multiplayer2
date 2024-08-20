@@ -21,8 +21,6 @@ public class WeaponHandler : NetworkBehaviour
     {
         if (isRight)
         {
-            // Vẽ một tia ray trong Scene view
-            Debug.DrawRay(_shootPoint.position, _shootPoint.forward * 1000f, Color.red, 2.0f);
             
             if (Runner.LagCompensation.Raycast(_shootPoint.position,
                     _shootPoint.forward,
@@ -32,7 +30,6 @@ public class WeaponHandler : NetworkBehaviour
                     _hitLayer,
                     _hitOptions))
             {
-                Debug.Log($"Hit {hit.GameObject.name} at {hit.Point}");
 
                 if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
                 {
@@ -41,14 +38,10 @@ public class WeaponHandler : NetworkBehaviour
                     hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
                 }
 
-                // Vẽ đường từ điểm bắn đến điểm va chạm
-                Debug.DrawLine(_shootPoint.position, hit.Point, Color.green, 2.0f);
             }
         }
         else
         {
-            // Vẽ một tia ray trong Scene view
-            Debug.DrawRay(_leftShootPoint.position, _leftShootPoint.forward * 1000f, Color.red, 2.0f);
 
             if (Runner.LagCompensation.Raycast(_leftShootPoint.position,
                     _leftShootPoint.forward,
@@ -58,7 +51,6 @@ public class WeaponHandler : NetworkBehaviour
                     _hitLayer,
                     _hitOptions))
             {
-                Debug.Log($"Hit {hit.GameObject.name} at {hit.Point}");
 
                 if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
                 {
@@ -67,8 +59,6 @@ public class WeaponHandler : NetworkBehaviour
                     hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal,playerName);
                 }
 
-                // Vẽ đường từ điểm bắn đến điểm va chạm
-                Debug.DrawLine(_leftShootPoint.position, hit.Point, Color.green, 2.0f);
             }
         }
         

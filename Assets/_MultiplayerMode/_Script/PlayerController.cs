@@ -7,8 +7,7 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     [SerializeField] private TMP_Text _playerNameText;
-    [Networked]
-    public string playerName { get; set; }
+    //[Networked] public NetworkString<_16> NickName { get; set; }
     [SerializeField]
     private int _maxHp = 100;
 
@@ -40,10 +39,41 @@ public class PlayerController : NetworkBehaviour
     bool isRight = true;
 
     private PlayerData _playerData;
+    private PlayerRef _playerRef;
+    [Networked, Capacity(30)]
+    public NetworkDictionary<PlayerRef, string> PlayerNames => default;
 
+   /* [Networked, Capacity(10)] // Thiết lập dung lượng tối đa là 10
+    public NetworkDictionary<int, float> syncedDict => default;*/
     public override void Spawned()
     {
+        _playerRef = Object.InputAuthority;
         
+        /* if (HasInputAuthority)
+         {
+             PlayerNames.Add(_playerRef, GameManager.Instance.PlayerData.playerName);
+            // _playerNameText.text = GameManager.Instance.PlayerData.playerName;
+         }*/
+        // Kiểm tra xem PlayerRef đã tồn tại trong từ điển PlayerNames hay chưa
+        if (!PlayerNames.ContainsKey(_playerRef))
+        {
+            // Nếu chưa tồn tại, thêm PlayerRef và tên người chơi vào từ điển
+            PlayerNames.Add(_playerRef, GameManager.Instance.PlayerData.playerName);
+            foreach (var kvp in PlayerNames)
+            {
+                Debug.Log($"dev_Khóa: {kvp.Key}, Tên người chơi: {kvp.Value}");
+            }
+        }
+
+        if (PlayerNames.ContainsKey(_playerRef))
+        {
+ 
+            string playerName = PlayerNames[_playerRef];
+
+            // Gán tên người chơi vào Text UI
+            _playerNameText.text = playerName;
+        }
+        //Rpc_SetNickname(GameManager.Instance.PlayerData.playerName);
         if (Runner.LocalPlayer == GetHostPlayerRef())
         {
             hardwareRig = FindObjectOfType<HardwareRig>();
@@ -70,10 +100,25 @@ public class PlayerController : NetworkBehaviour
             UpdateLeaderboard_RPC(_playerData.playerName);
             //-------------------------------------------------------
         }
+        
+        
         _audioSource = gameObject.AddComponent<AudioSource>();
         _audioSource.clip = _fireSound;
 
     }
+    /*[Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void Rpc_SetNickname(string nickname)
+    {
+        Debug.Log("dev_3: Rpc_SetNickname called");
+        NickName = nickname;
+        Host_AddPlayerToList_RPC(Object.StateAuthority, nickname);
+    }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void Host_AddPlayerToList_RPC(PlayerRef playerRef, string nickname)
+    {
+        Debug.Log("dev_4: Host_AddPlayerToList_RPC called");
+        _playerNameText.text = nickname;
+    }*/
     public PlayerRef GetHostPlayerRef()
     {
         PlayerRef host = PlayerRef.None;
@@ -123,11 +168,9 @@ public class PlayerController : NetworkBehaviour
     }
     public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal,string shooterName)
     {
-        Debug.Log("dev2_TakeDamage____" + Object.HasStateAuthority);
         if (Object.HasStateAuthority)
         {
             _currentHp -= damage;
-            Debug.Log("dev2_Player HP: " + _currentHp);
 
             // Hiển thị hiệu ứng máu khi bị bắn
             PlayBloodEffect_RPC(hitPosition, hitNormal);
