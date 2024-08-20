@@ -2,13 +2,11 @@
 
 public class OVRInputHandler : MonoBehaviour
 {
-
     private void Update()
     {
         OVRInputState.Instance.TriggerPressed = GetTriggerPressed(); // Lấy giá trị của nút kích hoạt
         OVRInputState.Instance.AButtonPressed = IsButtonAPressed(); // Lấy giá trị của nút A
-        OVRInputState.Instance.LeftTriggerPressed = GetTriggerLeftPressed(); // Lấy giá trị của nút kích hoạt bên trái
-      
+        OVRInputState.Instance.LeftTriggerPressed = GetTriggerLeftPressed(); // Lấy giá trị của nút kích hoạt bên trái    
     }
     public bool IsButtonAPressed()
     {
@@ -39,5 +37,4 @@ public class OVRInputHandler : MonoBehaviour
         // Ví dụ, sử dụng ngưỡng 0.1f để coi như là nhấn nút
         return leftTrigger > 0.1f;
     }
-
 }

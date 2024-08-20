@@ -23,7 +23,7 @@ public class WeaponHandler : NetworkBehaviour
         {
             // Vẽ một tia ray trong Scene view
             Debug.DrawRay(_shootPoint.position, _shootPoint.forward * 1000f, Color.red, 2.0f);
-
+            
             if (Runner.LagCompensation.Raycast(_shootPoint.position,
                     _shootPoint.forward,
                     Mathf.Infinity,
@@ -36,8 +36,9 @@ public class WeaponHandler : NetworkBehaviour
 
                 if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
                 {
+                    string playerName = GameManager.Instance.PlayerData.playerName;
                     // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                    hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal);
+                    hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
                 }
 
                 // Vẽ đường từ điểm bắn đến điểm va chạm
@@ -61,8 +62,9 @@ public class WeaponHandler : NetworkBehaviour
 
                 if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
                 {
+                    string playerName = GameManager.Instance.PlayerData.playerName;
                     // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                    hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal);
+                    hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal,playerName);
                 }
 
                 // Vẽ đường từ điểm bắn đến điểm va chạm

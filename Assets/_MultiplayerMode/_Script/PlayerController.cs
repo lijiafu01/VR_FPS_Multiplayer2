@@ -1,9 +1,14 @@
 ﻿using Fusion;
 using OculusSampleFramework;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField] private TMP_Text _playerNameText;
+    [Networked]
+    public string playerName { get; set; }
     [SerializeField]
     private int _maxHp = 100;
 
@@ -34,17 +39,106 @@ public class PlayerController : NetworkBehaviour
     private ParticleSystem _bloodEffect;
     bool isRight = true;
 
+    private PlayerData _playerData;
+
     public override void Spawned()
     {
-        if (Object.HasStateAuthority)
+        
+        if (Runner.LocalPlayer == GetHostPlayerRef())
         {
             hardwareRig = FindObjectOfType<HardwareRig>();
-            Debug.Log("dev1_tim thay hardwareRig " + hardwareRig.gameObject.name);
-            _currentHp = _maxHp; // Đặt HP ban đầu khi player được spawn
+            Dictionary<string, int> playerScores = hardwareRig._playerScores;
+            // Gọi RPC để gửi thông tin người chơi tới tất cả người chơi
+            foreach (var entry in playerScores)
+            {
+                SendPlayerDataToAll_RPC(entry.Key, entry.Value);
+            }
         }
+        if (Object.HasStateAuthority)
+        {
+            //playerName = GameManager.Instance.PlayerData.playerName;
+            //_playerNameText.text = playerName;
+            // Gửi tên người chơi tới tất cả các client khác
+            //UpdatePlayerName_RPC(playerName);
+            // Gán tên người chơi từ GameManager hoặc từ nguồn lưu trữ tên người chơi
 
+            //----------------------------------------------------------------
+            hardwareRig = FindObjectOfType<HardwareRig>();
+            _currentHp = _maxHp; 
+            //cap nhat leaderboard
+            _playerData = GameManager.Instance.PlayerData;
+            UpdateLeaderboard_RPC(_playerData.playerName);
+            //-------------------------------------------------------
+        }
         _audioSource = gameObject.AddComponent<AudioSource>();
         _audioSource.clip = _fireSound;
+
+    }
+    public PlayerRef GetHostPlayerRef()
+    {
+        PlayerRef host = PlayerRef.None;
+
+        foreach (var player in Runner.ActivePlayers)
+        {
+            if (host == PlayerRef.None || player < host)
+            {
+                host = player;
+            }
+        }
+
+        return host;
+    }
+    
+
+
+    
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void SendPlayerDataToAll_RPC(string playerName, int playerScore)
+    {
+        Debug.Log("dev_5: SendPlayerDataToAll_RPC received " + playerName + " " + playerScore);
+
+        // Gọi hàm trong HardwareRig để cập nhật bảng xếp hạng
+        HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
+        if (hardwareRig != null)
+        {
+            hardwareRig.AddOrUpdatePlayerOnLeaderboardWithScore(playerName, playerScore);
+            Debug.Log("dev_6: Player " + playerName + " updated with score " + playerScore);
+        }
+    }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void UpdateLeaderboard_RPC(string playerName)
+    {
+        // Tìm HardwareRig và cập nhật BXH trên mỗi client
+        HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
+        if (hardwareRig != null)
+        {
+            // Gọi hàm cập nhật BXH với thông tin của player
+            hardwareRig.AddOrUpdatePlayerOnLeaderboard(playerName);
+        }
+        else
+        {
+            Debug.LogError("HardwareRig not found!");
+        }
+    }
+    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal,string shooterName)
+    {
+        Debug.Log("dev2_TakeDamage____" + Object.HasStateAuthority);
+        if (Object.HasStateAuthority)
+        {
+            _currentHp -= damage;
+            Debug.Log("dev2_Player HP: " + _currentHp);
+
+            // Hiển thị hiệu ứng máu khi bị bắn
+            PlayBloodEffect_RPC(hitPosition, hitNormal);
+
+            if (_currentHp <= 0)
+            {
+                Dead();
+                UpdateLeaderboard_RPC(shooterName);
+                _currentHp = _maxHp; // Đặt lại HP khi player chết
+            }
+        }
     }
 
     public override void FixedUpdateNetwork()
@@ -89,15 +183,14 @@ public class PlayerController : NetworkBehaviour
         if (isRight)
         {
             _muzzleFlash.Play();
-            Debug.Log("dev_muzzle_flash_played");
-            Invoke(nameof(StopMuzzleFlash), 1f); // Dừng hiệu ứng sau 1 giây
+            Invoke(nameof(StopMuzzleFlash), 0.3f); // Dừng hiệu ứng sau 1 giây
 
         }
         else
         {
             
             _leftMuzzleFlash.Play();
-            Invoke(nameof(StopMuzzleFlash), 1f); // Dừng hiệu ứng sau 1 giây
+            Invoke(nameof(StopMuzzleFlash), 0.3f); // Dừng hiệu ứng sau 1 giây
         }
     }
 
@@ -106,12 +199,10 @@ public class PlayerController : NetworkBehaviour
         if(isRight)
         {
             _muzzleFlash.Stop();
-            Debug.Log("dev_muzzle_flash_stopped");
         }
         if (_muzzleFlash != null)
         {
             _leftMuzzleFlash.Stop();
-            Debug.Log("dev_muzzle_flash_stopped");
         }
     }
 
@@ -129,31 +220,14 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void TakeDamage_RPC(int damage, Vector3 hitPosition, Vector3 hitNormal)
+    public void TakeDamage_RPC(int damage, Vector3 hitPosition, Vector3 hitNormal,string shooterName)
     {
         Debug.Log("dev_take_damage_rpc_called");
-        TakeDamage(damage, hitPosition, hitNormal);
+        TakeDamage(damage, hitPosition, hitNormal, shooterName);
     }
 
-    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal)
-    {
-        Debug.Log("dev2_TakeDamage____" + Object.HasStateAuthority);
-        if (Object.HasStateAuthority)
-        {
-            _currentHp -= damage;
-            Debug.Log("dev2_Player HP: " + _currentHp);
-
-            // Hiển thị hiệu ứng máu khi bị bắn
-            PlayBloodEffect_RPC(hitPosition, hitNormal);
-
-            if (_currentHp <= 0)
-            {
-                Dead();
-                _currentHp = _maxHp; // Đặt lại HP khi player chết
-            }
-        }
-    }
-
+   
+    
     [Rpc(RpcSources.All, RpcTargets.All)]
     private void PlayBloodEffect_RPC(Vector3 hitPosition, Vector3 hitNormal)
     {

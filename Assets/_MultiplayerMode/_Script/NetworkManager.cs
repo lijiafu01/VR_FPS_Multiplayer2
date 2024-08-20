@@ -8,6 +8,10 @@ using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
+    //public Dictionary<string, int> PlayerScores = new Dictionary<string, int>();
+    /*[Networked, Capacity(100)]
+    public NetworkDictionary<string, int> PlayerScores { get; set; }
+*/
     // Tạo một singleton để dễ dàng truy cập từ mọi nơi trong mã
     public static NetworkManager Instance { get; private set; }
 
@@ -16,6 +20,8 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public NetworkRunner Runner { get; private set; } // Runner dùng để quản lý mạng
 
+    //public Dictionary<PlayerRef, PlayerData> playersDict = new Dictionary<PlayerRef, PlayerData>();
+    //public NetworkDictionary<PlayerRef, PlayerData> playersDict = new NetworkDictionary<PlayerRef, PlayerData>();
     private void Awake()
     {
         // Đảm bảo chỉ có một thể hiện duy nhất của NetworkManager
@@ -32,12 +38,14 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     private void Start()
     {
+
         // Cố định máy chủ vào một khu vực cụ thể
         Fusion.Photon.Realtime.PhotonAppSettings.Instance.AppSettings.FixedRegion = "asia";
     }
 
     public async void CreateSession(string roomCode)
     {
+        GameManager.Instance.SetPlayerName(); // Lấy tên người chơi từ InputField
         // Tạo Runner và bắt đầu phiên
         CreateRunner();
         // Tải scene cần thiết cho phiên
@@ -48,6 +56,8 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public async void JoinSession(string roomCode)
     {
+       // GameManager.Instance.PlayerData.playerName = GameManager.Instance.PlayerNameInput.text; // Tạo một PlayerData mới cho người chơi
+       GameManager.Instance.SetPlayerName(); // Lấy tên người chơi từ InputField
         // Thực hiện tương tự như CreateSession, nhưng dành cho người chơi tham gia vào một phiên đã có
         CreateRunner();
         await LoadScene();
@@ -87,10 +97,65 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     #region INetworkRunnerCallbacks
 
+    // Trong NetworkManager.cs
+    public PlayerRef GetHostPlayerRef()
+    {
+        PlayerRef host = PlayerRef.None;
+
+        foreach (var player in Runner.ActivePlayers)
+        {
+            if (host == PlayerRef.None || player < host)
+            {
+                host = player;
+            }
+        }
+
+        return host;
+    }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log("A new player joined to the session"); // Log khi có người chơi mới tham gia
+       /* Debug.Log("dev_Player joined: " + player);
+        if (Runner.LocalPlayer == GetHostPlayerRef() && NetworkManager.Instance.PlayerScores.Count != 0)
+        {
+            Debug.Log("This player is the host!");
+
+            // Gửi thông tin bảng xếp hạng hiện tại cho người chơi mới
+            foreach (var entry in NetworkManager.Instance.PlayerScores)
+            {
+                Debug.Log("dev_Player data: " + entry.Key + " - " + entry.Value);
+                // Gọi RPC để gửi tên và điểm số của người chơi tới tất cả người chơi
+                SendPlayerDataToAllPlayers_RPC(entry.Key, entry.Value);
+            }
+        }
+        else
+        {
+            Debug.Log("This player is not the host.");
+        }*/
     }
+
+   /* [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void SendPlayerDataToAllPlayers_RPC(string playerName, int playerScore)
+    {
+        // Tìm HardwareRig và cập nhật bảng xếp hạng cho tất cả người chơi
+        HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
+        if (hardwareRig != null)
+        {
+            hardwareRig.AddPlayerToLeaderboard(playerName, playerScore);
+        }
+    }*/
+
+
+    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+    {
+       /* if (playersDict.ContainsKey(player))
+        {
+            playersDict.Remove(player);
+            HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
+            hardwareRig.UpdateLeaderboard();
+        }*/
+    }
+
+
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
@@ -102,7 +167,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     #region INetworkRunnerCallbacks (Unused)
 
     // Các phương thức callback khác được định nghĩa, nhưng chưa sử dụng. Có thể được mở rộng để xử lý sự kiện sau này
-    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
 

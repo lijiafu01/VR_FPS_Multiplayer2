@@ -4,15 +4,116 @@ using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
 using System;
+using System.Linq;
+using TMPro;
+using System.Xml;
 
 public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
 {
+    
     // Các Transform đại diện cho vị trí và hướng của player và các phần tử khác
     public Transform playerTransform;
     public Transform headTransform;
     public Transform leftHandTransform;
     public Transform rightHandTransform;
-    
+
+    public GameObject Content;
+    public GameObject Template;
+    // Từ điển để lưu trữ tên người chơi và điểm số
+    public Dictionary<string, int> _playerScores = new Dictionary<string, int>();
+
+    // Hàm để thêm hoặc cập nhật người chơi trên bảng xếp hạng
+    public void AddOrUpdatePlayerOnLeaderboard(string playerName)
+    {
+        // Thêm hoặc cập nhật điểm số của người chơi trong từ điển local
+        if (_playerScores.ContainsKey(playerName))
+        {
+            _playerScores[playerName] += 1;  // Tăng điểm số của người chơi nếu đã tồn tại
+        }
+        else
+        {
+            _playerScores.Add(playerName, 0);  // Thêm người chơi mới với điểm số 0
+        }
+
+        
+
+        // Cập nhật bảng xếp hạng
+        UpdateLeaderboard();
+    }
+
+
+    // Hàm để cập nhật bảng xếp hạng
+    public void UpdateLeaderboard()
+    {
+        // Xóa tất cả các mục hiện có trong Content
+        foreach (Transform child in Content.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Sắp xếp danh sách người chơi theo điểm số giảm dần, và nếu điểm số bằng nhau thì sắp xếp theo tên
+        var sortedPlayers = _playerScores
+            .OrderByDescending(p => p.Value) // Sắp xếp theo điểm số giảm dần
+            .ThenBy(p => p.Key) // Nếu điểm số bằng nhau, sắp xếp theo tên người chơi
+            .ToList();
+
+        int rank = 1;
+        foreach (var player in sortedPlayers)
+        {
+            // Tạo một mục mới từ Template
+            GameObject newEntry = Instantiate(Template, Content.transform);
+            newEntry.SetActive(true);
+
+            // Tìm TMP_Text trong đối tượng con của Template và cập nhật thông tin
+            TMP_Text text = newEntry.GetComponentInChildren<TMP_Text>();
+            if (text != null)
+            {
+                text.text = $"{rank}. {player.Key} - {player.Value} points";
+            }
+            else
+            {
+                Debug.LogError("TMP_Text component not found in template");
+            }
+
+            rank++;
+        }
+    }
+
+    public void AddOrUpdatePlayerOnLeaderboardWithScore(string playerName, int playerScore)
+    {
+        // Thêm hoặc cập nhật điểm số của người chơi trong từ điển
+        if (_playerScores.ContainsKey(playerName))
+        {
+            _playerScores[playerName] = playerScore;  // Cập nhật điểm số cụ thể cho người chơi
+        }
+        else
+        {
+            _playerScores.Add(playerName, playerScore);  // Thêm người chơi mới với điểm số cụ thể
+        }
+
+        // Cập nhật bảng xếp hạng
+        UpdateLeaderboard();
+    }
+
+    // Hàm để thêm người chơi với điểm số và sinh template ra bảng xếp hạng
+    /*public void AddPlayerToLeaderboard(string playerName, int playerScore)
+    {
+        Debug.Log("dev_AddPlayerToLeaderboard____" + playerName + "____" + playerScore);
+        // Thêm hoặc cập nhật điểm số của người chơi trong từ điển
+        if (_playerScores.ContainsKey(playerName))
+        {
+            _playerScores[playerName] = playerScore;  // Cập nhật điểm số cụ thể cho người chơi
+        }
+        else
+        {
+            _playerScores.Add(playerName, playerScore);  // Thêm người chơi mới với điểm số cụ thể
+        }
+        Debug.Log("dev"+_playerScores);
+        // Cập nhật bảng xếp hạng
+        UpdateLeaderboard();
+    }*/
+
+
     void Start()
     {
         // Đăng ký HardwareRig để nhận callback từ NetworkRunner
