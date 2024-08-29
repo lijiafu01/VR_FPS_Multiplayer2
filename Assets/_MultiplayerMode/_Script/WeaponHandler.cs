@@ -16,52 +16,45 @@ public class WeaponHandler : NetworkBehaviour
 
     [SerializeField]
     private HitOptions _hitOptions = HitOptions.IncludePhysX | HitOptions.SubtickAccuracy | HitOptions.IgnoreInputAuthority;
-
-    public void Fire(bool isRight)
+    public void PistolRightFire()
     {
-        if (isRight)
-        {
-            
-            if (Runner.LagCompensation.Raycast(_shootPoint.position,
+        if (Runner.LagCompensation.Raycast(_shootPoint.position,
                     _shootPoint.forward,
                     Mathf.Infinity,
                     Object.InputAuthority,
                     out LagCompensatedHit hit,
                     _hitLayer,
                     _hitOptions))
-            {
-
-                if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
-                {
-                    string playerName = GameManager.Instance.PlayerData.playerName;
-                    // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                    hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
-                }
-
-            }
-        }
-        else
         {
 
-            if (Runner.LagCompensation.Raycast(_leftShootPoint.position,
+            if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
+            {
+                string playerName = GameManager.Instance.PlayerData.playerName;
+                // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
+                hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
+            }
+
+        }
+    }
+    public void PistolLeftFire()
+    {
+        if (Runner.LagCompensation.Raycast(_leftShootPoint.position,
                     _leftShootPoint.forward,
                     Mathf.Infinity,
                     Object.InputAuthority,
                     out LagCompensatedHit hit,
                     _hitLayer,
                     _hitOptions))
+        {
+
+            if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
-
-                if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
-                {
-                    string playerName = GameManager.Instance.PlayerData.playerName;
-                    // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                    hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal,playerName);
-                }
-
+                string playerName = GameManager.Instance.PlayerData.playerName;
+                // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
+                hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
             }
+
         }
-        
     }
 
 }

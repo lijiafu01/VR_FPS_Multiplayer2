@@ -11,17 +11,55 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     // Dictionary lưu trữ các nhân vật người chơi đã được spawn, để hủy chúng khi người chơi ngắt kết nối
     private Dictionary<PlayerRef, NetworkObject> _spawnedUsers = new Dictionary<PlayerRef, NetworkObject>();
-
+    NetworkObject networkPlayerObject;
     void Start()
     {
         // Thêm callback để nhận sự kiện mạng từ NetworkRunner
         NetworkManager.Instance.Runner.AddCallbacks(this);
     }
+    public void PrintSpawnedUsers()
+    {
+        Debug.Log("Contents of _spawnedUsers:");
 
+        foreach (var kvp in _spawnedUsers)
+        {
+            PlayerRef player = kvp.Key;
+            NetworkObject networkObject = kvp.Value;
+
+            Debug.Log($"dev2_PlayerRef: {player.PlayerId}, NetworkObject: {networkObject.name}");
+        }
+
+        Debug.Log("End of _spawnedUsers contents.");
+    }
     #region INetworkRunnerCallbacks
-
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+        Debug.Log("dev_OnPlayerJoined");
+
+        // Kiểm tra nếu người chơi đã tồn tại trong danh sách
+        if (!_spawnedUsers.ContainsKey(player))
+        {
+            // Khi một người chơi mới tham gia
+            if (player == runner.LocalPlayer)
+            {
+                // Xác định vị trí spawn ngẫu nhiên trong phạm vi nhất định
+                Vector3 spawnPosition = new Vector3(UnityEngine.Random.Range(1, 5), 0.5f, UnityEngine.Random.Range(1, 5));
+
+                // Tạo nhân vật người chơi từ prefab và lưu trữ trong dictionary
+                networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
+                _spawnedUsers.Add(player, networkPlayerObject);
+                Debug.Log($"dev2_OnPlayerJoined  {player} + {_spawnedUsers.Count}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Player {player.PlayerId} is already spawned.");
+        }
+    }
+
+    /*public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+    {
+        Debug.Log("dev_OnPlayerJoined");
         // Khi một người chơi mới tham gia
         if (player == runner.LocalPlayer)
         {
@@ -32,18 +70,42 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             NetworkObject networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
             _spawnedUsers.Add(player, networkPlayerObject);
         }
-    }
+    }*/
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        // Khi một người chơi rời khỏi phiên
-        if (_spawnedUsers.TryGetValue(player, out NetworkObject networkObject))
-        {
-            // Hủy bỏ nhân vật người chơi và loại bỏ khỏi dictionary
-            runner.Despawn(networkObject);
-            _spawnedUsers.Remove(player);
-        }
+        Debug.Log($"dev_OnPlayerLeft1111 {player}");
+       /* runner.Despawn(networkPlayerObject);
+        _spawnedUsers.Remove(player);
+
+        // Shutdown Runner và hủy Prefab nếu cần thiết
+        NetworkManager.Instance.Runner.Shutdown();
+        Destroy(NetworkManager.Instance.Runner.gameObject);*/
+        /* Debug.Log($"dev2_OnPlayerJoined  {player} + {_spawnedUsers.Count}");
+
+         Debug.Log($"dev_OnPlayerLeft222 - Player {player.PlayerId} left");
+         PrintSpawnedUsers();
+         // Kiểm tra xem player có tồn tại trong _spawnedUsers hay không
+         if (_spawnedUsers.TryGetValue(player, out NetworkObject networkObject))
+         {
+             Debug.Log($"dev_OnPlayerLeft3333 - Found player {player.PlayerId} in _spawnedUsers");
+
+             // Hủy bỏ nhân vật người chơi và loại bỏ khỏi dictionary
+             runner.Despawn(networkObject);
+             _spawnedUsers.Remove(player);
+
+             // Shutdown Runner và hủy Prefab nếu cần thiết
+             NetworkManager.Instance.Runner.Shutdown();
+             Destroy(NetworkManager.Instance._runnerPrefab);
+
+             Debug.Log("dev_OnPlayerLeft4444 - Player despawned and Runner shutdown");
+         }
+         else
+         {
+             Debug.LogWarning($"Player {player.PlayerId} not found in _spawnedUsers.");
+         }*/
     }
+
 
     #endregion
 

@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class ConnectionManager : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField inputField;
+    
+    /*[SerializeField] private TMP_InputField inputField;
     
     public void CreateRoom()
     {
@@ -16,5 +17,5 @@ public class ConnectionManager : MonoBehaviour
     {
         NetworkManager.Instance.JoinSession("a");
 
-    }
+    }*/
 }

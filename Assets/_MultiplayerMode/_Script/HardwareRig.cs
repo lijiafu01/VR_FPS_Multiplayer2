@@ -22,6 +22,25 @@ public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
     // Từ điển để lưu trữ tên người chơi và điểm số
     public Dictionary<string, int> _playerScores = new Dictionary<string, int>();
 
+    public void RemovePlayerFromLeaderboard(string playerName)
+    {
+        // Kiểm tra xem người chơi có tồn tại trong từ điển hay không
+        if (_playerScores.ContainsKey(playerName))
+        {
+            // Xóa người chơi khỏi từ điển
+            _playerScores.Remove(playerName);
+
+            // Cập nhật lại bảng xếp hạng sau khi xóa người chơi
+            UpdateLeaderboard();
+
+            Debug.Log($"Player {playerName} has been removed from the leaderboard.");
+        }
+        else
+        {
+            Debug.LogWarning($"Player {playerName} not found in the leaderboard.");
+        }
+    }
+
     // Hàm để thêm hoặc cập nhật người chơi trên bảng xếp hạng
     public void AddOrUpdatePlayerOnLeaderboard(string playerName)
     {
@@ -111,26 +130,55 @@ public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
         // Tạo một đối tượng RigState để chứa trạng thái hiện tại
         RigState xrRigState = new RigState();
 
-        // Cập nhật vị trí và hướng của từng phần tử từ phần cứng
-        xrRigState.HeadsetPosition = headTransform.position;
-        xrRigState.HeadsetRotation = headTransform.rotation;
+        // Kiểm tra null cho từng phần tử trước khi truy cập thuộc tính của chúng
+        if (headTransform != null)
+        {
+            xrRigState.HeadsetPosition = headTransform.position;
+            xrRigState.HeadsetRotation = headTransform.rotation;
+        }
+        else
+        {
+            Debug.LogWarning("headTransform is null or has been destroyed.");
+        }
 
-        xrRigState.PlayerPosition = playerTransform.position;
-        xrRigState.PlayerRotation = playerTransform.rotation;
+        if (playerTransform != null)
+        {
+            xrRigState.PlayerPosition = playerTransform.position;
+            xrRigState.PlayerRotation = playerTransform.rotation;
+        }
+        else
+        {
+            Debug.LogWarning("playerTransform is null or has been destroyed.");
+        }
 
-        xrRigState.LeftHandPosition = leftHandTransform.position;
-        xrRigState.LeftHandRotation = leftHandTransform.rotation;
+        if (leftHandTransform != null)
+        {
+            xrRigState.LeftHandPosition = leftHandTransform.position;
+            xrRigState.LeftHandRotation = leftHandTransform.rotation;
+        }
+        else
+        {
+            Debug.LogWarning("leftHandTransform is null or has been destroyed.");
+        }
 
-        xrRigState.RightHandPosition = rightHandTransform.position;
-        xrRigState.RightHandRotation = rightHandTransform.rotation;
+        if (rightHandTransform != null)
+        {
+            xrRigState.RightHandPosition = rightHandTransform.position;
+            xrRigState.RightHandRotation = rightHandTransform.rotation;
+        }
+        else
+        {
+            Debug.LogWarning("rightHandTransform is null or has been destroyed.");
+        }
+
         // Ghi nhận trạng thái vào NetworkInput để truyền qua mạng
-
         xrRigState.Button.Set(InputButton.Fire, OVRInputState.Instance.TriggerPressed);
         xrRigState.Button.Set(InputButton.Fire2, OVRInputState.Instance.LeftTriggerPressed);
         //xrRigState.Button.Set(InputButton.Jump, OVRInputState.Instance.AButtonPressed);
 
         input.Set(xrRigState);
     }
+
 
     #endregion
 

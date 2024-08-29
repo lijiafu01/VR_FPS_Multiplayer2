@@ -32,16 +32,56 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField]
     private ParticleSystem _leftMuzzleFlash;
-
+    [Networked]
+    public string playerName { get; set; }
     // Thêm biến cho hiệu ứng máu
     [SerializeField]
     private ParticleSystem _bloodEffect;
-    bool isRight = true;
 
     private PlayerData _playerData;
     private PlayerRef _playerRef;
     [Networked, Capacity(30)]
     public NetworkDictionary<PlayerRef, string> PlayerNames => default;
+    public override void Despawned(NetworkRunner runner, bool hasState)
+    {
+        Debug.Log($"dev_player {_playerRef.PlayerId} da bi xoa");
+        // Kiểm tra xem người chơi này có phải là người đang giữ quyền trạng thái (State Authority) không
+        if (hasState)
+        {
+            // Xóa người chơi khỏi danh sách PlayerNames
+            if (PlayerNames.ContainsKey(_playerRef))
+            {
+                PlayerNames.Remove(_playerRef);
+                
+                Debug.Log($"dev_Player {_playerRef.PlayerId} has been removed from PlayerNames.");
+            }
+        }
+        if (Object.HasStateAuthority) return;
+        
+        HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
+        if (hardwareRig != null)
+        {
+            // Gọi hàm cập nhật BXH với thông tin của player
+            hardwareRig.RemovePlayerFromLeaderboard(playerName);
+            Debug.Log($"dev_Player {playerName} has been removed from leaderboard.");
+        }
+
+    }
+    /*[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RemovePlayerFromLeaderboard_RPC(string playerName)
+    {
+        // Tìm HardwareRig và cập nhật BXH trên mỗi client
+        HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
+        if (hardwareRig != null)
+        {
+            // Gọi hàm cập nhật BXH với thông tin của player
+            hardwareRig.RemovePlayerFromLeaderboard(playerName);
+        }
+        else
+        {
+            Debug.LogError("HardwareRig not found!");
+        }
+    }*/
     public override void Spawned()
     {
         _playerRef = Object.InputAuthority;
@@ -88,7 +128,9 @@ public class PlayerController : NetworkBehaviour
             hardwareRig = FindObjectOfType<HardwareRig>();
             _currentHp = _maxHp; 
             //cap nhat leaderboard
+            GameManager.Instance.PlayerData.playerRef = _playerRef;
             _playerData = GameManager.Instance.PlayerData;
+            playerName = _playerData.playerName;
             UpdateLeaderboard_RPC(_playerData.playerName);
             //-------------------------------------------------------
         }
@@ -166,57 +208,57 @@ public class PlayerController : NetworkBehaviour
             _previousButton = input.Button;
             if (buttonPressed.IsSet(InputButton.Fire))
             {
-                isRight = true;
-                FireWeapon(isRight);
+                FirePistolRight();
             }
             if (buttonPressed.IsSet(InputButton.Fire2))
             {
-                isRight = false;
-                FireWeapon(isRight);
+                FirePistolLeft();
             }
         }
     }
 
-    private void FireWeapon(bool isRight)
+    private void FirePistolRight()
     {
-        _weaponHandler.Fire(isRight);
+        _weaponHandler.PistolRightFire();
 
         // Gọi hàm để chơi âm thanh và hiển thị hiệu ứng tóe lửa
-        FireWeaponEffects_RPC();
+        PistolRightFireEffects_RPC();
     }
+    private void FirePistolLeft()
+    {
+        _weaponHandler.PistolLeftFire();
 
+        // Gọi hàm để chơi âm thanh và hiển thị hiệu ứng tóe lửa
+        PistolLeftFireEffects_RPC();
+    }
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    private void FireWeaponEffects_RPC()
+    private void PistolRightFireEffects_RPC()
+    {
+        if (_audioSource != null && _fireSound != null)
+        {
+            _audioSource.Play();
+        }
+        _muzzleFlash.Play();
+        Invoke(nameof(StopPistolRightMuzzleFlash), 0.2f); // Dừng hiệu ứng sau 1 giây
+    }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    private void PistolLeftFireEffects_RPC()
     {
         if (_audioSource != null && _fireSound != null)
         {
             _audioSource.Play();
         }
 
-        if (isRight)
-        {
-            _muzzleFlash.Play();
-            Invoke(nameof(StopMuzzleFlash), 0.3f); // Dừng hiệu ứng sau 1 giây
-
-        }
-        else
-        {
-            
-            _leftMuzzleFlash.Play();
-            Invoke(nameof(StopMuzzleFlash), 0.3f); // Dừng hiệu ứng sau 1 giây
-        }
+        _leftMuzzleFlash.Play();
+        Invoke(nameof(StopPistolLeftMuzzleFlash), 0.2f); // Dừng hiệu ứng sau 1 giây
     }
-
-    private void StopMuzzleFlash()
+    private void StopPistolRightMuzzleFlash()
     {
-        if(isRight)
-        {
-            _muzzleFlash.Stop();
-        }
-        if(!isRight)
-        {
-            _leftMuzzleFlash.Stop();
-        }
+        _muzzleFlash.Stop();
+    }
+    private void StopPistolLeftMuzzleFlash()
+    {
+        _leftMuzzleFlash.Stop();
     }
 
     private void Dead()

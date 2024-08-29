@@ -9,16 +9,15 @@ using UnityEngine.SceneManagement;
 public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
     
-    
-
     // Tạo một singleton để dễ dàng truy cập từ mọi nơi trong mã
     public static NetworkManager Instance { get; private set; }
 
     [SerializeField]
-    private GameObject _runnerPrefab; // Prefab để tạo NetworkRunner
+    public GameObject _runnerPrefab; // Prefab để tạo NetworkRunner
 
     public NetworkRunner Runner { get; private set; } // Runner dùng để quản lý mạng
 
+    public PlayerSpawner PlayerSpawnerScript { get; private set; } // Script để tạo người chơi
     private void Awake()
     {
         // Đảm bảo chỉ có một thể hiện duy nhất của NetworkManager
@@ -38,11 +37,11 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
         // Cố định máy chủ vào một khu vực cụ thể
         Fusion.Photon.Realtime.PhotonAppSettings.Instance.AppSettings.FixedRegion = "asia";
+        PlayerSpawnerScript =  _runnerPrefab.GetComponent<PlayerSpawner>();
     }
 
     public async void CreateSession(string roomCode)
     {
-        GameManager.Instance.SetPlayerName(); // Lấy tên người chơi từ InputField
         // Tạo Runner và bắt đầu phiên
         CreateRunner();
         // Tải scene cần thiết cho phiên
@@ -54,7 +53,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     public async void JoinSession(string roomCode)
     {
        // GameManager.Instance.PlayerData.playerName = GameManager.Instance.PlayerNameInput.text; // Tạo một PlayerData mới cho người chơi
-       GameManager.Instance.SetPlayerName(); // Lấy tên người chơi từ InputField
         // Thực hiện tương tự như CreateSession, nhưng dành cho người chơi tham gia vào một phiên đã có
         CreateRunner();
         await LoadScene();
@@ -63,10 +61,18 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void CreateRunner()
     {
-        // Tạo một NetworkRunner từ prefab và thêm callback để nhận sự kiện mạng
+        // Kiểm tra nếu Runner đã tồn tại
+        if (Runner != null)
+        {
+            Debug.LogWarning("dev_A NetworkRunner instance already exists. Reusing the existing runner.");
+            return;
+        }
+
+        // Tạo một NetworkRunner từ prefab nếu chưa tồn tại
         Runner = Instantiate(_runnerPrefab, transform).GetComponent<NetworkRunner>();
         Runner.AddCallbacks(this);
     }
+
 
     public async Task LoadScene()
     {
@@ -119,14 +125,27 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-       
+       Debug.Log("dev_player_left id:1111 "+player);
     }
 
 
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        Debug.Log("Runner Shutdown"); // Log khi runner dừng hoạt động
+        Debug.Log("dev_OnShutdown11111");
+        /*if (Runner != null)
+        {
+            Runner.Shutdown(); // Dừng hoạt động của Runner
+
+            // Hủy bỏ đối tượng Runner sau khi shutdown hoàn tất
+            Destroy(Runner.gameObject);
+
+            // Đặt Runner về null để chắc chắn rằng nó không còn tồn tại
+            Runner = null;
+
+            Debug.Log("NetworkRunner has been shutdown and destroyed.");
+        }
+        Debug.Log("Runner Shutdown"); // Log khi runner dừng hoạt động*/
     }
     
     #endregion
