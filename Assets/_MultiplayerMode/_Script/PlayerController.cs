@@ -16,16 +16,12 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField]
     private WeaponHandler _weaponHandler;
-
     private NetworkButtons _previousButton { get; set; }
 
     private HardwareRig hardwareRig;
-
     [SerializeField]
     private AudioClip _fireSound;
-
     private AudioSource _audioSource;
-
     // Thêm biến cho ParticleSystem
     [SerializeField]
     private ParticleSystem _muzzleFlash;
@@ -42,46 +38,81 @@ public class PlayerController : NetworkBehaviour
     private PlayerRef _playerRef;
     [Networked, Capacity(30)]
     public NetworkDictionary<PlayerRef, string> PlayerNames => default;
+    [Networked, Capacity(20)]
+    public NetworkDictionary<PlayerRef, NetworkObject> _PlayerDict => default;
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
-        Debug.Log($"dev_player {_playerRef.PlayerId} da bi xoa");
+        Debug.Log($"dev10_2OnPlayerLeft {_PlayerDict.Count}");
+        //Debug.Log($"dev12_1player {_playerRef.PlayerId} da bi xoa");
         // Kiểm tra xem người chơi này có phải là người đang giữ quyền trạng thái (State Authority) không
-        if (hasState)
+        if (Object.HasStateAuthority)
         {
+            Debug.Log($"dev12_2player {_playerRef.PlayerId} da bi xoa");
+            Debug.Log($"dev12_3player player hien tai run funtion despaw {_playerNameText.text} ");
             // Xóa người chơi khỏi danh sách PlayerNames
             if (PlayerNames.ContainsKey(_playerRef))
             {
                 PlayerNames.Remove(_playerRef);
-                
                 Debug.Log($"dev_Player {_playerRef.PlayerId} has been removed from PlayerNames.");
+                if (_PlayerDict.ContainsKey(_playerRef))
+                {
+                    NetworkObject networkObject = _PlayerDict[_playerRef];
+                    // Sử dụng runner để despawn đối tượng
+                    //runner.Despawn(networkObject);
+                    // Xóa đối tượng khỏi dictionary
+                    // Gửi RPC để thông báo cho tất cả client xóa đối tượng này
+                    //RemovePlayerOnClients_RPC(_playerRef); 
+                    //_PlayerDict.Remove(_playerRef);
+                    Debug.Log($"dev8_1Player {_playerRef.PlayerId} has been removed from client.");
+                }
             }
         }
         if (Object.HasStateAuthority) return;
-        
+        Debug.Log("dev3_co cap nhat lai BXH");
         HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
         if (hardwareRig != null)
         {
             // Gọi hàm cập nhật BXH với thông tin của player
             hardwareRig.RemovePlayerFromLeaderboard(playerName);
-            Debug.Log($"dev_Player {playerName} has been removed from leaderboard.");
+            Debug.Log($"dev3_Player {playerName} has been removed from leaderboard.");
         }
-
     }
-    /*[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RemovePlayerFromLeaderboard_RPC(string playerName)
+    /*[Rpc(RpcSources.All, RpcTargets.All)]
+    private void RemovePlayerOnClients_RPC(PlayerRef playerRef)
     {
-        // Tìm HardwareRig và cập nhật BXH trên mỗi client
-        HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
-        if (hardwareRig != null)
+        Debug.Log($"dev8_2Player {playerRef.PlayerId} removed from client.");
+        // Chỉ xử lý trên các client khác (ngoại trừ người gửi)
+        if (playerRef != Runner.LocalPlayer)
         {
-            // Gọi hàm cập nhật BXH với thông tin của player
-            hardwareRig.RemovePlayerFromLeaderboard(playerName);
-        }
-        else
-        {
-            Debug.LogError("HardwareRig not found!");
+            Debug.Log($"dev8_2Player {playerRef.PlayerId} removed from client.");
+            if (_PlayerDict.ContainsKey(playerRef))
+            {
+                NetworkObject networkObject = _PlayerDict[playerRef];
+
+                // Sử dụng runner để despawn đối tượng
+                NetworkManager.Instance.Runner.Despawn(networkObject);
+
+                // Xóa đối tượng khỏi dictionary
+                _PlayerDict.Remove(playerRef);
+                Debug.Log($"dev8_3Player {playerRef.PlayerId} removed from client.");
+            }
         }
     }*/
+        /*[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RemovePlayerFromLeaderboard_RPC(string playerName)
+        {
+            // Tìm HardwareRig và cập nhật BXH trên mỗi client
+            HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
+            if (hardwareRig != null)
+            {
+                // Gọi hàm cập nhật BXH với thông tin của player
+                hardwareRig.RemovePlayerFromLeaderboard(playerName);
+            }
+            else
+            {
+                Debug.LogError("HardwareRig not found!");
+            }
+        }*/
     public override void Spawned()
     {
         _playerRef = Object.InputAuthority;
@@ -101,7 +132,6 @@ public class PlayerController : NetworkBehaviour
                 Debug.Log($"dev_Khóa: {kvp.Key}, Tên người chơi: {kvp.Value}");
             }
         }
-
         if (PlayerNames.ContainsKey(_playerRef))
         {
  
@@ -123,6 +153,7 @@ public class PlayerController : NetworkBehaviour
         }
         if (Object.HasStateAuthority)
         {
+            _PlayerDict.Add(_playerRef, NetworkManager.Instance.PlayerSpawnerScript._networkPlayerObject);
             
             //----------------------------------------------------------------
             hardwareRig = FindObjectOfType<HardwareRig>();
@@ -133,14 +164,10 @@ public class PlayerController : NetworkBehaviour
             playerName = _playerData.playerName;
             UpdateLeaderboard_RPC(_playerData.playerName);
             //-------------------------------------------------------
-        }
-        
-        
+        }              
         _audioSource = gameObject.AddComponent<AudioSource>();
         _audioSource.clip = _fireSound;
-
     }
-    
     public PlayerRef GetHostPlayerRef()
     {
         PlayerRef host = PlayerRef.None;
@@ -198,7 +225,6 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
-
     public override void FixedUpdateNetwork()
     {
         base.FixedUpdateNetwork();
@@ -216,7 +242,6 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
-
     private void FirePistolRight()
     {
         _weaponHandler.PistolRightFire();
@@ -260,7 +285,6 @@ public class PlayerController : NetworkBehaviour
     {
         _leftMuzzleFlash.Stop();
     }
-
     private void Dead()
     {
         Vector3 pos1 = new Vector3(0, 5, 0);
@@ -272,15 +296,11 @@ public class PlayerController : NetworkBehaviour
         hardwareRig.gameObject.transform.position = positions[randomIndex];
 
     }
-
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void TakeDamage_RPC(int damage, Vector3 hitPosition, Vector3 hitNormal,string shooterName)
     {
         TakeDamage(damage, hitPosition, hitNormal, shooterName);
-    }
-
-   
-    
+    }   
     [Rpc(RpcSources.All, RpcTargets.All)]
     private void PlayBloodEffect_RPC(Vector3 hitPosition, Vector3 hitNormal)
     {
@@ -299,7 +319,6 @@ public class PlayerController : NetworkBehaviour
             Debug.Log("dev_blood_effect_is_null");
         }
     }
-
     private void StopBloodEffect()
     {
         if (_bloodEffect != null)

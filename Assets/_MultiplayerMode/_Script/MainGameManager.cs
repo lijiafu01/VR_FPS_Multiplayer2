@@ -10,7 +10,7 @@ public class MainGameManager : MonoBehaviour
         // Ban đầu tắt menu
         // MenuObject.gameObject.SetActive(false);
         //test----------------
-        Invoke("LoadStartGameScene", 10f);
+        //Invoke("LoadStartGameScene", 7f);
     }
     public void LoadStartGameScene()
     {
@@ -22,6 +22,13 @@ public class MainGameManager : MonoBehaviour
         // Kiểm tra nếu Runner tồn tại
         if (NetworkManager.Instance.Runner != null)
         {
+           
+
+            //Debug.Log($"dev11_test {NetworkManager.Instance.NetworkPlayerObject.gameObject.name}");
+            NetworkManager.Instance.Runner.Despawn(NetworkManager.Instance.NetworkPlayerObject);
+            Debug.Log("dev11_da xoa");
+
+            yield return new WaitForSeconds(1f);
             Debug.Log("Shutting down Runner...");
             NetworkManager.Instance.Runner.Shutdown();
             // Chờ một chút để đảm bảo Shutdown được thực hiện

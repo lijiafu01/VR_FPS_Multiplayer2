@@ -22,6 +22,7 @@ public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
     // Từ điển để lưu trữ tên người chơi và điểm số
     public Dictionary<string, int> _playerScores = new Dictionary<string, int>();
 
+    
     public void RemovePlayerFromLeaderboard(string playerName)
     {
         // Kiểm tra xem người chơi có tồn tại trong từ điển hay không

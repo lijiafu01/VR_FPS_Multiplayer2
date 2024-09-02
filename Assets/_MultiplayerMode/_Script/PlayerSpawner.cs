@@ -6,18 +6,23 @@ using System;
 
 public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
+    /*[Networked, Capacity(30)]
+    public NetworkDictionary<PlayerRef, string> PlayerNames => default;*/
     [SerializeField]
     private NetworkPrefabRef playerPrefab; // Prefab của người chơi, được dùng để tạo các nhân vật trong game
+                                           // Dictionary lưu trữ các nhân vật người chơi đã được spawn, để hủy chúng khi người chơi ngắt kết nối
+    /*[Networked, Capacity(20)]
+    public NetworkDictionary<PlayerRef, NetworkObject> _spawnedUsers => default;*/
 
-    // Dictionary lưu trữ các nhân vật người chơi đã được spawn, để hủy chúng khi người chơi ngắt kết nối
     private Dictionary<PlayerRef, NetworkObject> _spawnedUsers = new Dictionary<PlayerRef, NetworkObject>();
-    NetworkObject networkPlayerObject;
+    public NetworkObject _networkPlayerObject;
+
     void Start()
     {
         // Thêm callback để nhận sự kiện mạng từ NetworkRunner
         NetworkManager.Instance.Runner.AddCallbacks(this);
     }
-    public void PrintSpawnedUsers()
+    /*public void PrintSpawnedUsers()
     {
         Debug.Log("Contents of _spawnedUsers:");
 
@@ -25,38 +30,46 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             PlayerRef player = kvp.Key;
             NetworkObject networkObject = kvp.Value;
-
             Debug.Log($"dev2_PlayerRef: {player.PlayerId}, NetworkObject: {networkObject.name}");
         }
 
         Debug.Log("End of _spawnedUsers contents.");
-    }
+    }*/
     #region INetworkRunnerCallbacks
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log("dev_OnPlayerJoined");
+        //Debug.Log("dev6_1OnPlayerJoined so player: " + _spawnedUsers.Count);
+
+        Debug.Log("dev6_OnPlayerJoined id: "+ player);
 
         // Kiểm tra nếu người chơi đã tồn tại trong danh sách
         if (!_spawnedUsers.ContainsKey(player))
         {
+            Debug.Log("dev7_check1");
             // Khi một người chơi mới tham gia
             if (player == runner.LocalPlayer)
             {
+                Debug.Log("dev7_check2");
                 // Xác định vị trí spawn ngẫu nhiên trong phạm vi nhất định
                 Vector3 spawnPosition = new Vector3(UnityEngine.Random.Range(1, 5), 0.5f, UnityEngine.Random.Range(1, 5));
 
                 // Tạo nhân vật người chơi từ prefab và lưu trữ trong dictionary
-                networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
-                _spawnedUsers.Add(player, networkPlayerObject);
-                Debug.Log($"dev2_OnPlayerJoined  {player} + {_spawnedUsers.Count}");
+                _networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
+               if (_networkPlayerObject != null) {
+                    NetworkManager.Instance.NetworkPlayerObject = _networkPlayerObject;
+                }
+                _spawnedUsers.Add(player, _networkPlayerObject);
+                Debug.Log("dev7_check3");
+                //Debug.Log($"dev2_OnPlayerJoined  {player} + {_spawnedUsers.Count}");
             }
         }
         else
         {
             Debug.LogWarning($"Player {player.PlayerId} is already spawned.");
         }
+        Debug.Log("dev7_check4");
+        // Debug.Log("dev6_2OnPlayerJoined so player: "+ _spawnedUsers.Count);
     }
-
     /*public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         Debug.Log("dev_OnPlayerJoined");
@@ -67,45 +80,53 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             Vector3 spawnPosition = new Vector3(UnityEngine.Random.Range(1, 5), 0.5f, UnityEngine.Random.Range(1, 5));
 
             // Tạo nhân vật người chơi từ prefab và lưu trữ trong dictionary
-            NetworkObject networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
-            _spawnedUsers.Add(player, networkPlayerObject);
+            NetworkObject _networkPlayerObject = runner.Spawn(playerPrefab, spawnPosition, Quaternion.identity, player);
+            _spawnedUsers.Add(player, _networkPlayerObject);
         }
     }*/
-
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log($"dev_OnPlayerLeft1111 {player}");
-       /* runner.Despawn(networkPlayerObject);
-        _spawnedUsers.Remove(player);
+        Debug.Log($"dev10_1OnPlayerLeft id: {player.PlayerId}");
+        /*Debug.Log("dev10_1OnPlayerLeft");
+        // Đảm bảo rằng _networkPlayerObject không phải là null
+        if (_networkPlayerObject == null)
+        {
+            Debug.LogError("NetworkPlayerObject is null.");
+            return;
+        }
 
-        // Shutdown Runner và hủy Prefab nếu cần thiết
-        NetworkManager.Instance.Runner.Shutdown();
-        Destroy(NetworkManager.Instance.Runner.gameObject);*/
-        /* Debug.Log($"dev2_OnPlayerJoined  {player} + {_spawnedUsers.Count}");
+        // Tìm và lấy PlayerController từ tất cả các đối tượng con của _networkPlayerObject
+        var playerController = _networkPlayerObject.GetComponentInChildren<PlayerController>();
 
-         Debug.Log($"dev_OnPlayerLeft222 - Player {player.PlayerId} left");
-         PrintSpawnedUsers();
-         // Kiểm tra xem player có tồn tại trong _spawnedUsers hay không
-         if (_spawnedUsers.TryGetValue(player, out NetworkObject networkObject))
-         {
-             Debug.Log($"dev_OnPlayerLeft3333 - Found player {player.PlayerId} in _spawnedUsers");
+        // Kiểm tra nếu không tìm thấy PlayerController
+        if (playerController == null)
+        {
+            Debug.LogError("PlayerController script not found on any child objects.");
+            return;
+        }
+        // Duyệt qua từng phần tử trong _PlayerDict và in ra thông tin
+        foreach (var entry in playerController._PlayerDict)
+        {
+            PlayerRef playerRef = entry.Key;
+            NetworkObject networkObject = entry.Value;
+            
+            // In thông tin của từng player
+            Debug.Log($"PlayerRef ID: {playerRef.PlayerId}, NetworkObject: {networkObject.name}");
+        }
+        // Kiểm tra xem player có tồn tại trong từ điển không
+        if (playerController._PlayerDict.ContainsKey(player))
+        {
+            // Lấy đối tượng mạng và despawn nó
+            NetworkObject networkObject = playerController._PlayerDict[player];
+            runner.Despawn(networkObject);
 
-             // Hủy bỏ nhân vật người chơi và loại bỏ khỏi dictionary
-             runner.Despawn(networkObject);
-             _spawnedUsers.Remove(player);
+            // Xóa player khỏi từ điển
+            playerController._PlayerDict.Remove(player);
 
-             // Shutdown Runner và hủy Prefab nếu cần thiết
-             NetworkManager.Instance.Runner.Shutdown();
-             Destroy(NetworkManager.Instance._runnerPrefab);
-
-             Debug.Log("dev_OnPlayerLeft4444 - Player despawned and Runner shutdown");
-         }
-         else
-         {
-             Debug.LogWarning($"Player {player.PlayerId} not found in _spawnedUsers.");
-         }*/
+            Debug.Log($"dev9_1Player {player.PlayerId} has been despawned and removed from the dictionary.");
+        }
+        Debug.Log($"dev9_2Player {player.PlayerId}");*/
     }
-
 
     #endregion
 

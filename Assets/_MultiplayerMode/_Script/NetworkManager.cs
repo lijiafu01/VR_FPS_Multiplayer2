@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
-    
+    public NetworkObject NetworkPlayerObject;
     // Tạo một singleton để dễ dàng truy cập từ mọi nơi trong mã
     public static NetworkManager Instance { get; private set; }
 
@@ -49,7 +49,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         // Kết nối vào phiên với mã phòng
         await Connect(roomCode);
     }
-
     public async void JoinSession(string roomCode)
     {
        // GameManager.Instance.PlayerData.playerName = GameManager.Instance.PlayerNameInput.text; // Tạo một PlayerData mới cho người chơi
@@ -58,7 +57,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         await LoadScene();
         await Connect(roomCode);
     }
-
     public void CreateRunner()
     {
         // Kiểm tra nếu Runner đã tồn tại
@@ -72,8 +70,6 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         Runner = Instantiate(_runnerPrefab, transform).GetComponent<NetworkRunner>();
         Runner.AddCallbacks(this);
     }
-
-
     public async Task LoadScene()
     {
         // Tải scene không đồng bộ, chờ đến khi hoàn tất
@@ -119,17 +115,10 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         
     }
-
-    
-
-
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
        Debug.Log("dev_player_left id:1111 "+player);
     }
-
-
-
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
         Debug.Log("dev_OnShutdown11111");
