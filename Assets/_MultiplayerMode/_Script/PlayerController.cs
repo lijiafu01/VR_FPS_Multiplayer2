@@ -3,17 +3,17 @@ using OculusSampleFramework;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : NetworkBehaviour
 {
+    public GameObject menuPanel;
     [SerializeField] private TMP_Text _playerNameText;
     //[Networked] public NetworkString<_16> NickName { get; set; }
     [SerializeField]
     private int _maxHp = 100;
-
     [Networked] // Sử dụng Networked để đồng bộ HP giữa các client
     public int _currentHp { get; set; }
-
     [SerializeField]
     private WeaponHandler _weaponHandler;
     private NetworkButtons _previousButton { get; set; }
@@ -47,13 +47,10 @@ public class PlayerController : NetworkBehaviour
         // Kiểm tra xem người chơi này có phải là người đang giữ quyền trạng thái (State Authority) không
         if (Object.HasStateAuthority)
         {
-            Debug.Log($"dev12_2player {_playerRef.PlayerId} da bi xoa");
-            Debug.Log($"dev12_3player player hien tai run funtion despaw {_playerNameText.text} ");
             // Xóa người chơi khỏi danh sách PlayerNames
             if (PlayerNames.ContainsKey(_playerRef))
             {
                 PlayerNames.Remove(_playerRef);
-                Debug.Log($"dev_Player {_playerRef.PlayerId} has been removed from PlayerNames.");
                 if (_PlayerDict.ContainsKey(_playerRef))
                 {
                     NetworkObject networkObject = _PlayerDict[_playerRef];
@@ -63,7 +60,6 @@ public class PlayerController : NetworkBehaviour
                     // Gửi RPC để thông báo cho tất cả client xóa đối tượng này
                     //RemovePlayerOnClients_RPC(_playerRef); 
                     //_PlayerDict.Remove(_playerRef);
-                    Debug.Log($"dev8_1Player {_playerRef.PlayerId} has been removed from client.");
                 }
             }
         }
@@ -153,6 +149,7 @@ public class PlayerController : NetworkBehaviour
         }
         if (Object.HasStateAuthority)
         {
+            
             _PlayerDict.Add(_playerRef, NetworkManager.Instance.PlayerSpawnerScript._networkPlayerObject);
             
             //----------------------------------------------------------------
@@ -167,6 +164,22 @@ public class PlayerController : NetworkBehaviour
         }              
         _audioSource = gameObject.AddComponent<AudioSource>();
         _audioSource.clip = _fireSound;
+    }
+    private void Update()
+    {
+        if (Object.HasStateAuthority)
+        {
+            if (OVRInput.GetDown(OVRInput.Button.Start, OVRInput.Controller.LTouch))
+            {
+                menuPanel.SetActive(!menuPanel.activeSelf);
+            }
+        }
+        
+    }
+    
+    public void OnQuitButtonClick()
+    {
+        LocalManager.Instance.LoadStartGameScene();
     }
     public PlayerRef GetHostPlayerRef()
     {
@@ -264,7 +277,7 @@ public class PlayerController : NetworkBehaviour
             _audioSource.Play();
         }
         _muzzleFlash.Play();
-        Invoke(nameof(StopPistolRightMuzzleFlash), 0.2f); // Dừng hiệu ứng sau 1 giây
+        Invoke(nameof(StopPistolRightMuzzleFlash), 0.1f); // Dừng hiệu ứng sau 1 giây
     }
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     private void PistolLeftFireEffects_RPC()
@@ -275,7 +288,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         _leftMuzzleFlash.Play();
-        Invoke(nameof(StopPistolLeftMuzzleFlash), 0.2f); // Dừng hiệu ứng sau 1 giây
+        Invoke(nameof(StopPistolLeftMuzzleFlash), 0.1f); // Dừng hiệu ứng sau 1 giây
     }
     private void StopPistolRightMuzzleFlash()
     {
