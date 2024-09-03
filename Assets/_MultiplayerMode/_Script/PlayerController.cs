@@ -7,12 +7,15 @@ using UnityEngine.UI;
 
 public class PlayerController : NetworkBehaviour
 {
+   /* private TextMeshProUGUI hpText;
+    [SerializeField]
+    private GameObject hpCanvas;*/
     public GameObject menuPanel;
     [SerializeField] private TMP_Text _playerNameText;
     //[Networked] public NetworkString<_16> NickName { get; set; }
     [SerializeField]
     private int _maxHp = 100;
-    [Networked] // Sử dụng Networked để đồng bộ HP giữa các client
+    [Networked(OnChanged = nameof(OnHpChanged))]
     public int _currentHp { get; set; }
     [SerializeField]
     private WeaponHandler _weaponHandler;
@@ -94,21 +97,39 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }*/
-        /*[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void RemovePlayerFromLeaderboard_RPC(string playerName)
+    /*[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RemovePlayerFromLeaderboard_RPC(string playerName)
+    {
+        // Tìm HardwareRig và cập nhật BXH trên mỗi client
+        HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
+        if (hardwareRig != null)
         {
-            // Tìm HardwareRig và cập nhật BXH trên mỗi client
-            HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
-            if (hardwareRig != null)
-            {
-                // Gọi hàm cập nhật BXH với thông tin của player
-                hardwareRig.RemovePlayerFromLeaderboard(playerName);
-            }
-            else
-            {
-                Debug.LogError("HardwareRig not found!");
-            }
-        }*/
+            // Gọi hàm cập nhật BXH với thông tin của player
+            hardwareRig.RemovePlayerFromLeaderboard(playerName);
+        }
+        else
+        {
+            Debug.LogError("HardwareRig not found!");
+        }
+    }*/
+
+    
+   
+    private static void OnHpChanged(Changed<PlayerController> changed)
+    {
+        // Lấy giá trị mới của _currentHp
+        int newHp = changed.Behaviour._currentHp;
+
+        Debug.Log($"HP has changed to {newHp}");
+
+        // Gọi hàm để cập nhật UI hoặc xử lý các logic khác
+        changed.Behaviour.UpdateHpUI(newHp);
+    }
+
+    private void UpdateHpUI(int hp)
+    {
+       hardwareRig.UpdateHP(hp);
+    }
     public override void Spawned()
     {
         _playerRef = Object.InputAuthority;
@@ -149,7 +170,6 @@ public class PlayerController : NetworkBehaviour
         }
         if (Object.HasStateAuthority)
         {
-            
             _PlayerDict.Add(_playerRef, NetworkManager.Instance.PlayerSpawnerScript._networkPlayerObject);
             
             //----------------------------------------------------------------
@@ -234,9 +254,13 @@ public class PlayerController : NetworkBehaviour
             {
                 Dead();
                 UpdateLeaderboard_RPC(shooterName);
-                _currentHp = _maxHp; // Đặt lại HP khi player chết
+                Invoke("SetInitHp", 1f);
             }
         }
+    }
+    private void SetInitHp()
+    {
+        _currentHp = _maxHp; // Đặt lại HP khi player chết
     }
     public override void FixedUpdateNetwork()
     {

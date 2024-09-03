@@ -10,7 +10,9 @@ using System.Xml;
 
 public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
 {
-    
+    private TextMeshProUGUI hpText;
+    [SerializeField]
+    private GameObject hpCanvas;
     // Các Transform đại diện cho vị trí và hướng của player và các phần tử khác
     public Transform playerTransform;
     public Transform headTransform;
@@ -22,7 +24,12 @@ public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
     // Từ điển để lưu trữ tên người chơi và điểm số
     public Dictionary<string, int> _playerScores = new Dictionary<string, int>();
 
-    
+    public void UpdateHP(int hp)
+    {
+        string displayHP = "HP : " + hp.ToString() + " / " + "100";
+        hpText.text = displayHP;
+    }
+
     public void RemovePlayerFromLeaderboard(string playerName)
     {
         // Kiểm tra xem người chơi có tồn tại trong từ điển hay không
@@ -122,6 +129,8 @@ public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
     {
         // Đăng ký HardwareRig để nhận callback từ NetworkRunner
         NetworkManager.Instance.Runner.AddCallbacks(this);
+        hpText = hpCanvas.transform.Find("HpText").GetComponent<TextMeshProUGUI>();
+
     }
 
     #region INetworkRunnerCallbacks

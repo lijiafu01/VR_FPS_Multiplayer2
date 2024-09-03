@@ -139,6 +139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  hpCanvas: {fileID: 5000670125012392490}
   menuPanel: {fileID: 3844415009410449431}
   _playerNameText: {fileID: 5409353169610258498}
   _maxHp: 100
@@ -352,7 +353,7 @@ GameObject:
   - component: {fileID: 8700194495103604141}
   - component: {fileID: 340396521927988794}
   m_Layer: 0
-  m_Name: Text (TMP)
+  m_Name: HpText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -374,8 +375,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.72, y: 0.48}
-  m_SizeDelta: {x: 169.27, y: 28.46}
+  m_AnchoredPosition: {x: 0, y: 0.000000059604645}
+  m_SizeDelta: {x: 246.42, y: 42.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8700194495103604141
 CanvasRenderer:
@@ -405,7 +406,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: jack119
+  m_text: 'HP : 0 / 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -432,8 +433,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 27.05
-  m_fontSizeBase: 27.05
+  m_fontSize: 42
+  m_fontSizeBase: 42
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2612,7 +2613,6 @@ Transform:
   m_Children:
   - {fileID: 1839468125511558463}
   - {fileID: 5759335512506500758}
-  - {fileID: 4873609697050134392}
   m_Father: {fileID: 1343448616175987264}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4587119567790532074
@@ -2922,18 +2922,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5000670125012392490}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.464}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0.05158}
+  m_LocalScale: {x: 0.001, y: 0.001, z: 0.001}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7145623730741852224}
-  m_Father: {fileID: 4392521291353837013}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 5139610041883146903}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.08}
-  m_SizeDelta: {x: 100, y: 18.8997}
+  m_AnchoredPosition: {x: 0.0167, y: 0.07923}
+  m_SizeDelta: {x: 174.11996, y: 25.3948}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4902813036493540378
 Canvas:
@@ -4399,6 +4399,7 @@ Transform:
   m_Children:
   - {fileID: 1576106483366971862}
   - {fileID: 8188731219510501584}
+  - {fileID: 4873609697050134392}
   m_Father: {fileID: 2662222825453090382}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3116965028751825055
