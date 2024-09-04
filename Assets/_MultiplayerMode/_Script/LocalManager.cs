@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class LocalManager : MonoBehaviour
 {
-    public GameObject MenuObject;  // Đối tượng menu
-    private bool isMenuActive = false;  // Biến lưu trạng thái của menu
+    /*public GameObject MenuObject;  // Đối tượng menu
+    private bool isMenuActive = false;  // Biến lưu trạng thái của menu*/
     // Biến tĩnh (static) giữ instance duy nhất của LocalManager
     private static LocalManager _instance;
 
@@ -46,12 +46,12 @@ public class LocalManager : MonoBehaviour
     private void Start()
     {
         // Ban đầu tắt menu
-        MenuObject.gameObject.SetActive(false);
+        //MenuObject.gameObject.SetActive(false);
         //test----------------
         //Invoke("LoadStartGameScene", 5f);
     }
 
-    void Update()
+   /* void Update()
     {
         // Kiểm tra nếu người chơi nhấn nút menu bên tay trái
         if (OVRInput.GetDown(OVRInput.Button.Start, OVRInput.Controller.LTouch))
@@ -72,7 +72,7 @@ public class LocalManager : MonoBehaviour
             // Thiết lập trạng thái menu dựa trên biến isMenuActive
             MenuObject.gameObject.SetActive(isMenuActive);
         }
-    }
+    }*/
     public void LoadStartGameScene()
     {
         StartCoroutine(ShutdownAndLoadScene());
@@ -99,17 +99,4 @@ public class LocalManager : MonoBehaviour
         SceneManager.LoadScene("StartGame");
     }
 
-   /* public void LoadStartGameScene()
-    {
-        // Kiểm tra nếu Runner tồn tại
-        if (NetworkManager.Instance.Runner != null)
-        {
-            // NetworkManager.Instance.PlayerSpawnerScript.OnPlayerLeft(NetworkManager.Instance.Runner, GameManager.Instance.PlayerData.playerRef);
-            //Debug.Log($"dev_localManager_{GameManager.Instance.PlayerData.playerRef.PlayerId} x {GameManager.Instance.PlayerData.playerRef}");
-            // Gọi hàm để rời khỏi session hoặc tắt runner
-            //NetworkManager.Instance.Runner.Shutdown();
-            NetworkManager.Instance.Runner.Shutdown();
-        }
-        SceneManager.LoadScene("StartGame");
-    }*/
 }

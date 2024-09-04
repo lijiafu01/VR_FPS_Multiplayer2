@@ -139,7 +139,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  hpCanvas: {fileID: 5000670125012392490}
   menuPanel: {fileID: 3844415009410449431}
   _playerNameText: {fileID: 5409353169610258498}
   _maxHp: 100
@@ -167,7 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  damage: 15
+  damage: 10
   _shootPoint: {fileID: 4201156648163348443}
   _leftShootPoint: {fileID: 959707310995911096}
   _hitLayer:

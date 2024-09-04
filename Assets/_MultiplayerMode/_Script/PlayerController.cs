@@ -76,45 +76,7 @@ public class PlayerController : NetworkBehaviour
             Debug.Log($"dev3_Player {playerName} has been removed from leaderboard.");
         }
     }
-    /*[Rpc(RpcSources.All, RpcTargets.All)]
-    private void RemovePlayerOnClients_RPC(PlayerRef playerRef)
-    {
-        Debug.Log($"dev8_2Player {playerRef.PlayerId} removed from client.");
-        // Chỉ xử lý trên các client khác (ngoại trừ người gửi)
-        if (playerRef != Runner.LocalPlayer)
-        {
-            Debug.Log($"dev8_2Player {playerRef.PlayerId} removed from client.");
-            if (_PlayerDict.ContainsKey(playerRef))
-            {
-                NetworkObject networkObject = _PlayerDict[playerRef];
-
-                // Sử dụng runner để despawn đối tượng
-                NetworkManager.Instance.Runner.Despawn(networkObject);
-
-                // Xóa đối tượng khỏi dictionary
-                _PlayerDict.Remove(playerRef);
-                Debug.Log($"dev8_3Player {playerRef.PlayerId} removed from client.");
-            }
-        }
-    }*/
-    /*[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RemovePlayerFromLeaderboard_RPC(string playerName)
-    {
-        // Tìm HardwareRig và cập nhật BXH trên mỗi client
-        HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
-        if (hardwareRig != null)
-        {
-            // Gọi hàm cập nhật BXH với thông tin của player
-            hardwareRig.RemovePlayerFromLeaderboard(playerName);
-        }
-        else
-        {
-            Debug.LogError("HardwareRig not found!");
-        }
-    }*/
-
     
-   
     private static void OnHpChanged(Changed<PlayerController> changed)
     {
         // Lấy giá trị mới của _currentHp
@@ -125,7 +87,18 @@ public class PlayerController : NetworkBehaviour
         // Gọi hàm để cập nhật UI hoặc xử lý các logic khác
         changed.Behaviour.UpdateHpUI(newHp);
     }
-
+    public void IncreaseHealth(int newHp)
+    {
+        if (Object.HasStateAuthority)
+        {
+            if (_currentHp >= _maxHp) return;
+            _currentHp += newHp;
+            if(_currentHp < _maxHp)
+            {
+                _currentHp = _maxHp;
+            }
+        }
+    }
     private void UpdateHpUI(int hp)
     {
        hardwareRig.UpdateHP(hp);
@@ -134,32 +107,26 @@ public class PlayerController : NetworkBehaviour
     {
         _playerRef = Object.InputAuthority;
         
-        /* if (HasInputAuthority)
-         {
-             PlayerNames.Add(_playerRef, GameManager.Instance.PlayerData.playerName);
-            // _playerNameText.text = GameManager.Instance.PlayerData.playerName;
-         }*/
-        // Kiểm tra xem PlayerRef đã tồn tại trong từ điển PlayerNames hay chưa
+       
         if (!PlayerNames.ContainsKey(_playerRef))
         {
             // Nếu chưa tồn tại, thêm PlayerRef và tên người chơi vào từ điển
             PlayerNames.Add(_playerRef, GameManager.Instance.PlayerData.playerName);
-            foreach (var kvp in PlayerNames)
-            {
-                Debug.Log($"dev_Khóa: {kvp.Key}, Tên người chơi: {kvp.Value}");
-            }
+            
         }
         if (PlayerNames.ContainsKey(_playerRef))
         {
  
             string playerName = PlayerNames[_playerRef];
 
-            // Gán tên người chơi vào Text UI
             _playerNameText.text = playerName;
         }
+        Debug.Log("dev14_1xxxxx" + playerName);
+
         //Rpc_SetNickname(GameManager.Instance.PlayerData.playerName);
         if (Runner.LocalPlayer == GetHostPlayerRef())
         {
+            Debug.Log("dev14_2xxxxx"+playerName);
             hardwareRig = FindObjectOfType<HardwareRig>();
             Dictionary<string, int> playerScores = hardwareRig._playerScores;
             // Gọi RPC để gửi thông tin người chơi tới tất cả người chơi
@@ -252,6 +219,7 @@ public class PlayerController : NetworkBehaviour
 
             if (_currentHp <= 0)
             {
+                _currentHp = _maxHp;
                 Dead();
                 UpdateLeaderboard_RPC(shooterName);
                 Invoke("SetInitHp", 1f);
