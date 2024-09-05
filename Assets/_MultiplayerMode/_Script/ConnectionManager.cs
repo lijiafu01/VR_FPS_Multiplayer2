@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class ConnectionManager : MonoBehaviour
 {
     
@@ -18,4 +20,6 @@ public class ConnectionManager : MonoBehaviour
         NetworkManager.Instance.JoinSession("a");
 
     }*/
+}
+
 }

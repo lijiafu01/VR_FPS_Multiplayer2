@@ -1,7 +1,9 @@
 ﻿using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class UserData : NetworkBehaviour
 {
     // Sử dụng Networked để đồng bộ nickname giữa các client
@@ -38,4 +40,6 @@ public class UserData : NetworkBehaviour
         // Cập nhật nickname trên server và đồng bộ với các client khác
         NickName = nickname;
     }
+}
+
 }

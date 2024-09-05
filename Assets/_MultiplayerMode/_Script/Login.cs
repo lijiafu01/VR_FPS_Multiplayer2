@@ -7,7 +7,9 @@ using Keyboard; // Đảm bảo rằng namespace này đúng và có chứa clas
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine.SceneManagement;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class Login : MonoBehaviour
 {
     public TMP_InputField usernameInput;
@@ -156,3 +158,5 @@ public class Login : MonoBehaviour
             error => Debug.LogError("Lấy dữ liệu nhóm chia sẻ thất bại: " + error.GenerateErrorReport()));
     }
 }
+}
+

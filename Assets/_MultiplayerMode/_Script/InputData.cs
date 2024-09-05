@@ -1,11 +1,14 @@
 using Fusion;
 using UnityEngine;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public enum InputButton
 {
     Jump,
     Fire,
-    Fire2
+    Fire2,
+    Bow
 }
 
 public struct InputData : INetworkInput
@@ -14,4 +17,5 @@ public struct InputData : INetworkInput
     public Vector2 MoveInput;
     public Angle Pitch;
     public Angle Yaw;
+}
 }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class LocalManager : MonoBehaviour
 {
     /*public GameObject MenuObject;  // Đối tượng menu
@@ -98,5 +100,7 @@ public class LocalManager : MonoBehaviour
         Debug.Log("Loading StartGame scene...");
         SceneManager.LoadScene("StartGame");
     }
+
+}
 
 }

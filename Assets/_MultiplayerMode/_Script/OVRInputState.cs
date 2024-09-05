@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class OVRInputState
 {
     private static OVRInputState instance;
@@ -26,3 +28,5 @@ public class OVRInputState
     {
     }
 }
+}
+

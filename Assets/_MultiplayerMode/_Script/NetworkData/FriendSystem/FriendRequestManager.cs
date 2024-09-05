@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class FriendRequestManager : MonoBehaviour
 {
     public GameObject requestTemplate;  // Template hiển thị yêu cầu kết bạn
@@ -62,4 +64,6 @@ public class FriendRequestManager : MonoBehaviour
 
         LoadFriendRequests();
     }
+}
+
 }

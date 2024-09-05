@@ -4,7 +4,9 @@ using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
 using System;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class InputHandle : MonoBehaviour, INetworkRunnerCallbacks
 {
 
@@ -52,3 +54,5 @@ public class InputHandle : MonoBehaviour, INetworkRunnerCallbacks
 
 }
 
+
+}

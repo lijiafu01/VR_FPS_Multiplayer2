@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using Fusion;
-
-public class HealthPickup : NetworkBehaviour
+using multiplayerMode;
+namespace multiplayerMode
+{
+    public class HealthPickup : NetworkBehaviour
 {
     private int health = 30;
     [Networked(OnChanged = nameof(OnStateChanged))]
@@ -44,3 +46,5 @@ public class HealthPickup : NetworkBehaviour
         changed.Behaviour.gameObject.SetActive(isActive); // Bật/tắt cục HP dựa trên trạng thái đồng bộ
     }
 }
+}
+

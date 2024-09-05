@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class MainGameManager : MonoBehaviour
 {
     private void Start()
@@ -39,4 +41,6 @@ public class MainGameManager : MonoBehaviour
         Debug.Log("Loading StartGame scene...");
         SceneManager.LoadScene("StartGame");
     }
+}
+
 }

@@ -1,7 +1,10 @@
 ﻿using Fusion;
 using UnityEngine;
-
-public class WeaponHandler : NetworkBehaviour
+using multiplayerMode;
+namespace multiplayerMode
+{
+   
+    public class WeaponHandler : NetworkBehaviour
 {
     [SerializeField]
     private int damage = 10;
@@ -58,3 +61,5 @@ public class WeaponHandler : NetworkBehaviour
     }
 
 }
+}
+

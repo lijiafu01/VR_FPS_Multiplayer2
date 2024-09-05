@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public static class FakeDatabase
 {
     // Danh sách người dùng trong hệ thống
@@ -24,4 +26,6 @@ public class User
         Friends = new List<string>();
         FriendRequestsReceived = new List<string>();
     }
+}
+
 }

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
-
-public class HealingItemManager : MonoBehaviour
+using multiplayerMode;
+namespace multiplayerMode
+{
+    public class HealingItemManager : MonoBehaviour
 {
     public GameObject[] healthPickups; // Gán các cục HP hiện có trong scene
 
@@ -20,3 +22,5 @@ public class HealingItemManager : MonoBehaviour
         }
     }
 }
+}
+

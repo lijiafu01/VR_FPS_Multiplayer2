@@ -1,7 +1,9 @@
 ﻿using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class GroupManagerTest : MonoBehaviour
 {
     public string emailToSearch = "aaaaaa@gmail.com";  // Đặt email mà bạn muốn tìm kiếm
@@ -76,3 +78,5 @@ public class GroupManagerTest : MonoBehaviour
         Debug.LogError("dev_Gửi lời mời kết bạn thất bại: " + error.GenerateErrorReport());
     }
 }
+}
+

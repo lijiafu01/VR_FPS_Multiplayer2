@@ -2,7 +2,9 @@ using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class Bullet : NetworkBehaviour
 {
     [Networked]
@@ -29,4 +31,5 @@ public class Bullet : NetworkBehaviour
         }
     }
 
+}
 }

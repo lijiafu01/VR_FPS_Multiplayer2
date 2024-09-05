@@ -7,7 +7,9 @@ using System;
 using System.Linq;
 using TMPro;
 using System.Xml;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
 {
     private TextMeshProUGUI hpText;
@@ -184,18 +186,30 @@ public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
         // Ghi nhận trạng thái vào NetworkInput để truyền qua mạng
         xrRigState.Button.Set(InputButton.Fire, OVRInputState.Instance.TriggerPressed);
         xrRigState.Button.Set(InputButton.Fire2, OVRInputState.Instance.LeftTriggerPressed);
-        //xrRigState.Button.Set(InputButton.Jump, OVRInputState.Instance.AButtonPressed);
+        xrRigState.Button.Set(InputButton.Bow, OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch));
+
+            //xrRigState.Button.Set(InputButton.Jump, OVRInputState.Instance.AButtonPressed);
 
         input.Set(xrRigState);
     }
+      /*  bool isPulled = false;
+     void Update()
+     {
+            if (OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
+            {
+                isPulled = true;
+            }
+            else
+            {
+                isPulled = false;
+            }
+     }*/
+        #endregion
 
+        #region Unused INetworkRunnerCallbacks
 
-    #endregion
-
-    #region Unused INetworkRunnerCallbacks
-
-    // Các phương thức callback khác, chưa được sử dụng, có thể được mở rộng sau này
-    void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner) { }
+        // Các phương thức callback khác, chưa được sử dụng, có thể được mở rộng sau này
+        void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner) { }
     void INetworkRunnerCallbacks.OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
     void INetworkRunnerCallbacks.OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
     void INetworkRunnerCallbacks.OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
@@ -230,4 +244,6 @@ public struct RigState : INetworkInput
 
     public Vector3 RightHandPosition;
     public Quaternion RightHandRotation;
+}
+
 }

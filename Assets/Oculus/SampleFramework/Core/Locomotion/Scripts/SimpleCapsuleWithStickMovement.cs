@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-
+using multiplayerMode;
 public class SimpleCapsuleWithStickMovement : MonoBehaviour
 {
     public float JumpForce = 5.0f; // Lực nhảy, có thể tùy chỉnh trong Inspector

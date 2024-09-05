@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using Oculus.Platform;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class NetworkRig : NetworkBehaviour
 {
     [SerializeField]
@@ -85,3 +87,5 @@ public class NetworkRig : NetworkBehaviour
         }
     }
 }
+}
+

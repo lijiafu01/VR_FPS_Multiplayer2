@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class StartGameSceneUI : MonoBehaviour
 {
     
@@ -43,3 +45,5 @@ public class StartGameSceneUI : MonoBehaviour
         NetworkManager.Instance.JoinSession("a");
     }
 }
+}
+

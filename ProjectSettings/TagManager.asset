@@ -6,6 +6,12 @@ TagManager:
   tags:
   - SamplesInfoPanel
   - Ground
+  - bullet
+  - BowStringHandle
+  - BowCenter
+  - RightHand
+  - wall
+  - target
   layers:
   - Default
   - TransparentFX

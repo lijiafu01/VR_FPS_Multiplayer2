@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Fusion.Sockets;
 using System;
 using UnityEngine.SceneManagement;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
     public NetworkObject NetworkPlayerObject;
@@ -161,3 +163,5 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     #endregion
 }
+}
+

@@ -2,7 +2,9 @@
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class FriendSearchManager : MonoBehaviour
 {
     public TMP_InputField searchInputField;  // Input Field để nhập tên người chơi
@@ -67,3 +69,5 @@ public class FriendSearchManager : MonoBehaviour
         }
     }
 }
+}
+

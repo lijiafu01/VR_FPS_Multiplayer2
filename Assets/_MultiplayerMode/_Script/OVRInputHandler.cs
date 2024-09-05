@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
-
+using multiplayerMode;
+namespace multiplayerMode
+{
 public class OVRInputHandler : MonoBehaviour
 {
     private void Update()
@@ -38,3 +40,5 @@ public class OVRInputHandler : MonoBehaviour
         return leftTrigger > 0.1f;
     }
 }
+}
+

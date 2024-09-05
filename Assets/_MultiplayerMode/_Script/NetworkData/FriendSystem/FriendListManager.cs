@@ -2,7 +2,10 @@
 using TMPro;
 using UnityEngine.UI;
 
-public class FriendListManager : MonoBehaviour
+using multiplayerMode;
+namespace multiplayerMode
+{
+    public class FriendListManager : MonoBehaviour
 {
     public GameObject friendTemplate;  // Template hiển thị tên bạn bè
     public Transform friendListContent;  // Content của ScrollView để hiển thị danh sách bạn bè
@@ -30,4 +33,6 @@ public class FriendListManager : MonoBehaviour
             nameText.text = friendUsername;
         }
     }
+}
+
 }
