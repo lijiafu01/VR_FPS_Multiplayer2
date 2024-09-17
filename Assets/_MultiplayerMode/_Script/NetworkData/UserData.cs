@@ -4,9 +4,16 @@ using UnityEngine;
 using multiplayerMode;
 namespace multiplayerMode
 {
-public class UserData : NetworkBehaviour
+public class UserData : MonoBehaviour
 {
-    // Sử dụng Networked để đồng bộ nickname giữa các client
+        public string Email {get;set;}
+        public string Password { get; set; }
+        public void SetAccount(string email,string passW)
+        {
+            Email = email; 
+            Password = passW;
+        }
+    /*// Sử dụng Networked để đồng bộ nickname giữa các client
     [Networked] public NetworkString<_16> NickName { get; set; }
 
     // Hàm này sẽ được gọi khi đối tượng được spawn
@@ -39,7 +46,7 @@ public class UserData : NetworkBehaviour
     {
         // Cập nhật nickname trên server và đồng bộ với các client khác
         NickName = nickname;
-    }
+    }*/
 }
 
 }

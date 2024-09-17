@@ -5,11 +5,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using multiplayerMode;
+using System.Collections;
 namespace multiplayerMode
 {
-    
     public class PlayerController : NetworkBehaviour
     {
+        [SerializeField] private GameObject rewardCanvas;
+        [SerializeField] private TMP_Text quitTimeCountText;
+        [SerializeField] private TMP_Text _rankCointText;
+
         public Weapon Weapon;
 
         /* private TextMeshProUGUI hpText;
@@ -170,10 +174,58 @@ namespace multiplayerMode
             }
 
         }
-
+       /* private void Start()
+        {
+            Invoke("OnQuitButtonClick", 5f);
+        }*/
         public void OnQuitButtonClick()
         {
-            LocalManager.Instance.LoadStartGameScene();
+            if (Object.InputAuthority.IsValid)
+            {
+                
+                int playerScore = hardwareRig.GetPlayerScore(playerName);
+                // Gọi hàm AddGoldCoin và xử lý số coin thực tế đã thêm qua callback
+                if(playerScore != 0)
+                {
+                    PlayFabManager.Instance.CurrencyManager.AddGoldCoin(playerScore, (int coinsAdded) =>
+                    {
+                        rewardCanvas.SetActive(true);
+                        _rankCointText.text = "+"+coinsAdded.ToString();  // Hiển thị số coin thực tế nhận được
+                    });
+                }
+                else
+                {
+                    rewardCanvas.SetActive(true);
+                    _rankCointText.text = "+0";
+                }
+
+                
+                StartCoroutine(QuitCountdown());
+            }
+        }
+
+
+        private IEnumerator QuitCountdown()
+        {
+            int count = 3;
+            
+            if (quitTimeCountText != null)
+            {
+                // Đếm ngược và hiển thị giá trị trên TMP_Text
+                while (count > 0)
+                {
+                    quitTimeCountText.text = count.ToString();
+                    yield return new WaitForSeconds(1); // Đợi 1 giây
+                    count--;
+                }
+
+                // Sau khi đếm ngược kết thúc, thực hiện hành động như chuyển cảnh
+                LocalManager.Instance.LoadStartGameScene();
+            }
+            else
+            {
+                Debug.LogError("Không tìm thấy đối tượng Text_QuitTimeCount trong rewardCanvas");
+            }
         }
         public PlayerRef GetHostPlayerRef()
         {

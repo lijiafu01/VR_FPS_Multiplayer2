@@ -89,7 +89,7 @@ public class LocalManager : MonoBehaviour
             NetworkManager.Instance.Runner.Despawn(NetworkManager.Instance.NetworkPlayerObject);
             Debug.Log("dev11_da xoa");
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
             Debug.Log("Shutting down Runner...");
             NetworkManager.Instance.Runner.Shutdown();
             // Chờ một chút để đảm bảo Shutdown được thực hiện
@@ -100,7 +100,6 @@ public class LocalManager : MonoBehaviour
         Debug.Log("Loading StartGame scene...");
         SceneManager.LoadScene("StartGame");
     }
-
 }
 
 }

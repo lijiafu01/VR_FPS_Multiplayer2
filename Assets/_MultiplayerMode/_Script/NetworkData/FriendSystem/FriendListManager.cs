@@ -1,38 +1,83 @@
 ﻿using UnityEngine;
 using TMPro;
+using PlayFab;
+using PlayFab.ClientModels;
+using System.Collections.Generic;
 using UnityEngine.UI;
-
-using multiplayerMode;
 namespace multiplayerMode
 {
     public class FriendListManager : MonoBehaviour
-{
-    public GameObject friendTemplate;  // Template hiển thị tên bạn bè
-    public Transform friendListContent;  // Content của ScrollView để hiển thị danh sách bạn bè
-
-    private void Start()
     {
-        LoadFriendList();
-    }
+        public GameObject friendTemplate;  // Template hiển thị tên bạn bè
+        public Transform friendListContent;  // Content của ScrollView để hiển thị danh sách bạn bè
 
-    public void LoadFriendList()
-    {
-        foreach (Transform child in friendListContent)
+        private List<FriendInfo> _friends = new List<FriendInfo>();  // Danh sách bạn bè
+
+        private void Start()
         {
-            Destroy(child.gameObject);
+            GetFriends();  // Lấy danh sách bạn bè khi bắt đầu
         }
 
-        User currentUser = FakeDatabase.Users["CurrentUser"];  // Thay "CurrentUser" bằng người dùng hiện tại
-
-        foreach (string friendUsername in currentUser.Friends)
+        // Lấy danh sách bạn bè từ PlayFab
+        private void GetFriends()
         {
-            GameObject newEntry = Instantiate(friendTemplate, friendListContent);
-            newEntry.SetActive(true);
+            PlayFabClientAPI.GetFriendsList(new GetFriendsListRequest(),
+            result =>
+            {
+                _friends = result.Friends;  // Lưu danh sách bạn bè
+                DisplayFriends();  // Hiển thị danh sách bạn bè lên giao diện
+            },
+            error =>
+            {
+                Debug.LogError("Failed to get friends list: " + error.GenerateErrorReport());
+            });
+        }
 
-            TMP_Text nameText = newEntry.transform.Find("NameText").GetComponent<TMP_Text>();
-            nameText.text = friendUsername;
+        // Hiển thị danh sách bạn bè trong giao diện
+        private void DisplayFriends()
+        {
+            foreach (var friend in _friends)
+            {
+                // Tạo đối tượng giao diện dựa trên friendTemplate
+                GameObject newFriendEntry = Instantiate(friendTemplate, friendListContent);
+                newFriendEntry.SetActive(true);
+
+                // Cập nhật tên của bạn bè trong template
+                TMP_Text nameText = newFriendEntry.transform.Find("NameText").GetComponent<TMP_Text>();
+
+                // Hiển thị PlayFabId hoặc TitleDisplayName (tên trước dấu '@' của email nếu có)
+                string friendName = !string.IsNullOrEmpty(friend.TitleDisplayName)
+                    ? friend.TitleDisplayName
+                    : friend.FriendPlayFabId;  // Nếu không có TitleDisplayName, dùng PlayFabId
+                nameText.text = friendName;  // Hiển thị tên bạn bè hoặc PlayFabId nếu không có tên hiển thị
+
+                // Xử lý nút "Xóa bạn"
+                Button removeButton = newFriendEntry.transform.Find("RemoveButton").GetComponent<Button>();
+                removeButton.onClick.AddListener(() => RemoveFriend(friend.FriendPlayFabId, newFriendEntry));
+            }
+        }
+
+        // Hàm xóa bạn bè dựa trên PlayFabId
+        private void RemoveFriend(string playFabId, GameObject friendEntry)
+        {
+            PlayFabClientAPI.RemoveFriend(new RemoveFriendRequest
+            {
+                FriendPlayFabId = playFabId
+            },
+            result =>
+            {
+                Debug.Log("Friend removed successfully!");
+
+                // Gỡ đối tượng bạn bè ra khỏi giao diện
+                Destroy(friendEntry);
+
+                // Xóa bạn khỏi danh sách cục bộ
+                _friends.RemoveAll(f => f.FriendPlayFabId == playFabId);
+            },
+            error =>
+            {
+                Debug.LogError("Failed to remove friend: " + error.GenerateErrorReport());
+            });
         }
     }
-}
-
 }

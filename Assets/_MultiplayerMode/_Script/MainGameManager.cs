@@ -19,6 +19,7 @@ public class MainGameManager : MonoBehaviour
         StartCoroutine(ShutdownAndLoadScene());
     }
 
+
     private IEnumerator ShutdownAndLoadScene()
     {
         // Kiểm tra nếu Runner tồn tại

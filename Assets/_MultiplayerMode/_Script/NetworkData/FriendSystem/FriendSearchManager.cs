@@ -1,73 +1,85 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using multiplayerMode;
+using PlayFab;
+using PlayFab.ClientModels;
+
 namespace multiplayerMode
 {
-public class FriendSearchManager : MonoBehaviour
-{
-    public TMP_InputField searchInputField;  // Input Field để nhập tên người chơi
-    public Button searchButton;  // Nút để thực hiện tìm kiếm
-    public GameObject friendTemplate;  // Template hiển thị thông tin người chơi và nút Add
-    public Transform searchResultsContent;  // Content của ScrollView để hiển thị kết quả
-
-    private void Start()
+    public class FriendSearchManager : MonoBehaviour
     {
-        searchInputField.text = "aaaaaa1";  // Xóa nội dung của Input Field
-        searchButton.onClick.AddListener(SearchFriend);
-        friendTemplate.SetActive(false);  // Đảm bảo rằng template gốc bị tắt để không hiển thị
-    }
+        public TMP_InputField searchInputField;  // Input Field để nhập tên người chơi
+        public Button searchButton;  // Nút để thực hiện tìm kiếm
+        public GameObject friendTemplate;  // Template hiển thị thông tin người chơi và nút Add
+        public Transform searchResultsContent;  // Content của ScrollView để hiển thị kết quả
 
-    private void SearchFriend()
-    {
-        string username = searchInputField.text.Trim();
-        if (string.IsNullOrEmpty(username))
+        private void Start()
         {
-            Debug.Log("Vui lòng nhập tên người chơi.");
-            return;
+            searchInputField.text = "aaaaaak";
+            searchButton.onClick.AddListener(OnSearchButtonClicked);
         }
 
-        if (FakeDatabase.Users.ContainsKey(username))
+        // Khi nhấn nút Search
+        private void OnSearchButtonClicked()
         {
-            User foundUser = FakeDatabase.Users[username];
-            DisplaySearchResult(foundUser);
-        }
-        else
-        {
-            Debug.Log("Không tìm thấy người dùng.");
-        }
-    }
+            string searchQuery = searchInputField.text;
 
-    private void DisplaySearchResult(User user)
-    {
-        foreach (Transform child in searchResultsContent)
-        {
-            Destroy(child.gameObject);
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                // Tìm kiếm bạn bè qua PlayFab bằng TitleDisplayName
+                SearchFriendByDisplayName(searchQuery);
+            }
         }
 
-        GameObject newEntry = Instantiate(friendTemplate, searchResultsContent);
-        newEntry.SetActive(true);
-
-        TMP_Text nameText = newEntry.transform.Find("NameText").GetComponent<TMP_Text>();
-        nameText.text = user.Username;
-
-        Button addButton = newEntry.transform.Find("AddFriendButton").GetComponent<Button>();
-        addButton.onClick.AddListener(() => SendFriendRequest(user.Username));
-    }
-
-    private void SendFriendRequest(string friendUsername)
-    {
-        if (!FakeDatabase.Users[friendUsername].FriendRequestsReceived.Contains("CurrentUser"))  // Thay "CurrentUser" bằng người dùng hiện tại
+        // Tìm kiếm bạn bè dựa trên TitleDisplayName
+        private void SearchFriendByDisplayName(string displayName)
         {
-            FakeDatabase.Users[friendUsername].FriendRequestsReceived.Add("CurrentUser");
-            Debug.Log("Đã gửi lời mời kết bạn tới " + friendUsername);
+            PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest
+            {
+                TitleDisplayName = displayName  // Tìm kiếm bằng TitleDisplayName
+            },
+            result =>
+            {
+                // Nếu tìm thấy người chơi, hiển thị kết quả
+                DisplaySearchResult(result.AccountInfo);
+            },
+            error =>
+            {
+                Debug.LogError("Friend not found or error occurred: " + error.GenerateErrorReport());
+            });
         }
-        else
+
+        // Hiển thị kết quả tìm kiếm
+        private void DisplaySearchResult(UserAccountInfo accountInfo)
         {
-            Debug.Log("Đã gửi lời mời kết bạn trước đó.");
+            // Tạo đối tượng giao diện dựa trên friendTemplate
+            GameObject newFriendEntry = Instantiate(friendTemplate, searchResultsContent);
+            newFriendEntry.SetActive(true);
+
+            // Cập nhật thông tin người chơi trong template (hiển thị TitleDisplayName)
+            TMP_Text nameText = newFriendEntry.transform.Find("NameText").GetComponent<TMP_Text>();
+            nameText.text = accountInfo.TitleInfo.DisplayName;  // Cập nhật TitleDisplayName
+
+            // Xử lý nút "Add Friend"
+            Button addButton = newFriendEntry.transform.Find("AddButton").GetComponent<Button>();
+            addButton.onClick.AddListener(() => AddFriend(accountInfo.PlayFabId));
+        }
+
+        // Thêm người chơi vào danh sách bạn bè
+        private void AddFriend(string playFabId)
+        {
+            PlayFabClientAPI.AddFriend(new AddFriendRequest
+            {
+                FriendPlayFabId = playFabId  // Dựa trên PlayFabId của người chơi
+            },
+            result =>
+            {
+                Debug.Log("Friend added successfully!");
+            },
+            error =>
+            {
+                Debug.LogError("Failed to add friend: " + error.GenerateErrorReport());
+            });
         }
     }
 }
-}
-
