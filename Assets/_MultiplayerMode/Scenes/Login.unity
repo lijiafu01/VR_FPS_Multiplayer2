@@ -12346,8 +12346,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrencyManager: {fileID: 814170126}
   UserData: {fileID: 814170129}
-  _email: 
-  _password: 
 --- !u!4 &814170128
 Transform:
   m_ObjectHideFlags: 0
