@@ -1,9 +1,9 @@
-﻿using PlayFab;
+﻿using Newtonsoft.Json;
+using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json;
 
 [System.Serializable]
 public class Item
@@ -23,11 +23,13 @@ public enum ItemType
 
 public class UserEquipmentData : MonoBehaviour
 {
+    public string CurrentModelId;
+
     public static UserEquipmentData Instance;
 
     public Dictionary<ItemType, List<Item>> OwnedItems = new Dictionary<ItemType, List<Item>>();
 
-    private bool dataLoaded = false;
+    public bool DataLoaded = false;
 
     private void Awake()
     {
@@ -44,13 +46,28 @@ public class UserEquipmentData : MonoBehaviour
 
     private void Initialize()
     {
-        dataLoaded = false;
+        DataLoaded = false;
         LoadUserEquipmentDataFromPlayFab();
+    }
+    public void EnsureDefaultModel()
+    {
+        if (!OwnedItems.ContainsKey(ItemType.PlayerModel) || OwnedItems[ItemType.PlayerModel].Count == 0)
+        {
+            // Thêm mô hình "Police" mặc định
+            Item defaultModel = new Item { ItemId = "Police", Type = ItemType.PlayerModel };
+            AddItem(defaultModel);
+
+            // Đặt mô hình hiện tại là "Police"
+            CurrentModelId = "Police";
+            SaveUserEquipmentDataToPlayFab();
+
+            Debug.Log("dev5_Default model 'Police' has been added.");
+        }
     }
 
     public void AddItem(Item newItem)
     {
-        if (!dataLoaded)
+        if (!DataLoaded)
         {
             Debug.LogWarning("dev5_Data not loaded yet, cannot add item.");
             return;
@@ -81,12 +98,26 @@ public class UserEquipmentData : MonoBehaviour
         var request = new UpdateUserDataRequest
         {
             Data = new Dictionary<string, string>
-            {
-                { "UserEquipmentData", jsonData }
-            }
+        {
+            { "UserEquipmentData", jsonData },
+            { "CurrentModelId", CurrentModelId }
+        }
         };
 
         PlayFabClientAPI.UpdateUserData(request, OnDataSendSuccess, OnDataSendFailure);
+    }
+
+    public void SetCurrentModel(string modelId)
+    {
+        if (!OwnedItems.ContainsKey(ItemType.PlayerModel) || !OwnedItems[ItemType.PlayerModel].Exists(item => item.ItemId == modelId))
+        {
+            Debug.LogWarning("dev5_Model not owned: " + modelId);
+            return;
+        }
+
+        CurrentModelId = modelId;
+        SaveUserEquipmentDataToPlayFab();
+        Debug.Log("dev5_Current model set to: " + CurrentModelId);
     }
 
     private void OnDataSendSuccess(UpdateUserDataResult result)
@@ -103,11 +134,12 @@ public class UserEquipmentData : MonoBehaviour
     {
         var request = new GetUserDataRequest
         {
-            Keys = new List<string> { "UserEquipmentData" }
+            Keys = new List<string> { "UserEquipmentData", "CurrentModelId" }
         };
 
         PlayFabClientAPI.GetUserData(request, OnDataReceiveSuccess, OnDataReceiveFailure);
     }
+
 
     private void OnDataReceiveSuccess(GetUserDataResult result)
     {
@@ -116,6 +148,46 @@ public class UserEquipmentData : MonoBehaviour
             string jsonData = result.Data["UserEquipmentData"].Value;
             OwnedItems = JsonConvert.DeserializeObject<Dictionary<ItemType, List<Item>>>(jsonData);
             Debug.Log("dev5_Data loaded from PlayFab successfully.");
+
+            if (OwnedItems.ContainsKey(ItemType.PlayerModel))
+            {
+                var models = OwnedItems[ItemType.PlayerModel];
+
+                // Luôn cố gắng lấy CurrentModelId từ dữ liệu nếu nó tồn tại
+                if (result.Data.ContainsKey("CurrentModelId"))
+                {
+                    CurrentModelId = result.Data["CurrentModelId"].Value;
+                }
+                else
+                {
+                    // Nếu không có CurrentModelId trong dữ liệu, đặt giá trị mặc định
+                    if (models.Exists(item => item.ItemId == "Police"))
+                    {
+                        CurrentModelId = "Police";
+                    }
+                    else if (models.Count > 0)
+                    {
+                        CurrentModelId = models[0].ItemId;
+                    }
+                    else
+                    {
+                        // Nếu người chơi không sở hữu mô hình nào, thêm mô hình "Police" mặc định
+                        Item defaultModel = new Item { ItemId = "Police", Type = ItemType.PlayerModel };
+                        OwnedItems[ItemType.PlayerModel].Add(defaultModel);
+                        CurrentModelId = "Police";
+                        SaveUserEquipmentDataToPlayFab();
+                    }
+                }
+            }
+            else
+            {
+                // Nếu không có mô hình nào, thêm mô hình "Police" mặc định
+                OwnedItems[ItemType.PlayerModel] = new List<Item>();
+                Item defaultModel = new Item { ItemId = "Police", Type = ItemType.PlayerModel };
+                OwnedItems[ItemType.PlayerModel].Add(defaultModel);
+                CurrentModelId = "Police";
+                SaveUserEquipmentDataToPlayFab();
+            }
 
             // In ra danh sách các item đã tải
             foreach (var kvp in OwnedItems)
@@ -130,15 +202,24 @@ public class UserEquipmentData : MonoBehaviour
         {
             Debug.Log("dev5_No equipment data found on PlayFab, initializing new data.");
             OwnedItems = new Dictionary<ItemType, List<Item>>();
+            // Thêm mô hình "Police" mặc định
+            Item defaultModel = new Item { ItemId = "Police", Type = ItemType.PlayerModel };
+            OwnedItems[ItemType.PlayerModel] = new List<Item> { defaultModel };
+            CurrentModelId = "Police";
+            SaveUserEquipmentDataToPlayFab();
         }
 
-        dataLoaded = true;
+        DataLoaded = true;
+
+        EnsureDefaultModel();
     }
+
+
 
     private void OnDataReceiveFailure(PlayFabError error)
     {
         Debug.LogError("dev5_Error loading data from PlayFab: " + error.GenerateErrorReport());
-        dataLoaded = true; // Để tránh bị treo nếu tải dữ liệu thất bại
+        DataLoaded = true; // Để tránh bị treo nếu tải dữ liệu thất bại
     }
 
     private void Start()
@@ -150,7 +231,7 @@ public class UserEquipmentData : MonoBehaviour
 
     private IEnumerator WaitUntilDataLoaded()
     {
-        while (!dataLoaded)
+        while (!DataLoaded)
         {
             yield return null;
         }

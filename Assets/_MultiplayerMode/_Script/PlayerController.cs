@@ -10,6 +10,13 @@ namespace multiplayerMode
 {
     public class PlayerController : NetworkBehaviour
     {
+        //Equipment
+        [Header("SetUp Equipment")]
+        [SerializeField] private Transform _modelParentObject;
+        [Networked]
+        private string _playerModelName { get; set; }
+
+        //UI
         [SerializeField] private GameObject rewardCanvas;
         [SerializeField] private TMP_Text quitTimeCountText;
         [SerializeField] private TMP_Text _rankCointText;
@@ -146,6 +153,9 @@ namespace multiplayerMode
             }
             if (Object.HasStateAuthority)
             {
+                _playerModelName = UserEquipmentData.Instance.CurrentModelId;
+                Debug.Log("dev20_" + _playerModelName);
+
                 WeaponManager weaponManager = GetComponentInParent<WeaponManager>();
                 Weapon = weaponManager.CurrenWeapon;
                 _PlayerDict.Add(_playerRef, NetworkManager.Instance.PlayerSpawnerScript._networkPlayerObject);
@@ -160,8 +170,38 @@ namespace multiplayerMode
                 UpdateLeaderboard_RPC(_playerData.playerName);
                 //-------------------------------------------------------
             }
+
+            //setup player Equipment
+            SetUpPlayerEquipment();
+
+
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.clip = _fireSound;
+        }
+        void SetUpPlayerEquipment()
+        {
+
+            // Tìm và tải prefab từ thư mục Resources/ModelPrefabs
+            GameObject modelPrefab = Resources.Load<GameObject>($"ModelPrefabs/{_playerModelName}");
+
+            // Kiểm tra xem có tìm thấy prefab không
+            if (modelPrefab != null)
+            {
+                // Tạo một object mới từ prefab
+                GameObject modelInstance = Instantiate(modelPrefab, _modelParentObject);
+
+                // Đặt vị trí, quay và tỉ lệ của object mới theo _modelParentObject
+                modelInstance.transform.localPosition = Vector3.zero;
+                modelInstance.transform.localRotation = Quaternion.identity;
+                modelInstance.transform.localScale = Vector3.one;
+
+                // Nếu cần, bạn có thể gắn thêm các hành vi hoặc thiết lập khác cho modelInstance tại đây
+            }
+            else
+            {
+                // Nếu không tìm thấy prefab, in ra thông báo lỗi
+                Debug.LogError($"Model prefab with name {_playerModelName} not found in Resources/ModelPrefabs!");
+            }
         }
         private void Update()
         {

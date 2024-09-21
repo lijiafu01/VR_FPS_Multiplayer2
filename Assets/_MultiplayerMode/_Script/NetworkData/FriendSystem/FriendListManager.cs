@@ -13,7 +13,7 @@ namespace multiplayerMode
 
         private List<FriendInfo> _friends = new List<FriendInfo>();  // Danh sách bạn bè
 
-        private void Start()
+        private void OnEnable()
         {
             GetFriends();  // Lấy danh sách bạn bè khi bắt đầu
         }
@@ -34,8 +34,15 @@ namespace multiplayerMode
         }
 
         // Hiển thị danh sách bạn bè trong giao diện
+        // Hiển thị danh sách bạn bè trong giao diện
         private void DisplayFriends()
         {
+            // Xóa các mục bạn bè hiện tại để tránh trùng lặp
+            foreach (Transform child in friendListContent)
+            {
+                Destroy(child.gameObject);
+            }
+
             foreach (var friend in _friends)
             {
                 // Tạo đối tượng giao diện dựa trên friendTemplate
@@ -43,19 +50,49 @@ namespace multiplayerMode
                 newFriendEntry.SetActive(true);
 
                 // Cập nhật tên của bạn bè trong template
-                TMP_Text nameText = newFriendEntry.transform.Find("NameText").GetComponent<TMP_Text>();
-
-                // Hiển thị PlayFabId hoặc TitleDisplayName (tên trước dấu '@' của email nếu có)
-                string friendName = !string.IsNullOrEmpty(friend.TitleDisplayName)
-                    ? friend.TitleDisplayName
-                    : friend.FriendPlayFabId;  // Nếu không có TitleDisplayName, dùng PlayFabId
-                nameText.text = friendName;  // Hiển thị tên bạn bè hoặc PlayFabId nếu không có tên hiển thị
+                Transform nameTextTransform = newFriendEntry.transform.Find("NameText");
+                if (nameTextTransform != null)
+                {
+                    TMP_Text nameText = nameTextTransform.GetComponent<TMP_Text>();
+                    if (nameText != null)
+                    {
+                        // Hiển thị TitleDisplayName hoặc Username hoặc PlayFabId nếu không có TitleDisplayName
+                        string friendName = !string.IsNullOrEmpty(friend.TitleDisplayName)
+                            ? friend.TitleDisplayName
+                            : (!string.IsNullOrEmpty(friend.Username) ? friend.Username : friend.FriendPlayFabId);
+                        nameText.text = friendName;
+                    }
+                    else
+                    {
+                        Debug.LogError("dev3_NameText component not found in friendTemplate.");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("dev3_NameText transform not found in friendTemplate.");
+                }
 
                 // Xử lý nút "Xóa bạn"
-                Button removeButton = newFriendEntry.transform.Find("RemoveButton").GetComponent<Button>();
-                removeButton.onClick.AddListener(() => RemoveFriend(friend.FriendPlayFabId, newFriendEntry));
+                Transform removeButtonTransform = newFriendEntry.transform.Find("RemoveButton");
+                if (removeButtonTransform != null)
+                {
+                    Button removeButton = removeButtonTransform.GetComponent<Button>();
+                    if (removeButton != null)
+                    {
+                        removeButton.onClick.AddListener(() => RemoveFriend(friend.FriendPlayFabId, newFriendEntry));
+                    }
+                    else
+                    {
+                        Debug.LogError("dev3_RemoveButton component not found in friendTemplate.");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("dev3_RemoveButton transform not found in friendTemplate.");
+                }
             }
         }
+
 
         // Hàm xóa bạn bè dựa trên PlayFabId
         private void RemoveFriend(string playFabId, GameObject friendEntry)
