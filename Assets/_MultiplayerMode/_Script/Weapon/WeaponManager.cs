@@ -45,12 +45,12 @@ namespace multiplayerMode
        /* void SwitchWeaponWrapper()
         {
             // Gọi phương thức SwitchWeapon và truyền tham số
-            SwitchWeapon(Weapon.Pistol);
+            SwitchWeapon(CurrentWeapon.Pistol);
         }
         void SwitchWeaponWrapper2()
         {
             // Gọi phương thức SwitchWeapon và truyền tham số
-            SwitchWeapon(Weapon.Bow);
+            SwitchWeapon(CurrentWeapon.Bow);
         }*/
         // Phương thức để tắt tất cả các vũ khí
         private void DeactivateAllWeapons()
@@ -98,7 +98,7 @@ namespace multiplayerMode
             }
             else
             {
-                Debug.LogError($"Weapon {currentWeapon} not found in the dictionary.");
+                Debug.LogError($"CurrentWeapon {currentWeapon} not found in the dictionary.");
             }
         }
 
@@ -112,7 +112,7 @@ namespace multiplayerMode
             CurrenWeapon = newWeapon;
             ActivateWeapon(CurrenWeapon);
             PlayerController player = GetComponentInParent<PlayerController>();
-            player.Weapon = CurrenWeapon;
+            player.CurrentWeapon = CurrenWeapon;
 
         }
     }

@@ -25,7 +25,10 @@ namespace multiplayerMode
             usernameInput.onSelect.AddListener(delegate { HandleInputSelected(usernameInput); });
             passwordInput.onSelect.AddListener(delegate { HandleInputSelected(passwordInput); });
         }
-
+        public void SwitchAccount()
+        {
+            usernameInput.text = "aaaaaad@gmail.com";
+        }
         private void HandleInputSelected(TMP_InputField selectedInputField)
         {
             virtualKeyBoard.SetActive(true);

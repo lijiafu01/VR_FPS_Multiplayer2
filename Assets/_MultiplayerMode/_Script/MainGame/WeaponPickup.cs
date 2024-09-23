@@ -18,7 +18,7 @@ namespace multiplayerMode
             {
                 Debug.Log("dev15_2haha");
 
-                WeaponManager player = other.GetComponent<WeaponManager>();
+                PlayerController player = other.GetComponent<PlayerController>();
                 if (player != null)
                 {
                     player.SwitchWeapon(weapon);
@@ -27,6 +27,7 @@ namespace multiplayerMode
 
                 }
             }
+
         }
 
         private void DespawnPickup()

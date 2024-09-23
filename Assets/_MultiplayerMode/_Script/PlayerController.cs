@@ -10,18 +10,22 @@ namespace multiplayerMode
 {
     public class PlayerController : NetworkBehaviour
     {
+        [SerializeField]
+        private WeaponManager _weaponManager;
         //Equipment
         [Header("SetUp Equipment")]
         [SerializeField] private Transform _modelParentObject;
-        [Networked]
-        private string _playerModelName { get; set; }
+       /* [Networked]
+        private string _playerModelName { get; set; }*/
 
         //UI
         [SerializeField] private GameObject rewardCanvas;
         [SerializeField] private TMP_Text quitTimeCountText;
         [SerializeField] private TMP_Text _rankCointText;
 
-        public Weapon Weapon;
+        // Biến mạng để lưu trữ vũ khí hiện tại
+        [Networked(OnChanged = nameof(OnWeaponChanged))]
+        public Weapon CurrentWeapon { get; set; }
 
         /* private TextMeshProUGUI hpText;
          [SerializeField]
@@ -92,7 +96,35 @@ namespace multiplayerMode
                 Debug.Log($"dev3_Player {playerName} has been removed from leaderboard.");
             }
         }
+        public void SwitchWeapon(Weapon weapon)
+        {
+            Debug.Log($"dev1x_{playerName} switch weapon to {weapon}");
 
+            // Gọi RPC để thông báo cho tất cả các máy khách
+            RPC_SwitchWeapon(weapon);
+        }
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        private void RPC_SwitchWeapon(Weapon weapon)
+        {
+            // Cập nhật vũ khí hiện tại
+            CurrentWeapon = weapon;
+
+            // Chuyển đổi vũ khí trong WeaponManager
+            _weaponManager.SwitchWeapon(weapon);
+        }
+
+        // Hàm callback được gọi khi CurrentWeapon thay đổi
+        private static void OnWeaponChanged(Changed<PlayerController> changed)
+        {
+            changed.Behaviour.OnWeaponChanged();
+        }
+
+        private void OnWeaponChanged()
+        {
+            // Cập nhật vũ khí trong WeaponManager
+            _weaponManager.SwitchWeapon(CurrentWeapon);
+        }
         private static void OnHpChanged(Changed<PlayerController> changed)
         {
             // Lấy giá trị mới của _currentHp
@@ -140,7 +172,18 @@ namespace multiplayerMode
             Debug.Log("dev14_1xxxxx" + playerName);
 
             //Rpc_SetNickname(GameManager.Instance.PlayerData.playerName);
-            if (Runner.LocalPlayer == GetHostPlayerRef())
+           /* if (Runner.LocalPlayer == GetHostPlayerRef())
+            {
+                Debug.Log("dev14_2xxxxx" + playerName);
+                hardwareRig = FindObjectOfType<HardwareRig>();
+                Dictionary<string, int> playerScores = hardwareRig._playerScores;
+                // Gọi RPC để gửi thông tin người chơi tới tất cả người chơi
+                foreach (var entry in playerScores)
+                {
+                    SendPlayerDataToAll_RPC(entry.Key, entry.Value);
+                }
+            }*/
+            if (!Object.HasStateAuthority)
             {
                 Debug.Log("dev14_2xxxxx" + playerName);
                 hardwareRig = FindObjectOfType<HardwareRig>();
@@ -151,13 +194,17 @@ namespace multiplayerMode
                     SendPlayerDataToAll_RPC(entry.Key, entry.Value);
                 }
             }
-            if (Object.HasStateAuthority)
+            /*if(Object.InputAuthority.IsValid)
             {
                 _playerModelName = UserEquipmentData.Instance.CurrentModelId;
                 Debug.Log("dev20_" + _playerModelName);
 
+            }*/
+            if (Object.HasStateAuthority)
+            {
+
                 WeaponManager weaponManager = GetComponentInParent<WeaponManager>();
-                Weapon = weaponManager.CurrenWeapon;
+                CurrentWeapon = weaponManager.CurrenWeapon;
                 _PlayerDict.Add(_playerRef, NetworkManager.Instance.PlayerSpawnerScript._networkPlayerObject);
 
                 //----------------------------------------------------------------
@@ -172,13 +219,14 @@ namespace multiplayerMode
             }
 
             //setup player Equipment
-            SetUpPlayerEquipment();
+           // Invoke("SetUpPlayerEquipment", 0.3f);
+            //SetUpPlayerEquipment();
 
 
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.clip = _fireSound;
         }
-        void SetUpPlayerEquipment()
+        /*void SetUpPlayerEquipment()
         {
 
             // Tìm và tải prefab từ thư mục Resources/ModelPrefabs
@@ -202,7 +250,7 @@ namespace multiplayerMode
                 // Nếu không tìm thấy prefab, in ra thông báo lỗi
                 Debug.LogError($"Model prefab with name {_playerModelName} not found in Resources/ModelPrefabs!");
             }
-        }
+        }*/
         private void Update()
         {
             if (Object.HasStateAuthority)
@@ -338,7 +386,7 @@ namespace multiplayerMode
                 _previousButton = input.Button;
                 if (buttonPressed.IsSet(InputButton.Fire))
                 {
-                    if(Weapon == Weapon.Pistol)
+                    if(CurrentWeapon == Weapon.Pistol)
                     {
                         FirePistolRight();
 
@@ -346,7 +394,7 @@ namespace multiplayerMode
                 }
                 if (buttonPressed.IsSet(InputButton.Fire2))
                 {
-                    if (Weapon == Weapon.Pistol)
+                    if (CurrentWeapon == Weapon.Pistol)
                     {
                         FirePistolLeft();
                     }

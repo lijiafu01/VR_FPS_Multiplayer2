@@ -250,7 +250,7 @@ public class UserEquipmentData : MonoBehaviour
 
         Item newItem2 = new Item();
         newItem2.ItemId = "Item2";
-        newItem2.Type = ItemType.Weapon;
+        newItem2.Type = ItemType.CurrentWeapon;
         AddItem(newItem2);
 
         Item newItem3 = new Item();
