@@ -6,6 +6,7 @@ using TMPro; // Thêm thư viện TextMeshPro
 
 public class ShopManager : MonoBehaviour
 {
+    public TextMeshProUGUI GoldCoinText;
     public GameObject BuySuccessTab;
     public GameObject NoMoneyTab;
     [SerializeField]
@@ -16,11 +17,23 @@ public class ShopManager : MonoBehaviour
     [SerializeField]
     private List<ShopItem> _shopItems; // Danh sách các item trong cửa hàng
 
-    void Start()
+    /* void Start()
+     {
+         PopulateShop();
+     }*/
+    private void OnEnable()
     {
         PopulateShop();
+        UpdateGoldCoinDisplay();
     }
-
+    private void UpdateGoldCoinDisplay()
+    {
+        PlayFabCurrencyManager currencyManager = FindObjectOfType<PlayFabCurrencyManager>();
+        currencyManager.GetGoldCoinBalance((balance) =>
+        {
+            GoldCoinText.text = balance +"$";
+        });
+    }
     private void PopulateShop()
     {
         foreach (ShopItem item in _shopItems)
@@ -65,6 +78,7 @@ public class ShopManager : MonoBehaviour
                 UserEquipmentData.Instance.AddItem(newItem);
                 Debug.Log($"dev3_Đã trừ thành công {amountSubtracted} coin.");
                 // Thực hiện các hành động tiếp theo, ví dụ: cập nhật giao diện người dùng
+                UpdateGoldCoinDisplay();
             }
             else
             {

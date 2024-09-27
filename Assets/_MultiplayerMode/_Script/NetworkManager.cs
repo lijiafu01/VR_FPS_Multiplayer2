@@ -59,6 +59,14 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         await LoadScene();
         await Connect(roomCode);
     }
+    public async void JoinBossSession(string roomCode)
+    {
+       // GameManager.Instance.PlayerData.playerName = GameManager.Instance.PlayerNameInput.text; // Tạo một PlayerData mới cho người chơi
+        // Thực hiện tương tự như CreateSession, nhưng dành cho người chơi tham gia vào một phiên đã có
+        CreateRunner();
+        await LoadSBosscene();
+        await ConnectBoss(roomCode);
+    }
     public void CreateRunner()
     {
         // Kiểm tra nếu Runner đã tồn tại
@@ -82,6 +90,16 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             await Task.Yield();
         }
     }
+    public async Task LoadSBosscene()
+    {
+        // Tải scene không đồng bộ, chờ đến khi hoàn tất
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(3);
+
+        while (!asyncLoad.isDone)
+        {
+            await Task.Yield();
+        }
+    }
 
     private async Task Connect(string SessionName)
     {
@@ -92,6 +110,18 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             SessionName = SessionName,  // Tên phiên
             SceneManager = GetComponent<NetworkSceneManagerDefault>(), // Quản lý scene mạng
             Scene = 2 // Scene đầu tiên (có thể là scene chính)
+        };
+        await Runner.StartGame(args);
+    }
+    private async Task ConnectBoss(string SessionName)
+    {
+        // Cấu hình và bắt đầu trò chơi với các tham số cần thiết
+        var args = new StartGameArgs()
+        {
+            GameMode = GameMode.Shared, // Chế độ game chia sẻ
+            SessionName = SessionName,  // Tên phiên
+            SceneManager = GetComponent<NetworkSceneManagerDefault>(), // Quản lý scene mạng
+            Scene = 3 // Scene đầu tiên (có thể là scene chính)
         };
         await Runner.StartGame(args);
     }

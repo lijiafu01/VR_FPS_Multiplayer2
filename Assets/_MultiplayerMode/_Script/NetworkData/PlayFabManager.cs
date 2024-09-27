@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayFabManager : MonoBehaviour
 {
+    public bool isPC =true;
     // Biến tĩnh lưu trữ instance duy nhất của PlayFabManager
     public PlayFabCurrencyManager CurrencyManager;
     public UserData UserData;
@@ -28,7 +29,14 @@ public class PlayFabManager : MonoBehaviour
     // Các hàm Start và Update có thể giữ nguyên nếu cần
     void Start()
     {
-        // Code cần thực hiện khi game bắt đầu
+        if(Application.platform == RuntimePlatform.WindowsEditor)
+        {
+            isPC = true;
+        }
+        else
+        {
+            isPC = false;
+        }
     }
 
     void Update()

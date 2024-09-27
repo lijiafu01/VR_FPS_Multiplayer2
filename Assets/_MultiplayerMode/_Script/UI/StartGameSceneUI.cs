@@ -46,6 +46,23 @@ namespace multiplayerMode
             SetPlayerName();
             NetworkManager.Instance.JoinSession("a");
         }
+        private void Start()
+        {
+            if(PlayFabManager.Instance.isPC)
+            {
+                PlayerNameInput.text = "PC";
+            }
+            else
+            {
+                PlayerNameInput.text = "MetaQuestVR";
+            }
+            JoinBossRoom();
+        }
+        public void JoinBossRoom()
+        {
+            SetPlayerName();
+            NetworkManager.Instance.JoinBossSession("BOSS");
+        }
         private void Update()
         {
             if (OVRInput.GetDown(OVRInput.Button.Start, OVRInput.Controller.LTouch))

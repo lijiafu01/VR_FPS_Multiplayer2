@@ -180,7 +180,38 @@ public class PlayFabCurrencyManager : MonoBehaviour
             LoginUser(() => SubtractCurrency("GC", coinsToSubtract, onCoinSubtractedCallback));
         }
     }
+    // Hàm để lấy số GoldCoin hiện tại
+    public void GetGoldCoinBalance(Action<int> onBalanceReceivedCallback)
+    {
+        if (isLoggedIn)
+        {
+            GetCurrencyBalance("GC", onBalanceReceivedCallback);
+        }
+        else
+        {
+            // Nếu chưa đăng nhập, đăng nhập trước rồi mới lấy số dư
+            LoginUser(() => GetCurrencyBalance("GC", onBalanceReceivedCallback));
+        }
+    }
 
+    // Hàm hỗ trợ để lấy số dư tiền tệ cụ thể
+    private void GetCurrencyBalance(string currencyCode, Action<int> onBalanceReceivedCallback)
+    {
+        PlayFabClientAPI.GetUserInventory(new GetUserInventoryRequest(), result =>
+        {
+            int balance = 0;
+            if (result.VirtualCurrency.ContainsKey(currencyCode))
+            {
+                balance = result.VirtualCurrency[currencyCode];
+            }
+            Debug.Log($"dev3_Số dư {currencyCode} hiện tại: {balance}");
+            onBalanceReceivedCallback(balance);
+        }, error =>
+        {
+            Debug.LogError($"dev3_Lỗi khi lấy số dư tiền tệ: {error.GenerateErrorReport()}");
+            onBalanceReceivedCallback(0); // Trả về 0 nếu có lỗi
+        });
+    }
     // Hàm để trừ tiền tệ
     private void SubtractCurrency(string currencyCode, int amount, Action<int> onCurrencySubtractedCallback)
     {
