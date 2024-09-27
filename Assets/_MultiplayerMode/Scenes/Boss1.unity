@@ -6882,6 +6882,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0.9268915
       objectReference: {fileID: 0}
+    - target: {fileID: 3548756573203151536, guid: 25efadffec8700e4eb150e795847955d, type: 3}
+      propertyPath: fireballPrefab
+      value: 
+      objectReference: {fileID: 7187195177625638121, guid: f94113840e473794398ef47c56ac3862, type: 3}
     - target: {fileID: 3788205403198807995, guid: 25efadffec8700e4eb150e795847955d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 39.70789
