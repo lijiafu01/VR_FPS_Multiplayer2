@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using multiplayerMode;
+using UnityEngine.SceneManagement;
 namespace multiplayerMode
 {
     public class StartGameSceneUI : MonoBehaviour
@@ -13,6 +14,12 @@ namespace multiplayerMode
         public GameObject MenuPanel;
         public TMP_InputField PlayerNameInput;
         public Button _button;
+
+
+        public void NextTraningSettingRoomScene()
+        {
+            SceneManager.LoadScene("TraningSettingRoom");
+        }
         public void SetPlayerName()
         {
             // Kiểm tra nếu PlayerData chưa được khởi tạo
