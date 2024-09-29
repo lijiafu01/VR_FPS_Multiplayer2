@@ -27,20 +27,24 @@ public class FireballSkill : Skill
 
     public override void Activate()
     {
+        isSkillActive = true;
         if (runner.IsSharedModeMasterClient && IsReady)
         {
-            isSkillActive = true;
+           
             currentState = SkillState.FindingTarget;
 
             // Kích hoạt animation tấn công
             animator.SetInteger("State", 2); // 2 tương ứng với trạng thái Attacking
         }
     }
-
-    protected void Update()
+   
+    protected override void Update()
     {
         base.Update();
-
+        if (runner == null)
+        {
+            return;
+        }
         if (!runner.IsSharedModeMasterClient)
             return;
 
@@ -118,7 +122,7 @@ public class FireballSkill : Skill
         if (angleDifference < 1f)
         {
             // Xoay hoàn tất, chờ 0.3 giây rồi bắn
-            fireballDelayTimer = TickTimer.CreateFromSeconds(runner, 0.3f);
+            fireballDelayTimer = TickTimer.CreateFromSeconds(runner, 0.2f);
             currentState = SkillState.WaitingToFire;
         }
     }

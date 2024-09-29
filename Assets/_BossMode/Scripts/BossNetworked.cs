@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -109,5 +110,51 @@ public class BossNetworked : NetworkBehaviour
         {
             CurrentSkillId = -1; // Reset để có thể chọn kỹ năng mới
         }
+    }
+    //---
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RpcStartJump(Vector3 targetPosition, float jumpDuration)
+    {
+        StartCoroutine(HandleJump(targetPosition, jumpDuration));
+    }
+
+    private IEnumerator HandleJump(Vector3 targetPosition, float jumpDuration)
+    {
+        // Kích hoạt animation nhảy
+        _animator.SetInteger("State", 3); // 3 tương ứng với trạng thái Jumping
+
+        // Kích hoạt trọng lực và đặt isKinematic = false
+        Rigidbody bossRigidbody = GetComponent<Rigidbody>();
+        bossRigidbody.useGravity = true;
+        // Tính toán vận tốc nhảy
+        Vector3 jumpVelocity = CalculateJumpVelocity(transform.position, targetPosition, jumpDuration);
+        bossRigidbody.velocity = Vector3.zero;
+        bossRigidbody.AddForce(jumpVelocity, ForceMode.VelocityChange);
+
+        // Chờ đợi trong thời gian nhảy
+        yield return new WaitForSeconds(jumpDuration);
+
+        // Kết thúc nhảy
+        bossRigidbody.useGravity = false;
+        bossRigidbody.velocity = Vector3.zero;
+
+        // Chuyển về trạng thái Idle
+        _animator.SetInteger("State", 0);
+
+        // Thông báo kết thúc kỹ năng
+        OnSkillCompleted();
+    }
+
+    private Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 targetPoint, float timeToTarget)
+    {
+        // Tính toán sự chênh lệch vị trí
+        Vector3 distance = targetPoint - startPoint;
+
+        // Tính toán vận tốc cần thiết
+        Vector3 velocityY = Vector3.up * distance.y / timeToTarget - Vector3.up * 0.5f * Physics.gravity.y * timeToTarget;
+        Vector3 velocityXZ = new Vector3(distance.x, 0, distance.z) / timeToTarget;
+
+        // Kết hợp vận tốc trục Y và XZ
+        return velocityXZ + velocityY;
     }
 }

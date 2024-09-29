@@ -21,7 +21,8 @@ public class Fireball : NetworkBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (Object.HasStateAuthority)
+        if(!(collision.gameObject.tag=="Ground")) return;
+        if (Runner.IsSharedModeMasterClient)
         {
             // Tính toán vị trí vụ nổ với offset
             Vector3 explosionPosition = transform.position;
