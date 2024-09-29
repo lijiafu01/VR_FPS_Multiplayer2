@@ -49,13 +49,11 @@ public class BossNetworked : NetworkBehaviour
                 }
             }
         }
-
         if (Runner.IsSharedModeMasterClient)
         {
             HandleBossLogic();
         }
     }
-
     private void HandleBossLogic()
     {
         Debug.Log("boss1_111");
@@ -68,17 +66,14 @@ public class BossNetworked : NetworkBehaviour
                 int skillId = ChooseSkill();
                 CurrentSkillId = skillId;
                 Debug.Log($"[Boss] Chose Skill ID: {skillId}");
-                Debug.Log("boss1_112");
             }
         }
     }
-
     private bool ShouldUseSkill()
     {
         // Điều kiện để Boss sử dụng kỹ năng
         return Random.value < 0.01f; // Ví dụ: 1% cơ hội mỗi frame
     }
-
     private int ChooseSkill()
     {
         var readySkills = _skillManager._skills.Where(skill => skill.IsReady).ToList();
@@ -93,8 +88,6 @@ public class BossNetworked : NetworkBehaviour
             return -1;
         }
     }
-
-
     // Callback khi CurrentSkillId thay đổi
     private static void OnSkillChanged(Changed<BossNetworked> changed)
     {
@@ -109,7 +102,6 @@ public class BossNetworked : NetworkBehaviour
             _skillManager.ActivateSkill(CurrentSkillId);
         }
     }
-
     // Hàm này được gọi bởi Skill khi kết thúc
     public void OnSkillCompleted()
     {

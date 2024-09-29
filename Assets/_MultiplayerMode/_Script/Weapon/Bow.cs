@@ -35,7 +35,6 @@ namespace multiplayerMode
         protected void Start()
         {
             ResetString();
-            Debug.Log("dev16: Bow system initialized.");
         }
 
         public override void FixedUpdateNetwork()
@@ -49,12 +48,10 @@ namespace multiplayerMode
                 if (input.Button.IsSet(InputButton.Bow))  // Sử dụng IsSet thay cho GetPressed
                 {
                     isPulled = true;  // Nút đang được nhấn giữ
-                    Debug.Log("dev17: Button Bow is being held continuously.");
                 }
                 else
                 {
                     isPulled = false; // Nút không được nhấn giữ
-                    Debug.Log("dev17: Button Bow is not being held.");
                 }
 
                 // Cập nhật trạng thái nút trước đó
@@ -64,22 +61,18 @@ namespace multiplayerMode
             // Kiểm tra xem tay đã rời khỏi collider và người chơi đã thả nút
             if (hasLeftCollider && !isPulled && isStringPulled)
             {
-                Debug.Log("dev16: Player has left the collider and released the bow. Shooting arrow.");
                 ShootArrow();
                 isStringPulled = false;
                 hasLeftCollider = false; // Reset trạng thái sau khi bắn
             }
 
-            Debug.Log("dev16: RightHand is: " + (RightHand != null) + " | isPulled: " + isPulled);
 
             // Kiểm tra khi tay phải đang kéo và nút Bow được giữ
             if (RightHand != null && isPulled)
             {
-                Debug.Log("dev16: RightHand is active and pulling.");
 
                 if (!isStringPulled)
                 {
-                    Debug.Log("dev16: String is not yet pulled, creating arrow.");
                     if (Object.HasInputAuthority)
                     {
                         CreateArrow();
@@ -93,21 +86,17 @@ namespace multiplayerMode
 
                 // Khoảng cách từ tay đến bowstringCenter
                 float handDistance = Vector3.Distance(RightHand.position, bowstringCenter.position);
-                Debug.Log("dev16: Hand distance: " + handDistance);
 
                 // Giảm khoảng cách kéo nếu vượt quá giới hạn cho phép
                 float pullDistance = Mathf.Max(0, Mathf.Min(handDistance, -maxPullDistance));
-                Debug.Log("dev16: Pull distance (limited by maxPullDistance): " + pullDistance);
 
                 // Cập nhật vị trí của bowHandle dọc theo hướng kéo
                 bowHandle.position = bowstringCenter.position - pullDirection * pullDistance;
-                Debug.Log("dev16: BowHandle position updated.");
 
                 // Cập nhật hướng của mũi tên để luôn hướng theo attackTransform
                 if (currentArrow != null)
                 {
                     currentArrow.transform.rotation = Quaternion.LookRotation(attackTransform.forward);
-                    Debug.Log("dev16: Arrow rotation updated.");
                 }
             }
             else if (isStringPulled)
@@ -121,7 +110,6 @@ namespace multiplayerMode
                 {
                     // Khi thả dây cung
                     drawSound.Stop();
-                    Debug.Log("dev16: Shooting arrow.");
                     ShootArrow();
                     isStringPulled = false;
                     RightHand = null;
@@ -138,7 +126,6 @@ namespace multiplayerMode
         {
             if (currentArrow == null)
             {
-                Debug.Log("dev16: Spawning new arrow.");
 
                 // Kiểm tra arrowPrefab có được gán không
                 if (arrowPrefab == null)
@@ -157,7 +144,6 @@ namespace multiplayerMode
 
                 currentArrow = networkArrow.gameObject;  // Lấy GameObject từ NetworkObject
                 currentArrow.transform.SetParent(bowHandle);  // Đặt mũi tên là con của bowHandle
-                Debug.Log("dev16: Arrow spawned and attached to bowHandle.");
             }
         }
 
@@ -168,7 +154,6 @@ namespace multiplayerMode
             {
                 RightHand = other.transform;
                 hasLeftCollider = false; // Reset khi tay vào lại collider
-                Debug.Log("dev16: RightHand detected.");
             }
             else
             {
@@ -182,7 +167,6 @@ namespace multiplayerMode
             if (other.CompareTag("RightHand"))
             {
                 hasLeftCollider = true; // Đánh dấu rằng tay đã rời khỏi collider
-                Debug.Log("dev16: RightHand exited.");
             }
             else
             {
@@ -214,7 +198,6 @@ namespace multiplayerMode
 
                 // Tính toán lực bắn mũi tên
                 rb.AddForce(transform.forward * pullDistance * pullStrengthMultiplier);
-                Debug.Log("dev16: Arrow shot with force: " + pullDistance * pullStrengthMultiplier);
 
                 currentArrow = null;
                 shootSound.Play();  // Phát âm thanh bắn mũi tên
@@ -236,7 +219,6 @@ namespace multiplayerMode
             }
 
             bowHandle.position = bowstringCenter.position;
-            Debug.Log("dev16: Bow string reset.");
         }
     }
 }

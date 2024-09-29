@@ -2791,7 +2791,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 847d8b0d968d4a14c89d7508f54c0db7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JumpForce: 5
   EnableLinearMovement: 1
   EnableRotation: 1
   HMDRotatesPlayer: 1
@@ -6886,6 +6885,14 @@ PrefabInstance:
       propertyPath: fireballPrefab
       value: 
       objectReference: {fileID: 7187195177625638121, guid: f94113840e473794398ef47c56ac3862, type: 3}
+    - target: {fileID: 3548756573203151536, guid: 25efadffec8700e4eb150e795847955d, type: 3}
+      propertyPath: fireballPrefab.RawGuidValue.Array.data[0]
+      value: -7766660904706162183
+      objectReference: {fileID: 0}
+    - target: {fileID: 3548756573203151536, guid: 25efadffec8700e4eb150e795847955d, type: 3}
+      propertyPath: fireballPrefab.RawGuidValue.Array.data[1]
+      value: 7077596301876301369
+      objectReference: {fileID: 0}
     - target: {fileID: 3788205403198807995, guid: 25efadffec8700e4eb150e795847955d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 39.70789

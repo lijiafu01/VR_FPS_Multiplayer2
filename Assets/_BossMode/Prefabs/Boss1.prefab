@@ -274,9 +274,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 0
   SkillName: Fireball
-  Cooldown: 10
-  fireballPrefab: {fileID: 738230508261538532, guid: ff1f9bbef77ee214d8b9a394474915b5, type: 3}
+  CooldownDuration: 0
+  fireballPrefab:
+    RawGuidValue: 00000000000000000000000000000000
   firePoint: {fileID: 3500668548729042956}
+  searchRadius: 20
+  rotationSpeed: 90
+  launchAngle: 45
 --- !u!1 &674898052661311631
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,9 +834,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _IsAuthority:
-    _value: 0
-  _CurrentState: 0
   _CurrentSkillId: 0
 --- !u!114 &2649900055277957465
 MonoBehaviour:
@@ -870,6 +871,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3fa5c5251bffb2438d361e2aee87f28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _skills: []
 --- !u!54 &7724778677927752397
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2278,7 +2280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SkillId: 0
   SkillName: Lightning
-  Cooldown: 5
+  CooldownDuration: 0
 --- !u!1 &5598251465315050750
 GameObject:
   m_ObjectHideFlags: 0
