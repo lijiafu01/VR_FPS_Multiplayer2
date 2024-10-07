@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4862395912036837384}
-  - component: {fileID: 3425753306419392436}
   - component: {fileID: 7926453954813890835}
   - component: {fileID: 4718821100689816359}
+  - component: {fileID: -8503809409576593897}
   m_Layer: 0
   m_Name: BombEF
   m_TagString: Untagged
@@ -35,19 +35,6 @@ Transform:
   - {fileID: 3811465258587635198}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3425753306419392436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2655876496241774336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6a1d80d164695746abe8439b5f548ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
 --- !u!114 &7926453954813890835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,8 +58,8 @@ MonoBehaviour:
   NestedObjects:
   - {fileID: 5116950040643437715}
   NetworkedBehaviours:
-  - {fileID: 3425753306419392436}
   - {fileID: 4718821100689816359}
+  - {fileID: -8503809409576593897}
   SimulationBehaviours: []
 --- !u!114 &4718821100689816359
 MonoBehaviour:
@@ -102,6 +89,21 @@ MonoBehaviour:
     RotTeleportRadians: 1.5
   UseLegacySharedModeInterpolation: 0
   TargetInterpolationDelay: 0.03
+--- !u!114 &-8503809409576593897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2655876496241774336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0eab19ce9b6e4c4bb6eb52cfe5c828d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  damageRadius: 5
+  damageAmount: 20
 --- !u!1 &2669523806780425881
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,8 @@
 ﻿using TraningMode;
 using UnityEngine;
 
-
+namespace TraningMode
+{
 public class PlayerController : MonoBehaviour
 {
     // Định nghĩa các biến private
@@ -49,3 +50,5 @@ public class PlayerController : MonoBehaviour
         Debug.Assert(_playerTeleport != null, "PlayerTeleport component is missing!");
     }
 }
+}
+

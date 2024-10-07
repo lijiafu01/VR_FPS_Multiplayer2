@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 
 public class StrongJumpSkill : Skill
 {
     public float jumpDuration = 2f; // Thời gian để hoàn thành cú nhảy
     public float searchRadius = 20f; // Phạm vi tìm kiếm người chơi
+    public float jumpProximityFactor = 0.75f; // Khoảng cách tới người chơi khi nhảy (tỷ lệ phần trăm)
 
     private bool isSkillActive = false;
     private GameObject targetPlayer;
@@ -19,7 +20,10 @@ public class StrongJumpSkill : Skill
             targetPlayer = FindNearestPlayerInRange();
             if (targetPlayer != null)
             {
-                targetPosition = targetPlayer.transform.position;
+                Vector3 bossPosition = boss.transform.position;
+                Vector3 playerPosition = targetPlayer.transform.position;
+                // Tính toán vị trí nhảy dựa trên tỷ lệ khoảng cách
+                targetPosition = bossPosition + jumpProximityFactor * (playerPosition - bossPosition);
 
                 // Chỉ gọi RPC từ State Authority
                 if (boss.Object.HasStateAuthority)
@@ -65,3 +69,4 @@ public class StrongJumpSkill : Skill
         boss.OnSkillCompleted();
     }
 }
+*/

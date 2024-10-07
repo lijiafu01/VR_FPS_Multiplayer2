@@ -36,8 +36,13 @@ namespace multiplayerMode
                 // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
                 hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
             }
+            if (hit.GameObject.TryGetComponent<BossNetworked>(out var hitBossNetworked))
+            {
 
-        }
+                    // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
+                    //hitBossNetworked.TakeDamage(damage);
+            }
+            }
     }
     public void PistolLeftFire()
     {
@@ -56,8 +61,13 @@ namespace multiplayerMode
                 // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
                 hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
             }
+            if (hit.GameObject.TryGetComponent<BossNetworked>(out var hitBossNetworked))
+            {
 
-        }
+                // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
+                //hitBossNetworked.TakeDamage(damage);
+            }
+            }
     }
 
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 using Fusion;
 
 public class SkillManager : MonoBehaviour
@@ -42,3 +42,4 @@ public class SkillManager : MonoBehaviour
         }
     }
 }
+*/

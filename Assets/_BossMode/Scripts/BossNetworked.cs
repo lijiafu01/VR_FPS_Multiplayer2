@@ -1,160 +1,197 @@
 ﻿using Fusion;
-using System.Collections;
-using System.Linq;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class BossNetworked : NetworkBehaviour
 {
-    // Biến mạng lưu trữ chiêu thức hiện tại
-    [Networked(OnChanged = nameof(OnSkillChanged))]
-    public int CurrentSkillId { get; set; }
+    [SerializeField] private float bossSkillTime = 10f;
+    private Animator animator;
 
-    private SkillManager _skillManager;
-    private Animator _animator;
-    private bool wasSharedModeMaster = false;
+    // Danh sách các kỹ năng của boss
+    private List<IBossSkill> bossSkills = new List<IBossSkill>();
+    [Networked]
+    private TickTimer skillTimer { get; set; }
 
-    private void Awake()
-    {
-        _skillManager = GetComponent<SkillManager>();
-        _animator = GetComponent<Animator>();
-    }
+    [Networked]
+    private NetworkBool isRotating { get; set; }
+
+    [Networked]
+    private NetworkBool hasRotated { get; set; }
+
+    private Vector3 targetRotationDirection;
 
     public override void Spawned()
     {
-        // Khởi tạo SkillManager với NetworkRunner
-        _skillManager.Initialize(Runner);
-
-        // Kiểm tra nếu máy khách này là Shared Mode Master
-        if (Runner.IsSharedModeMasterClient)
+        if (Object.HasStateAuthority)
         {
-            CurrentSkillId = -1; // Không có chiêu thức nào đang kích hoạt
+            // Khởi tạo bộ đếm thời gian kỹ năng
+            skillTimer = TickTimer.CreateFromSeconds(Runner, bossSkillTime);
+            isRotating = false;
+            hasRotated = false;
         }
-        wasSharedModeMaster = Runner.IsSharedModeMasterClient;
+
+        // (Các mã khác trong hàm Spawned)
     }
+
+    void Awake()
+    {
+        Debug.Log("boss7_1");
+        animator = GetComponent<Animator>();
+
+        // Lấy các kỹ năng từ các component trên các đối tượng con
+        var skillComponents = GetComponentsInChildren<MonoBehaviour>(true);
+        foreach (var comp in skillComponents)
+        {
+            // Bỏ qua các component trên chính đối tượng boss
+            if (comp.gameObject == this.gameObject)
+                continue;
+
+            if (comp is IBossSkill skill)
+            {
+                bossSkills.Add(skill);
+                skill.OnSkillStart += OnSkillStart;
+                skill.OnSkillEnd += OnSkillEnd;
+                Debug.Log("boss7_3");
+            }
+        }
+        Debug.Log("boss7_2");
+
+    }
+
 
     public override void FixedUpdateNetwork()
     {
-        // Kiểm tra nếu Runner.IsSharedModeMasterClient đã thay đổi
-        if (wasSharedModeMaster != Runner.IsSharedModeMasterClient)
+        if (Object.HasStateAuthority)
         {
-            wasSharedModeMaster = Runner.IsSharedModeMasterClient;
-            if (Runner.IsSharedModeMasterClient)
+            // Cập nhật các kỹ năng
+            foreach (var skill in bossSkills)
             {
-                Debug.Log("[BossNetworked] This client is now the Shared Mode Master.");
+                skill.FixedUpdateSkill();
+            }
 
-                // Thực hiện khởi tạo hoặc cập nhật cần thiết
-                if (CurrentSkillId == -1)
+            // Kiểm tra nếu boss đang casting bất kỳ kỹ năng nào
+            bool isCasting = bossSkills.Exists(skill => skill.IsCasting);
+            if (isRotating)
+            {
+                RotateTowards(targetRotationDirection);
+            }
+            else if (!isCasting)
+            {
+                // Kiểm tra nếu skillTimer đã hết hạn
+                if (skillTimer.Expired(Runner))
                 {
-                    // Không có kỹ năng nào đang hoạt động, có thể bắt đầu logic
-                    HandleBossLogic();
+                    // Tìm người chơi gần nhất
+                    Transform targetPlayer = FindNearestPlayer();
+
+                    if (targetPlayer != null)
+                    {
+                        // Xoay boss về phía người chơi
+                        RotateTowards(targetPlayer.position);
+
+                        // Kích hoạt kỹ năng
+                        ActivateNextSkill(targetPlayer);
+
+                        // Đặt lại skillTimer
+                        skillTimer = TickTimer.CreateFromSeconds(Runner, 5f);
+                    }
+                }
+            }
+            else
+            {
+                // Bắt đầu xoay về phía người chơi
+                Transform targetPlayer = FindNearestPlayer();
+
+                if (targetPlayer != null)
+                {
+                    // Lưu hướng mục tiêu
+                    targetRotationDirection = targetPlayer.position;
+
+                    // Bắt đầu xoay
+                    isRotating = true;
                 }
             }
         }
-        if (Runner.IsSharedModeMasterClient)
-        {
-            HandleBossLogic();
-        }
     }
-    private void HandleBossLogic()
+    void ActivateNextSkill(Transform targetPlayer)
     {
-        Debug.Log("boss1_111");
-        // Kiểm tra nếu Boss đang không thực hiện kỹ năng
-        if (CurrentSkillId == -1)
+        // Tạo danh sách các kỹ năng sẵn sàng
+        var availableSkills = bossSkills.FindAll(skill => !skill.IsOnCooldown);
+
+        if (availableSkills.Count > 0)
         {
-            // Kiểm tra xem có nên sử dụng kỹ năng không
-            if (ShouldUseSkill())
-            {
-                int skillId = ChooseSkill();
-                CurrentSkillId = skillId;
-                Debug.Log($"[Boss] Chose Skill ID: {skillId}");
-            }
-        }
-    }
-    private bool ShouldUseSkill()
-    {
-        // Điều kiện để Boss sử dụng kỹ năng
-        return Random.value < 0.01f; // Ví dụ: 1% cơ hội mỗi frame
-    }
-    private int ChooseSkill()
-    {
-        var readySkills = _skillManager._skills.Where(skill => skill.IsReady).ToList();
-        if (readySkills.Count > 0)
-        {
-            int index = Random.Range(0, readySkills.Count);
-            return readySkills[index].SkillId;
+            // Chọn ngẫu nhiên một kỹ năng
+            int randomIndex = Random.Range(0, availableSkills.Count);
+            var skill = availableSkills[randomIndex];
+
+            skill.ActivateSkill(targetPlayer);
         }
         else
         {
-            // Không có chiêu thức nào sẵn sàng
-            return -1;
+            // Không có kỹ năng nào sẵn sàng, boss chờ đến lần sau
         }
     }
-    // Callback khi CurrentSkillId thay đổi
-    private static void OnSkillChanged(Changed<BossNetworked> changed)
+
+    void OnSkillStart()
     {
-        changed.Behaviour.OnSkillChanged();
+        // Xử lý khi kỹ năng bắt đầu (nếu cần)
+        // Ví dụ: Dừng di chuyển, kích hoạt animation, v.v.
     }
 
-    private void OnSkillChanged()
+    void OnSkillEnd()
     {
-        if (CurrentSkillId >= 0)
+        // Xử lý khi kỹ năng kết thúc (nếu cần)
+        // Ví dụ: Tiếp tục di chuyển, v.v.
+    }
+
+    [SerializeField]
+    private float detectionRadius = 30f; // Bán kính tìm kiếm
+
+    [SerializeField]
+    private LayerMask playerLayerMask; // LayerMask cho Layer của người chơi
+
+    Transform FindNearestPlayer()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayerMask);
+
+        Transform nearestPlayer = null;
+        float minDistance = Mathf.Infinity;
+
+        foreach (var hit in hits)
         {
-            // Kích hoạt kỹ năng tương ứng
-            _skillManager.ActivateSkill(CurrentSkillId);
+            float distance = Vector3.Distance(transform.position, hit.transform.position);
+
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearestPlayer = hit.transform;
+            }
         }
+
+        return nearestPlayer;
     }
-    // Hàm này được gọi bởi Skill khi kết thúc
-    public void OnSkillCompleted()
+
+
+    void RotateTowards(Vector3 targetPosition)
     {
-        if (Runner.IsSharedModeMasterClient)
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        direction.y = 0f; // Chỉ xoay trên trục Y
+
+        if (direction != Vector3.zero)
         {
-            CurrentSkillId = -1; // Reset để có thể chọn kỹ năng mới
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            float rotationSpeed = 5f; // Tốc độ xoay
+
+            // Xoay từ từ về phía mục tiêu
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Runner.DeltaTime * 100f);
+
+            // Kiểm tra nếu góc giữa hướng hiện tại và hướng mục tiêu nhỏ hơn một ngưỡng
+            float angleDifference = Quaternion.Angle(transform.rotation, targetRotation);
+            if (angleDifference < 1f)
+            {
+                // Đã xoay xong
+                isRotating = false;
+                hasRotated = true;
+            }
         }
-    }
-    //---
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RpcStartJump(Vector3 targetPosition, float jumpDuration)
-    {
-        StartCoroutine(HandleJump(targetPosition, jumpDuration));
-    }
-
-    private IEnumerator HandleJump(Vector3 targetPosition, float jumpDuration)
-    {
-        // Kích hoạt animation nhảy
-        _animator.SetInteger("State", 3); // 3 tương ứng với trạng thái Jumping
-
-        // Kích hoạt trọng lực và đặt isKinematic = false
-        Rigidbody bossRigidbody = GetComponent<Rigidbody>();
-        bossRigidbody.useGravity = true;
-        // Tính toán vận tốc nhảy
-        Vector3 jumpVelocity = CalculateJumpVelocity(transform.position, targetPosition, jumpDuration);
-        bossRigidbody.velocity = Vector3.zero;
-        bossRigidbody.AddForce(jumpVelocity, ForceMode.VelocityChange);
-
-        // Chờ đợi trong thời gian nhảy
-        yield return new WaitForSeconds(jumpDuration);
-
-        // Kết thúc nhảy
-        bossRigidbody.useGravity = false;
-        bossRigidbody.velocity = Vector3.zero;
-
-        // Chuyển về trạng thái Idle
-        _animator.SetInteger("State", 0);
-
-        // Thông báo kết thúc kỹ năng
-        OnSkillCompleted();
-    }
-
-    private Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 targetPoint, float timeToTarget)
-    {
-        // Tính toán sự chênh lệch vị trí
-        Vector3 distance = targetPoint - startPoint;
-
-        // Tính toán vận tốc cần thiết
-        Vector3 velocityY = Vector3.up * distance.y / timeToTarget - Vector3.up * 0.5f * Physics.gravity.y * timeToTarget;
-        Vector3 velocityXZ = new Vector3(distance.x, 0, distance.z) / timeToTarget;
-
-        // Kết hợp vận tốc trục Y và XZ
-        return velocityXZ + velocityY;
     }
 }

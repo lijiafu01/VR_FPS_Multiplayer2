@@ -355,6 +355,22 @@ namespace multiplayerMode
                 Debug.LogError("HardwareRig not found!");
             }
         }
+
+        public void TakeDamage_Boss(int damage)
+        {
+            if (Object.HasStateAuthority)
+            {
+                _currentHp -= damage;
+
+
+                if (_currentHp <= 0)
+                {
+                    _currentHp = _maxHp;
+                 /*   Dead();
+                    Invoke("SetInitHp", 1f);*/
+                }
+            }
+        }
         public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)
         {
             if (Object.HasStateAuthority)

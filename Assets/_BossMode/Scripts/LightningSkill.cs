@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 
 public class LightningSkill : Skill
 {
@@ -16,3 +16,4 @@ public class LightningSkill : Skill
        
     }
 }
+*/

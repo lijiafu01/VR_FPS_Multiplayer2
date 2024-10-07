@@ -160,10 +160,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1539213612918012742}
   - component: {fileID: 2120188867906992081}
-  - component: {fileID: 4937897161998463319}
   - component: {fileID: 8657560241961819649}
   - component: {fileID: 7263987907749836710}
-  - component: {fileID: 1444849616557501129}
+  - component: {fileID: 1448864257011953297}
+  - component: {fileID: 3511859522786502941}
   m_Layer: 0
   m_Name: BombBall
   m_TagString: Untagged
@@ -197,7 +197,7 @@ Rigidbody:
   m_GameObject: {fileID: 7187195177625638121}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0.18
+  m_Drag: 0.1
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -215,23 +215,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &4937897161998463319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7187195177625638121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 211a84d70a48a1e4c9b4555020cc5b77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
-  _networkedLaunchVelocity: {x: 0, y: 0, z: 0}
-  explosionPrefab:
-    RawGuidValue: 1cc2a1b61af4bc847837b6369fc12289
-  explosionOffsetY: 0.5
 --- !u!114 &8657560241961819649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,8 +237,8 @@ MonoBehaviour:
     RawGuidValue: f94113840e473794398ef47c56ac3862
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 4937897161998463319}
-  - {fileID: 1444849616557501129}
+  - {fileID: 1448864257011953297}
+  - {fileID: 3511859522786502941}
   SimulationBehaviours: []
 --- !u!136 &7263987907749836710
 CapsuleCollider:
@@ -280,7 +263,7 @@ CapsuleCollider:
   m_Height: 0
   m_Direction: 1
   m_Center: {x: 0, y: 1.15, z: 0}
---- !u!114 &1444849616557501129
+--- !u!114 &1448864257011953297
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -289,10 +272,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 7187195177625638121}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Script: {fileID: 11500000, guid: 79a031ad5a52921479db2db6b8be41fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
+  _interpolationDataSource: 2
+  speed: 10
+  explosionPrefabNetworked:
+    RawGuidValue: 1cc2a1b61af4bc847837b6369fc12289
+--- !u!114 &3511859522786502941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7187195177625638121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1710889294, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 2
   InterpolationSpace: 0
   InterpolationTarget: {fileID: 1022260229715984397}
   InterpolateErrorCorrection: 1

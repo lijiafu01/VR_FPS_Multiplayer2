@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using Fusion;
 
 public abstract class Skill : MonoBehaviour
@@ -32,3 +32,4 @@ public abstract class Skill : MonoBehaviour
         }
     }
 }
+*/

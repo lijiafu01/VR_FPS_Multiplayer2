@@ -146,7 +146,7 @@ MonoBehaviour:
   rewardCanvas: {fileID: 4371599278154740083}
   quitTimeCountText: {fileID: 3007024529957901135}
   _rankCointText: {fileID: 3900842772064681027}
-  Weapon: 0
+  _CurrentWeapon: 0
   menuPanel: {fileID: 3844415009410449431}
   _playerNameText: {fileID: 5409353169610258498}
   _maxHp: 100
@@ -179,7 +179,7 @@ MonoBehaviour:
   _leftShootPoint: {fileID: 959707310995911096}
   _hitLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 136
   _hitOptions: 11
 --- !u!114 &3491195057938197728
 MonoBehaviour:
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHand: {fileID: 2407538687800826564}
   leftHand: {fileID: 3116965028751825055}
-  CurrenWeapon: 1
+  CurrenWeapon: 0
   Pistol:
   - {fileID: 5588585699794085985}
   - {fileID: 1041157782327699018}

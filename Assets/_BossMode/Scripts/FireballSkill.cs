@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 using Fusion;
 
 public class FireballSkill : Skill
@@ -218,3 +218,4 @@ public class FireballSkill : Skill
         return launchVelocity;
     }
 }
+*/

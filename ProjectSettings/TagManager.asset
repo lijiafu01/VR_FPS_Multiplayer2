@@ -12,6 +12,8 @@ TagManager:
   - RightHand
   - wall
   - target
+  - Boss
+  - LocalPlayer
   layers:
   - Default
   - TransparentFX
@@ -20,8 +22,8 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
+  - Boss
+  - LocalPlayer
   - 
   - 
   - 

@@ -99,12 +99,17 @@ namespace multiplayerMode
                 // Đặt mũi tên làm con của người chơi để nó dính vào người chơi
                 transform.SetParent(hit.GameObject.transform);
             }
+            /*if(Object.HasStateAuthority && hit.GameObject.tag == "Boss")
+            {
+                BossNetworked bossNetworked = hit.GameObject.GetComponent<BossNetworked>();
+                bossNetworked.TakeDamage(10);
+            }*/
         }
 
         private void OnCollisionEnter(Collision collision)
         {
             // Kiểm tra va chạm với tường, mặt đất, và mục tiêu
-            if (collision.collider.CompareTag("target") || collision.collider.CompareTag("wall") || collision.collider.CompareTag("Ground"))
+            if (collision.collider.CompareTag("target") || collision.collider.CompareTag("wall") || collision.collider.CompareTag("Ground") || collision.collider.CompareTag("Boss"))
             {
                 // Đảm bảo mũi tên không tiếp tục chịu ảnh hưởng vật lý sau va chạm
                 rb.isKinematic = true;
