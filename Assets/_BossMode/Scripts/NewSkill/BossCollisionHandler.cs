@@ -13,6 +13,10 @@ public class BossCollisionHandler : NetworkBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if ((Runner == null))
+        {
+            return;
+        }
         // Chuyển tiếp sự kiện va chạm đến PowerfulJumpSkill
         jumpSkill.HandleCollision(collision);
     }

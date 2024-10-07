@@ -1,5 +1,6 @@
 ﻿using Fusion;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class ThrowBallSkill : NetworkBehaviour, IBossSkill
 {
@@ -53,9 +54,10 @@ public class ThrowBallSkill : NetworkBehaviour, IBossSkill
         Debug.Log("boss7_da bat dau chieu 1");
         if (Object.HasStateAuthority && !IsOnCooldown && !IsCasting)
         {
+
             // Gán giá trị cho biến mạng nội bộ
             isCastingNetworked = true;
-
+            
             castingTimer = TickTimer.CreateFromSeconds(Runner, CastingDuration);
             cooldownTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
 
@@ -64,12 +66,11 @@ public class ThrowBallSkill : NetworkBehaviour, IBossSkill
             RPC_ActivateSkill(target.position);
         }
     }
-
+   
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_ActivateSkill(Vector3 targetPosition)
     {
         Debug.Log("boss7_da bat dau chieu 1_RPC");
-
         // Kích hoạt animation nếu cần
         animator.SetTrigger("Skill1");
 
