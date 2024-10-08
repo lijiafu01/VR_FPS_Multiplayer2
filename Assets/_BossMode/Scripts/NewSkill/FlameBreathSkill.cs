@@ -10,7 +10,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     public float Cooldown => cooldown;
 
     [SerializeField]
-    private float castingDuration = 2f; // Thời gian kỹ năng diễn ra
+    private float castingDuration = 2f;
     public float CastingDuration => castingDuration;
 
     [Networked]
@@ -32,19 +32,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     [SerializeField]
     private GameObject flameBreathObject; // Object con (tia laser)
 
-    [SerializeField]
-    private float rotationSpeed = 90f; // Tốc độ quay (độ mỗi giây)
-
     private Animator animator;
-
-    [Networked]
-    private NetworkBool isRotating { get; set; }
-
-    [Networked]
-    private float rotationAngle { get; set; }
-
-    [Networked]
-    private Quaternion bossRotation { get; set; }
 
     void Awake()
     {
@@ -55,22 +43,25 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
         {
             flameBreathObject.SetActive(false);
         }
+
+        Debug.Log("Awake: Animator initialized and flameBreathObject set inactive.");
     }
 
     public void ActivateSkill(Transform target)
     {
+
         if (Object.HasStateAuthority && !IsOnCooldown && !IsCasting)
         {
             isCastingNetworked = true;
             castingTimer = TickTimer.CreateFromSeconds(Runner, CastingDuration);
             cooldownTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
 
+            // Đặt giá trị ban đầu cho currentRotation
+            currentRotation = transform.parent.rotation;
             OnSkillStart?.Invoke();
-
-            // Kích hoạt animation Skill3
             animator.SetTrigger("Skill3");
+            Debug.Log("ActivateSkill: Skill activated.");
 
-            // Gọi RPC để kích hoạt hiệu ứng trên tất cả các client
             RPC_StartFlameBreath();
         }
     }
@@ -78,69 +69,40 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void RPC_StartFlameBreath()
     {
-        // Kích hoạt object con (tia laser)
         if (flameBreathObject != null)
         {
             flameBreathObject.SetActive(true);
         }
 
-        // Bắt đầu quay
-        isRotating = true;
-        rotationAngle = 0f;
-
-        // Khởi tạo góc quay của Boss
-        bossRotation = transform.parent.rotation;
+        Debug.Log("RPC_StartFlameBreath: Flame breath started.");
     }
-
+    [Networked]
+    private Quaternion currentRotation { get; set; }
+    [SerializeField]
+    private float rotationSpeed = 90f; // Tốc độ quay (độ mỗi giây)
     public void FixedUpdateSkill()
     {
-        if (isCastingNetworked)
+        if (Object.HasStateAuthority)
         {
-            // Xử lý quay
-            if (isRotating)
+            if (IsCasting && castingTimer.Expired(Runner))
             {
-                RotateBoss();
-            }
-
-            // Nếu cần thiết, bạn có thể giữ kiểm tra castingTimer ở đây
-            // Nếu không, có thể bỏ qua
-        }
-
-        // Áp dụng góc quay cho Boss trên tất cả các client
-        transform.parent.rotation = bossRotation;
-    }
-
-    void RotateBoss()
-    {
-        float rotationStep = rotationSpeed * Runner.DeltaTime;
-
-        // Cập nhật góc quay
-        rotationAngle += rotationStep;
-
-        // Tính toán góc quay mới
-        Quaternion deltaRotation = Quaternion.Euler(0f, rotationStep, 0f);
-        bossRotation *= deltaRotation;
-
-        // Áp dụng góc quay cho Boss
-        transform.parent.rotation = bossRotation;
-
-        // Kiểm tra nếu đã quay đủ 180 độ
-        if (rotationAngle >= 390f)
-        {
-            Debug.Log("boss7_2_ quay xong 180");
-            animator.SetTrigger("Idle");
-
-            // Kết thúc quay
-            isRotating = false;
-
-            // Gọi RPC để tắt tia laser
-            RPC_EndFlameBreath();
-
-            // **Đặt isCastingNetworked về false và gọi OnSkillEnd**
-            if (Object.HasStateAuthority)
-            {
+                RPC_EndFlameBreath();
+                // Gán giá trị cho biến mạng nội bộ
                 isCastingNetworked = false;
+                Debug.Log("boss7_da ket thuc chieu 3");
                 OnSkillEnd?.Invoke();
+            }
+           if(isCastingNetworked)
+           {
+                // Tính toán góc quay mới dựa trên tốc độ và thời gian giữa các frame
+                float rotationStep = rotationSpeed * Runner.DeltaTime;
+                Quaternion deltaRotation = Quaternion.Euler(0f, rotationStep, 0f);
+
+                // Cập nhật góc quay
+                currentRotation *= deltaRotation;
+
+                // Áp dụng góc quay mới cho object
+                transform.parent.rotation = currentRotation;
             }
         }
     }
@@ -148,10 +110,11 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void RPC_EndFlameBreath()
     {
-        // Tắt object con (tia laser)
         if (flameBreathObject != null)
         {
             flameBreathObject.SetActive(false);
         }
+
+        Debug.Log("RPC_EndFlameBreath: Flame breath ended.");
     }
 }

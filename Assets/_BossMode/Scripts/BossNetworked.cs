@@ -1,9 +1,12 @@
 ﻿using Fusion;
 using UnityEngine;
 using System.Collections.Generic;
-
+using UnityEngine.UI;
 public class BossNetworked : NetworkBehaviour
 {
+    [SerializeField]
+    private Slider healthSlider;
+
     [SerializeField] private float bossSkillTime = 10f;
     private Animator animator;
 
@@ -19,6 +22,11 @@ public class BossNetworked : NetworkBehaviour
     private NetworkBool hasRotated { get; set; }
 
     private Vector3 targetRotationDirection;
+    [Networked]
+    public int MaxHealth { get; set; } = 100;
+
+    [Networked(OnChanged = nameof(OnHealthChanged))]
+    public int CurrentHealth { get; set; }
 
     public override void Spawned()
     {
@@ -28,11 +36,50 @@ public class BossNetworked : NetworkBehaviour
             skillTimer = TickTimer.CreateFromSeconds(Runner, bossSkillTime);
             isRotating = false;
             hasRotated = false;
+
+            // Khởi tạo HP của boss
+            CurrentHealth = MaxHealth;
         }
 
         // (Các mã khác trong hàm Spawned)
     }
+    public static void OnHealthChanged(Changed<BossNetworked> changed)
+    {
+        changed.Behaviour.UpdateHealthUI();
+    }
 
+    void UpdateHealthUI()
+    {
+        if (healthSlider != null)
+        {
+            Debug.Log("boss8_5 cogoi");
+            healthSlider.value = (float)CurrentHealth / MaxHealth;
+        }
+        else
+        {
+            Debug.Log("boss8_5 healthSlider is null");
+        }
+    }
+
+
+
+    public void TakeDamage(int damage)
+    {
+        if (Object.HasStateAuthority)
+        {
+            CurrentHealth -= damage;
+            if (CurrentHealth <= 0)
+            {
+                CurrentHealth = 0;
+                Die();
+            }
+        }
+    }
+
+    void Die()
+    {
+        CurrentHealth = MaxHealth;
+    }
     void Awake()
     {
         Debug.Log("boss7_1");
@@ -80,11 +127,13 @@ public class BossNetworked : NetworkBehaviour
                 // Kiểm tra nếu skillTimer đã hết hạn
                 if (skillTimer.Expired(Runner))
                 {
+
                     // Tìm người chơi gần nhất
                     Transform targetPlayer = FindNearestPlayer();
 
                     if (targetPlayer != null)
                     {
+
                         // Xoay boss về phía người chơi
                         RotateTowards(targetPlayer.position);
 
@@ -93,6 +142,7 @@ public class BossNetworked : NetworkBehaviour
 
                         // Đặt lại skillTimer
                         skillTimer = TickTimer.CreateFromSeconds(Runner, 5f);
+                       
                     }
                 }
             }

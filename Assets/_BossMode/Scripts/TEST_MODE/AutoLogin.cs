@@ -7,7 +7,7 @@ public class AutoLogin : MonoBehaviour
 {
     public Login login;
 
-    private void Start()
+    /*private void Start()
     {
         if (PlayFabManager.Instance.isPC)
         {
@@ -17,7 +17,7 @@ public class AutoLogin : MonoBehaviour
         {
             LoginQuest();
         }
-    }
+    }*/
     public void LoginPC()
     {
         PlayFabManager.Instance.isPC = true;

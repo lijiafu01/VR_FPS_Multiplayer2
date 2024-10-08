@@ -51,7 +51,7 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
     private Vector3 targetPosition;
 
     [SerializeField]
-    private float minJumpDistance = 10f; // Khoảng cách tối thiểu để thực hiện kỹ năng nhảy
+    private float minJumpDistance = 1f; // Khoảng cách tối thiểu để thực hiện kỹ năng nhảy
 
     [SerializeField]
     private Transform effectParent; // Kéo đối tượng con vào đây trong Inspector
@@ -183,11 +183,11 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
         }
     }
     [SerializeField]
-    private float explosionRadius = 10f;
+    private float explosionRadius = 15f;
     [SerializeField]
-    private float explosionForce = 6f;
+    private float explosionForce = 8f;
     [SerializeField]
-    private float upwardsModifier = 5f; // Cho phép điều chỉnh trong Inspector
+    private float upwardsModifier = 10f; // Cho phép điều chỉnh trong Inspector
 
     void CreateShockwave()
     {

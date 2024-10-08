@@ -53,7 +53,7 @@ namespace multiplayerMode
             SetPlayerName();
             NetworkManager.Instance.JoinSession("a");
         }
-        private void Start()
+        /*private void Start()
         {
             if (PlayFabManager.Instance.isPC)
             {
@@ -64,7 +64,7 @@ namespace multiplayerMode
                 PlayerNameInput.text = "MetaQuestVR";
             }
             JoinBossRoom();
-        }
+        }*/
         public void JoinBossRoom()
         {
             SetPlayerName();

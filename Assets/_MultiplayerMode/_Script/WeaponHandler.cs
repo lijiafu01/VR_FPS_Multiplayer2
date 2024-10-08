@@ -40,7 +40,7 @@ namespace multiplayerMode
             {
 
                     // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                    //hitBossNetworked.TakeDamage(damage);
+                    hitBossNetworked.TakeDamage(damage);
             }
             }
     }
@@ -65,7 +65,7 @@ namespace multiplayerMode
             {
 
                 // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                //hitBossNetworked.TakeDamage(damage);
+                hitBossNetworked.TakeDamage(damage);
             }
             }
     }
