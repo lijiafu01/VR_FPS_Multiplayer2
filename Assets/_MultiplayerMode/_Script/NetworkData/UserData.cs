@@ -6,8 +6,11 @@ namespace multiplayerMode
 {
 public class UserData : MonoBehaviour
 {
+        public string UserID { get; set; }
         public string Email {get;set;}
         public string Password { get; set; }
+        public string DisplayName { get; set; }
+        
         public void SetAccount(string email,string passW)
         {
             Email = email; 

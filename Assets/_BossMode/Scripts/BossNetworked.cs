@@ -10,6 +10,13 @@ public class BossNetworked : NetworkBehaviour
     [SerializeField] private float bossSkillTime = 10f;
     private Animator animator;
 
+    // Hàm này được gọi bởi Unity để vẽ Gizmos
+    void OnDrawGizmos()
+    {
+        // Vẽ hình cầu tại vị trí của GameObject để biểu thị vùng bắt đầu
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius-15);
+    }
     // Danh sách các kỹ năng của boss
     private List<IBossSkill> bossSkills = new List<IBossSkill>();
     [Networked]

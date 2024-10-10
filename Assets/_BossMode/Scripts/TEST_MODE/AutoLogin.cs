@@ -7,7 +7,7 @@ public class AutoLogin : MonoBehaviour
 {
     public Login login;
 
-    /*private void Start()
+    private void Start()
     {
         if (PlayFabManager.Instance.isPC)
         {
@@ -17,11 +17,11 @@ public class AutoLogin : MonoBehaviour
         {
             LoginQuest();
         }
-    }*/
+    }
     public void LoginPC()
     {
         PlayFabManager.Instance.isPC = true;
-        login.usernameInput.text = "aaaaaad@gmail.com";
+        login.usernameInput.text = "aaaaaaf@gmail.com";
         login.passwordInput.text = "aaaaaa";
         login.LoginBtn();
     }
@@ -29,7 +29,7 @@ public class AutoLogin : MonoBehaviour
     {
         PlayFabManager.Instance.isPC = false;
 
-        login.usernameInput.text = "aaaaaaf@gmail.com";
+        login.usernameInput.text = "aaaaaag@gmail.com";
         login.passwordInput.text = "aaaaaa";
         login.LoginBtn();
     }

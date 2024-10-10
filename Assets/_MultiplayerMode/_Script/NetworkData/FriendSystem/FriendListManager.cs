@@ -24,6 +24,15 @@ namespace multiplayerMode
             PlayFabClientAPI.GetFriendsList(new GetFriendsListRequest(),
             result =>
             {
+                foreach (var friend in result.Friends)
+                {
+                    string friendPlayFabId = friend.FriendPlayFabId;
+                    string friendUsername = friend.Username; // Nếu có
+                    string friendDisplayName = friend.TitleDisplayName; // Nếu có
+
+                    Debug.Log("Friend PlayFab ID: " + friendPlayFabId);
+                    // Bạn có thể lưu trữ hoặc hiển thị danh sách bạn bè để người chơi chọn
+                }
                 _friends = result.Friends;  // Lưu danh sách bạn bè
                 DisplayFriends();  // Hiển thị danh sách bạn bè lên giao diện
             },

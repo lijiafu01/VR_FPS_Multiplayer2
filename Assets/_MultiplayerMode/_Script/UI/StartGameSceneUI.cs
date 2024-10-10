@@ -53,7 +53,7 @@ namespace multiplayerMode
             SetPlayerName();
             NetworkManager.Instance.JoinSession("a");
         }
-        /*private void Start()
+       /* private void Start()
         {
             if (PlayFabManager.Instance.isPC)
             {

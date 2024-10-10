@@ -11,6 +11,7 @@ namespace multiplayerMode
 {
     public class Login : MonoBehaviour
     {
+        private string _displayName;
         public TMP_InputField usernameInput;
         public TMP_InputField passwordInput;
         [SerializeField]
@@ -49,7 +50,11 @@ namespace multiplayerMode
             var request = new LoginWithEmailAddressRequest
             {
                 Email = usernameInput.text,
-                Password = passwordInput.text
+                Password = passwordInput.text,
+                InfoRequestParameters = new GetPlayerCombinedInfoRequestParams
+                {
+                    GetPlayerProfile = true
+                }
             };
 
             PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailure);
@@ -57,9 +62,12 @@ namespace multiplayerMode
 
         private void OnLoginSuccess(LoginResult result)
         {
+            // Lấy _displayName từ kết quả đăng nhập
+            _displayName = result.InfoResultPayload.PlayerProfile.DisplayName;
             PlayFabManager.Instance.UserData.Email = usernameInput.text;
             PlayFabManager.Instance.UserData.Password = passwordInput.text;
-           
+            PlayFabManager.Instance.UserData.DisplayName = _displayName;
+            PlayFabManager.Instance.UserData.UserID = result.PlayFabId;
             Debug.Log("Đăng nhập thành công!");
             // Chuyển đổi đến scene có index 1          
             SceneManager.LoadScene(1);
@@ -95,13 +103,6 @@ namespace multiplayerMode
 
             // Thực hiện các thao tác sau khi đăng ký thành công, ví dụ như đăng nhập tự động
         }
-
-        private void OnRegisterFailure(PlayFabError error)
-        {
-            Debug.LogError("Đăng ký thất bại: " + error.GenerateErrorReport());
-        }
-
-        // Hàm cập nhật TitleDisplayName
         private void UpdateTitleDisplayName(string displayName)
         {
             var request = new UpdateUserTitleDisplayNameRequest
@@ -112,8 +113,17 @@ namespace multiplayerMode
             PlayFabClientAPI.UpdateUserTitleDisplayName(request, OnDisplayNameUpdateSuccess, OnDisplayNameUpdateFailure);
         }
 
+        private void OnRegisterFailure(PlayFabError error)
+        {
+            Debug.LogError("Đăng ký thất bại: " + error.GenerateErrorReport());
+        }
+
+        // Hàm cập nhật TitleDisplayName
+       
+
         private void OnDisplayNameUpdateSuccess(UpdateUserTitleDisplayNameResult result)
         {
+
             Debug.Log("TitleDisplayName updated successfully to: " + result.DisplayName);
         }
 
