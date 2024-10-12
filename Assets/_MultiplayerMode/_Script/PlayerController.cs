@@ -158,7 +158,7 @@ namespace multiplayerMode
 
             if (!PlayerNames.ContainsKey(_playerRef))
             {
-                // Nếu chưa tồn tại, thêm PlayerRef và tên người chơi vào từ điển
+                // Nếu chưa tồn tại, thêm _playerRef và tên người chơi vào từ điển
                 PlayerNames.Add(_playerRef, GameManager.Instance.PlayerData.playerName);
 
             }

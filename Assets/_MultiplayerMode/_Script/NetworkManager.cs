@@ -6,10 +6,12 @@ using Fusion.Sockets;
 using System;
 using UnityEngine.SceneManagement;
 using multiplayerMode;
+using System.Collections;
 namespace multiplayerMode
 {
     public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
+        private List<SessionInfo> _sessionList = new List<SessionInfo>();
         public NetworkObject NetworkPlayerObject;
         // Tạo một singleton để dễ dàng truy cập từ mọi nơi trong mã
         public static NetworkManager Instance { get; private set; }
@@ -20,6 +22,10 @@ namespace multiplayerMode
         public NetworkRunner Runner { get; private set; } // Runner dùng để quản lý mạng
 
         public PlayerSpawner PlayerSpawnerScript { get; private set; } // Script để tạo người chơi
+
+        public PlayerRef _playerRef;
+
+
         private void Awake()
         {
             // Đảm bảo chỉ có một thể hiện duy nhất của NetworkManager
@@ -37,23 +43,23 @@ namespace multiplayerMode
 
         private async void Start()
         {
-
             // Cố định máy chủ vào một khu vực cụ thể
             Fusion.Photon.Realtime.PhotonAppSettings.Instance.AppSettings.FixedRegion = "asia";
             PlayerSpawnerScript = _runnerPrefab.GetComponent<PlayerSpawner>();
-            CreateRunner();
-            Invoke("a", 3f);
-
+            
         }
-        async void a()
+        public async void StartBossLobby()
         {
-            _networkEvents = Runner.gameObject.GetComponent<NetworkEvents>();
-           /* _networkEvents.PlayerJoined.AddListener(OnPlayerJoined);
-            _networkEvents.PlayerLeft.AddListener(OnPlayerLeft);*/
-           
-            //-------------
-            var result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
+            CreateRunner();
 
+            await Task.Delay(300);
+
+            _networkEvents = Runner.gameObject.GetComponent<NetworkEvents>();
+            /* _networkEvents.PlayerJoined.AddListener(OnPlayerJoined);
+             _networkEvents.PlayerLeft.AddListener(OnPlayerLeft);*/
+            //-------------
+
+            var result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
             if (result.Ok)
             {
                 SceneManager.LoadScene("Menu");
@@ -93,9 +99,12 @@ namespace multiplayerMode
             // Kiểm tra nếu Runner đã tồn tại
             if (Runner != null)
             {
+                Debug.Log("menu2_6");
+
                 Debug.LogWarning("dev_A NetworkRunner instance already exists. Reusing the existing runner.");
                 return;
             }
+            Debug.Log("menu2_7");
 
             // Tạo một NetworkRunner từ prefab nếu chưa tồn tại
             Runner = Instantiate(_runnerPrefab, transform).GetComponent<NetworkRunner>();
@@ -168,17 +177,28 @@ namespace multiplayerMode
         {
             //boss lobby
             Debug.Log("runner1_playerNetworkDataPrefab");
-            runner.Spawn(_playerNetworkDataPrefab, transform.position, Quaternion.identity, player);
+            if (SceneManager.GetActiveScene().name == "Menu")
+            {
+                runner.Spawn(_playerNetworkDataPrefab, transform.position, Quaternion.identity, player);
+
+            }
             //---
         }
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
+            Debug.Log("menu_roi di");
             //boss lobby
-            if (_playerList.TryGetValue(player, out var playerNetworkData))
+            if(SceneManager.GetActiveScene().name == "Menu")
             {
-                runner.Despawn(playerNetworkData.Object);
-                _playerList.Remove(player);
+                
+                if (_playerList.TryGetValue(player, out var playerNetworkData))
+                {
+                    runner.Despawn(playerNetworkData.Object);
+                    _playerList.Remove(player);
+                    Debug.Log("menu_a1");
+                }
             }
+          
             //----
             Debug.Log("dev_player_left id:1111 "+player);
         }
@@ -215,7 +235,13 @@ namespace multiplayerMode
         public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
         public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
         public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
-        public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
+        public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
+        {
+            _sessionList = sessionList;
+            Debug.Log($"Session List Updated: {_sessionList.Count} sessions available.");
+
+            // Bạn có thể cập nhật giao diện hiển thị danh sách phòng ở đây nếu cần
+        }
         public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
         public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
         public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) { }
@@ -256,74 +282,115 @@ namespace multiplayerMode
 
             playerNetworkData.transform.SetParent(transform);
         }
-       
-        public async Task CreateRoom()
+
+        public async 
+        Task
+CreateRoom()
         {
-            var result = await Runner.StartGame(new StartGameArgs()
+            // Kiểm tra xem phòng đã tồn tại hay chưa
+            var session = _sessionList.Find(s => s.Name == RoomName);
+
+            if (session == null)
             {
-                GameMode = GameMode.Host,
-                SessionName = RoomName,
-                PlayerCount = 20,
-                Scene = SceneManager.GetActiveScene().buildIndex,
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
-            });
+                var startGameArgs = new StartGameArgs()
+                {
+                    GameMode = GameMode.Host,
+                    SessionName = RoomName,
+                    SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
+                };
 
-            if (result.Ok)
-            {
-                var menuManager = FindObjectOfType<BossLobbyManager>();
+                var result = await Runner.StartGame(startGameArgs);
 
-                menuManager.SwitchMenuType(BossLobbyManager.MenuType.Room);
-                menuManager.SetStartBtnVisible(true);
-
+                if (result.Ok)
+                {
+                    Debug.Log("Created Room successfully.");
+                    BossLobbyManager menuManager = FindObjectOfType<BossLobbyManager>();
+                    menuManager.SwitchMenuType(BossLobbyManager.MenuType.Room);
+                    menuManager.SetStartBtnVisible(true);
+                }
+                else
+                {
+                    Debug.LogError($"Failed To Create Room: {result.ShutdownReason}");
+                }
             }
             else
             {
-                Debug.LogError($"Failed To Create Room: {result.ShutdownReason}");
+                Debug.LogWarning("Room name already exists. Please choose a different name.");
+                // Hiển thị thông báo lỗi cho người dùng nếu cần
             }
         }
 
-        public async Task JoinRoom()
+        public async 
+        Task
+JoinRoom()
         {
-            var result = await Runner.StartGame(new StartGameArgs()
-            {
-                GameMode = GameMode.Client,
-                SessionName = RoomName,
-                PlayerCount = 20,
-                Scene = SceneManager.GetActiveScene().buildIndex,
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
-            });
+            // Kiểm tra xem phòng có tồn tại không
+            var session = _sessionList.Find(s => s.Name == RoomName);
 
-            if (result.Ok)
+            if (session != null)
             {
-                var menuManager = FindObjectOfType<BossLobbyManager>();
+                var startGameArgs = new StartGameArgs()
+                {
+                    GameMode = GameMode.Client,
+                    SessionName = RoomName,
+                    SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
+                };
 
-                menuManager.SwitchMenuType(BossLobbyManager.MenuType.Room);
-                menuManager.SetStartBtnVisible(false);
+                var result = await Runner.StartGame(startGameArgs);
+
+                if (result.Ok)
+                {
+                    BossLobbyManager menuManager = FindObjectOfType<BossLobbyManager>();
+                    menuManager.SwitchMenuType(BossLobbyManager.MenuType.Room);
+                    menuManager.SetStartBtnVisible(true);
+                }
+                else
+                {
+                    Debug.LogError($"Failed To Join Room: {result.ShutdownReason}");
+                }
             }
             else
             {
-                Debug.LogError($"Failed To Join Room: {result.ShutdownReason}");
+                Debug.LogWarning("Room not found. Please check the room name.");
+                // Hiển thị thông báo lỗi cho người dùng nếu cần
             }
         }
         public void StartGame()
         {
-            //Runner.SetActiveScene("Boss1");
-            Runner.Shutdown();
-            Invoke("StartBossScene", 3f);
+            if (_playerList.TryGetValue(_playerRef, out var playerNetworkData))
+            {
+                playerNetworkData.StartGame_RPC();
+            }
+            
         }
-        void StartBossScene()
+       
+        public void MidFuntion_StartBossScene()
         {
+            StartCoroutine(StartBossScene());
+        }
+        public IEnumerator StartBossScene()
+        {
+            yield return new WaitForSeconds(1);
+            if (_playerList.TryGetValue(_playerRef, out var playerNetworkData))
+            {
+                Runner.Despawn(playerNetworkData.Object);
+                _playerList.Remove(_playerRef);
+                
+            }
+            yield return new WaitForSeconds(1);
+            Runner.Shutdown();
+            yield return new WaitForSeconds(1);
             SetPlayerName();
-            NetworkManager.Instance.JoinBossSession("BOSS");
+            JoinBossSession("BOSS");
         }
         public void SetPlayerName()
         {
             // Kiểm tra nếu PlayerData chưa được khởi tạo
-            if (multiplayerMode.GameManager.Instance.PlayerData == null)
+            if (GameManager.Instance.PlayerData == null)
             {
-                multiplayerMode.GameManager.Instance.PlayerData = new PlayerData();
+                GameManager.Instance.PlayerData = new PlayerData();
             }
-            multiplayerMode.GameManager.Instance.PlayerData.playerName = "test";
+            GameManager.Instance.PlayerData.playerName = "test";
         }
     }
 }

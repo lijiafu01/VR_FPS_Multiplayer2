@@ -47,6 +47,11 @@ namespace multiplayerMode
             // Gán tên người chơi với 4 số ngẫu nhiên phía sau
             PlayerNameInput.text = "Player" + formattedNumber;
         }
+        public void PlayBoss1Btn()
+        {
+            NetworkManager.Instance.StartBossLobby();
+        }
+
         public void JoinRoom()
         {
 

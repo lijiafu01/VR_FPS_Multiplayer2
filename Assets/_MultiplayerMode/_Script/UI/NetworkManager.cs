@@ -19,9 +19,9 @@ public class NetworkManager : MonoBehaviour
     [SerializeField]
     private NetworkEvents _networkEvents;
 
-    public Dictionary<PlayerRef, PlayerNetworkData> PlayerList => _playerList;
+    public Dictionary<_playerRef, PlayerNetworkData> PlayerList => _playerList;
 
-    private Dictionary<PlayerRef, PlayerNetworkData> _playerList = new Dictionary<PlayerRef, PlayerNetworkData>();
+    private Dictionary<_playerRef, PlayerNetworkData> _playerList = new Dictionary<_playerRef, PlayerNetworkData>();
 
     public void UpdatePlayerList()
     {
@@ -35,18 +35,18 @@ public class NetworkManager : MonoBehaviour
         menuManager.UpdatePlayerList(playerNames);
     }
 
-    public void SetPlayerNetworkData(PlayerRef player, PlayerNetworkData playerNetworkData)
+    public void SetPlayerNetworkData(_playerRef player, PlayerNetworkData playerNetworkData)
     {
         _playerList.Add(player, playerNetworkData);
 
         playerNetworkData.transform.SetParent(transform);
     }
-    private void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+    private void OnPlayerJoined(NetworkRunner runner, _playerRef player)
     {
         runner.Spawn(_playerNetworkDataPrefab, transform.position, Quaternion.identity, player);
     }
 
-    private void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+    private void OnPlayerLeft(NetworkRunner runner, _playerRef player)
     {
         if (_playerList.TryGetValue(player, out var playerNetworkData))
         {
