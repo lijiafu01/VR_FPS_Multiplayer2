@@ -51,7 +51,7 @@ public class FriendInvitationReceiver : MonoBehaviour
             }
 
             // Sau khi xử lý, xóa lời mời
-            ClearInvitations();
+            //ClearInvitations();
         }
     }
 

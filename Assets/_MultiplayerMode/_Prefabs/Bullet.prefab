@@ -93,7 +93,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5759350101165286889}
   - component: {fileID: 3909741755898128761}
-  - component: {fileID: 6835464620777254163}
   - component: {fileID: 6614079483239426092}
   m_Layer: 0
   m_Name: Bullet
@@ -140,37 +139,8 @@ MonoBehaviour:
     RawGuidValue: afbdd7fd27c54b5449245c01b8de34c9
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 6835464620777254163}
   - {fileID: 6614079483239426092}
   SimulationBehaviours: []
---- !u!114 &6835464620777254163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7353042923167531987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
-  InterpolationSpace: 0
-  InterpolationTarget: {fileID: 6301556722688791026}
-  InterpolateErrorCorrection: 1
-  InterpolatedErrorCorrectionSettings:
-    MinRate: 3.3
-    MaxRate: 10
-    PosBlendStart: 0.25
-    PosBlendEnd: 1
-    PosMinCorrection: 0.025
-    PosTeleportDistance: 2
-    RotBlendStart: 0.1
-    RotBlendEnd: 0.5
-    RotTeleportRadians: 1.5
-  UseLegacySharedModeInterpolation: 0
-  TargetInterpolationDelay: 0.03
 --- !u!114 &6614079483239426092
 MonoBehaviour:
   m_ObjectHideFlags: 0

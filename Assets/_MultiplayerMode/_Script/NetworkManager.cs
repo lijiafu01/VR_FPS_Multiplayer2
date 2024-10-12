@@ -33,13 +33,14 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
             DontDestroyOnLoad(this.gameObject); // Không hủy đối tượng khi tải scene mới
         }
     }
-
-    private void Start()
+        
+        private void Start()
     {
 
         // Cố định máy chủ vào một khu vực cụ thể
         Fusion.Photon.Realtime.PhotonAppSettings.Instance.AppSettings.FixedRegion = "asia";
         PlayerSpawnerScript =  _runnerPrefab.GetComponent<PlayerSpawner>();
+
     }
 
     public async void CreateSession(string roomCode)
