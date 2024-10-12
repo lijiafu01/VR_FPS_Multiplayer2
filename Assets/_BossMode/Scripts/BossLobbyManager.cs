@@ -1,3 +1,4 @@
+using multiplayerMode;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -72,21 +73,21 @@ public class BossLobbyManager : MonoBehaviour
 
     private async void OnCreateBtnClicked()
     {
-        MainSceneManager.Instance.PlayerName = _playerNameInputField.text;
-        MainSceneManager.Instance.RoomName = _roomNameInputField.text;
-        await MainSceneManager.Instance.CreateRoom();
+        NetworkManager.Instance.PlayerName = _playerNameInputField.text;
+        NetworkManager.Instance.RoomName = _roomNameInputField.text;
+        await NetworkManager.Instance.CreateRoom();
     }
 
     private async void OnJoinBtnClicked()
     {
-        MainSceneManager.Instance.PlayerName = _playerNameInputField.text;
-        MainSceneManager.Instance.RoomName = _roomNameInputField.text;
-        await MainSceneManager.Instance.JoinRoom();
+        NetworkManager.Instance.PlayerName = _playerNameInputField.text;
+        NetworkManager.Instance.RoomName = _roomNameInputField.text;
+        await NetworkManager.Instance.JoinRoom();
     }
 
     private void OnStartBtnClicked()
     {
-        MainSceneManager.Instance.StartGame();
+        NetworkManager.Instance.StartGame();
     }
     public void SetStartBtnVisible(bool isVisible)
     {

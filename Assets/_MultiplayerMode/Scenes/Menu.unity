@@ -1523,7 +1523,7 @@ GameObject:
   - component: {fileID: 1088023858}
   - component: {fileID: 1088023857}
   m_Layer: 5
-  m_Name: Button
+  m_Name: StartBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2424,7 +2424,7 @@ MonoBehaviour:
   _roomNameInputField: {fileID: 1695377512}
   _createBtn: {fileID: 1462436747}
   _joinBtn: {fileID: 749396324}
-  _startBtn: {fileID: 749396324}
+  _startBtn: {fileID: 1088023857}
   _playerListContent: {fileID: 91002955}
   _playerListCell: {fileID: 1592430853}
 --- !u!4 &1377663831

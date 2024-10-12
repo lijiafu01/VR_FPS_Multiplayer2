@@ -58178,7 +58178,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &2904173783312743922
 GameObject:
   m_ObjectHideFlags: 0
@@ -61607,7 +61607,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4856393571244455089
 Transform:
   m_ObjectHideFlags: 0
@@ -72555,7 +72555,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  cooldown: 5
+  cooldown: 15
   castingDuration: 4
   flameBreathObject: {fileID: 1979739825366883}
   rotationSpeed: 90

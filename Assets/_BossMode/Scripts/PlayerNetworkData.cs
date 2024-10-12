@@ -1,4 +1,5 @@
 using Fusion;
+using multiplayerMode;
 
 public class PlayerNetworkData : NetworkBehaviour
 {
@@ -9,10 +10,10 @@ public class PlayerNetworkData : NetworkBehaviour
     {
         if (Object.HasInputAuthority)
         {
-            SetPlayerName_RPC(MainSceneManager.Instance.PlayerName);
+            SetPlayerName_RPC(NetworkManager.Instance.PlayerName);
         }
 
-        MainSceneManager.Instance.SetPlayerNetworkData(Object.InputAuthority, this);
+        NetworkManager.Instance.SetPlayerNetworkData(Object.InputAuthority, this);
     }
 
     [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
@@ -23,6 +24,6 @@ public class PlayerNetworkData : NetworkBehaviour
 
     private static void OnPlayerNameChanged(Changed<PlayerNetworkData> changed)
     {
-        MainSceneManager.Instance.UpdatePlayerList();
+        NetworkManager.Instance.UpdatePlayerList();
     }
 }

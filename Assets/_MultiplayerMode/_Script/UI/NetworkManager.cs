@@ -1,20 +1,20 @@
-﻿using Fusion;
+﻿/*using Fusion;
 using multiplayerMode;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-public class MainSceneManager : MonoBehaviour
+public class NetworkManager : MonoBehaviour
 {
     public string PlayerName { get; set; }
     public string RoomName { get; set; }
     [SerializeField]
     private PlayerNetworkData _playerNetworkDataPrefab;
 
-    public static MainSceneManager Instance { get; private set; }
+    public static NetworkManager Instance { get; private set; }
 
     [SerializeField]
-    private NetworkRunner _networkRunner;
+    private NetworkRunner Runner;
 
     [SerializeField]
     private NetworkEvents _networkEvents;
@@ -73,9 +73,9 @@ public class MainSceneManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    /*private async void Start()
+    private async void Start()
     {
-        var result = await _networkRunner.JoinSessionLobby(SessionLobby.ClientServer);
+        var result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
 
         if (result.Ok)
         {
@@ -85,10 +85,10 @@ public class MainSceneManager : MonoBehaviour
         {
             Debug.LogError($"Failed To Join Lobby: {result.ShutdownReason}");
         }
-    }*/
+    }
     public async Task CreateRoom()
     {
-        var result = await _networkRunner.StartGame(new StartGameArgs()
+        var result = await Runner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Shared,
             SessionName = RoomName,
@@ -113,7 +113,7 @@ public class MainSceneManager : MonoBehaviour
 
     public async Task JoinRoom()
     {
-        var result = await _networkRunner.StartGame(new StartGameArgs()
+        var result = await Runner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Shared,
             SessionName = RoomName,
@@ -136,11 +136,11 @@ public class MainSceneManager : MonoBehaviour
     }
     public void StartGame()
     {
-        _networkRunner.SetActiveScene("Boss1");
-        /*_networkRunner.Shutdown();
-        Invoke("StartBossScene", 3f);*/
+        Runner.SetActiveScene("Boss1");
+        *//*Runner.Shutdown();
+        Invoke("StartBossScene", 3f);*//*
     }
-   /* void StartBossScene()
+   *//* void StartBossScene()
     {
         SetPlayerName();
         NetworkManager.Instance.JoinBossSession("BOSS");
@@ -153,5 +153,6 @@ public class MainSceneManager : MonoBehaviour
             multiplayerMode.GameManager.Instance.PlayerData = new PlayerData();
         }
         multiplayerMode.GameManager.Instance.PlayerData.playerName = "test";
-    }*/
+    }*//*
 }
+*/
