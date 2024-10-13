@@ -28,7 +28,7 @@ namespace multiplayerMode
         }
         public void SwitchAccount()
         {
-            usernameInput.text = "aaaaaad@gmail.com";
+            usernameInput.text = "jack@gmail.com";
         }
         private void HandleInputSelected(TMP_InputField selectedInputField)
         {

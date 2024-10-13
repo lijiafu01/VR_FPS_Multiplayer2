@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 7547475702387617892}
   - component: {fileID: 7465314911950937190}
   - component: {fileID: 3491195057938197728}
+  - component: {fileID: 4724930341528288119}
   m_Layer: 3
   m_Name: PlayerBody
   m_TagString: Player
@@ -141,6 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  _TeamID: 
   _weaponManager: {fileID: 3491195057938197728}
   _modelParentObject: {fileID: 2377890744869656841}
   rewardCanvas: {fileID: 4371599278154740083}
@@ -202,6 +204,19 @@ MonoBehaviour:
   Bow:
   - {fileID: 7390615054457343223}
   - {fileID: 7230105054465098251}
+--- !u!114 &4724930341528288119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68325388355897181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f83ce03d8a51156498144a7aec156fab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNameText: {fileID: 5409353169610258498}
 --- !u!1 &171141744953099212
 GameObject:
   m_ObjectHideFlags: 0

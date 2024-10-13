@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class BossLobbyManager : MonoBehaviour
 {
+    public string RoomName => _roomNameInputField.text;
     public enum MenuType
     {
         Menu,
@@ -16,8 +17,8 @@ public class BossLobbyManager : MonoBehaviour
     [SerializeField]
     private GameObject _roomPanel;
 
-    [SerializeField]
-    private TMP_InputField _playerNameInputField;
+
+    private string _playerName;
 
     [SerializeField]
     private TMP_InputField _roomNameInputField;
@@ -63,6 +64,8 @@ public class BossLobbyManager : MonoBehaviour
         _createBtn.onClick.AddListener(OnCreateBtnClicked);
         _joinBtn.onClick.AddListener(OnJoinBtnClicked);
         _startBtn.onClick.AddListener(OnStartBtnClicked);
+        _playerName = PlayFabManager.Instance.UserData.DisplayName;
+        
     }
     private void OnDestroy()
     {
@@ -73,14 +76,14 @@ public class BossLobbyManager : MonoBehaviour
 
     private async void OnCreateBtnClicked()
     {
-        NetworkManager.Instance.PlayerName = _playerNameInputField.text;
+        NetworkManager.Instance.PlayerName = _playerName;
         NetworkManager.Instance.RoomName = _roomNameInputField.text;
         await NetworkManager.Instance.CreateRoom();
     }
 
     private async void OnJoinBtnClicked()
     {
-        NetworkManager.Instance.PlayerName = _playerNameInputField.text;
+        NetworkManager.Instance.PlayerName = _playerName;
         NetworkManager.Instance.RoomName = _roomNameInputField.text;
         await NetworkManager.Instance.JoinRoom();
     }

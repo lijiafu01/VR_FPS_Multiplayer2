@@ -11,6 +11,7 @@ namespace multiplayerMode
 {
     public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
+        public string TeamID = null;
         private List<SessionInfo> _sessionList = new List<SessionInfo>();
         public NetworkObject NetworkPlayerObject;
         // Tạo một singleton để dễ dàng truy cập từ mọi nơi trong mã
@@ -25,7 +26,10 @@ namespace multiplayerMode
 
         public PlayerRef _playerRef;
 
-
+        public void UpdateTeamName(string newName)
+        {
+            TeamID = newName;
+        }
         private void Awake()
         {
             // Đảm bảo chỉ có một thể hiện duy nhất của NetworkManager
@@ -41,18 +45,18 @@ namespace multiplayerMode
             }
         }
 
-        private async void Start()
+        private void Start()
         {
             // Cố định máy chủ vào một khu vực cụ thể
             Fusion.Photon.Realtime.PhotonAppSettings.Instance.AppSettings.FixedRegion = "asia";
             PlayerSpawnerScript = _runnerPrefab.GetComponent<PlayerSpawner>();
-            
         }
+      
         public async void StartBossLobby()
         {
             CreateRunner();
 
-            await Task.Delay(300);
+            await Task.Delay(200);
 
             _networkEvents = Runner.gameObject.GetComponent<NetworkEvents>();
             /* _networkEvents.PlayerJoined.AddListener(OnPlayerJoined);
@@ -180,7 +184,7 @@ namespace multiplayerMode
             if (SceneManager.GetActiveScene().name == "Menu")
             {
                 runner.Spawn(_playerNetworkDataPrefab, transform.position, Quaternion.identity, player);
-
+                Debug.Log("runner1_playerNetworkDataPrefab2");
             }
             //---
         }
@@ -283,9 +287,7 @@ namespace multiplayerMode
             playerNetworkData.transform.SetParent(transform);
         }
 
-        public async 
-        Task
-CreateRoom()
+        public async Task CreateRoom()
         {
             // Kiểm tra xem phòng đã tồn tại hay chưa
             var session = _sessionList.Find(s => s.Name == RoomName);
@@ -319,10 +321,39 @@ CreateRoom()
                 // Hiển thị thông báo lỗi cho người dùng nếu cần
             }
         }
+        public async Task FriendInviteGame(string roomName)
+        {
+            StartBossLobby();
+            await Task.Delay(2000);
+            await JoinRoomFromFriendInvitation(roomName);
+        }
+        public async Task JoinRoomFromFriendInvitation(string roomName)
+        {
+            Debug.Log("invite_JoinRoomFromFriendInvitation_" + roomName);
+            // Kiểm tra xem phòng có tồn tại không
+            //var session = _sessionList.Find(s => s.Name == roomName);
 
-        public async 
-        Task
-JoinRoom()
+            var startGameArgs = new StartGameArgs()
+            {
+                GameMode = GameMode.Client,
+                SessionName = roomName,
+                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
+            };
+
+            var result = await Runner.StartGame(startGameArgs);
+
+            if (result.Ok)
+            {
+                BossLobbyManager menuManager = FindObjectOfType<BossLobbyManager>();
+                menuManager.SwitchMenuType(BossLobbyManager.MenuType.Room);
+                menuManager.SetStartBtnVisible(false);
+            }
+            else
+            {
+                Debug.LogError($"Failed To Join Room: {result.ShutdownReason}");
+            }
+        }
+        public async Task JoinRoom()
         {
             // Kiểm tra xem phòng có tồn tại không
             var session = _sessionList.Find(s => s.Name == RoomName);
@@ -357,9 +388,13 @@ JoinRoom()
         }
         public void StartGame()
         {
+            int randomNumber = UnityEngine.Random.Range(10000, 100000); // Random số từ 10000 đến 99999
+
+            // Chuyển số thành chuỗi
+            string randomNumberString = randomNumber.ToString();
             if (_playerList.TryGetValue(_playerRef, out var playerNetworkData))
             {
-                playerNetworkData.StartGame_RPC();
+                playerNetworkData.StartGame_RPC(randomNumberString);
             }
             
         }
@@ -390,7 +425,7 @@ JoinRoom()
             {
                 GameManager.Instance.PlayerData = new PlayerData();
             }
-            GameManager.Instance.PlayerData.playerName = "test";
+            GameManager.Instance.PlayerData.playerName = PlayFabManager.Instance.UserData.DisplayName;
         }
     }
 }

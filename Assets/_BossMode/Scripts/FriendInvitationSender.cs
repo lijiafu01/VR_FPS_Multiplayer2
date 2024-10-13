@@ -1,26 +1,49 @@
 ﻿using PlayFab;
 using PlayFab.ClientModels;
+using PlayFab.EconomyModels;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class FriendInvitationSender : MonoBehaviour
 {
-    public string playerDisplayName; // Lưu trữ DisplayName của người chơi
-    public string friendID;
-    public string USerID;
-    private void Start()
+    private List<FriendInfo> friendsList = new List<FriendInfo>();
+    [SerializeField] private Transform _content;
+    [SerializeField] private GameObject _friendTemplate;
+    private BossLobbyManager _bossLobbyManager;
+    private string playerDisplayName; // Lưu trữ DisplayName của người chơi
+    private string friendID;
+    private string USerID;
+   
+    private void OnEnable()
     {
-        Debug.Log("Playfab_aaa");
-        GetFriends();
+        _bossLobbyManager = FindObjectOfType<BossLobbyManager>();
         playerDisplayName = PlayFabManager.Instance.UserData.DisplayName;
         USerID = PlayFabManager.Instance.UserData.UserID;
-        Invoke("Invite", 3f);
-        
+        GetFriends();
+        Invoke("DisplayFriendList", 1);
     }
-    void Invite()
+    void DisplayFriendList()
+    {
+        // Xóa các mục cũ trong danh sách
+        foreach (Transform child in _content)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Tạo các mục mới cho danh sách bạn bè
+        foreach (var friend in friendsList)
+        {
+            GameObject newFriendItem = Instantiate(_friendTemplate, _content);
+            newFriendItem.SetActive(true);
+            FriendData friendData = newFriendItem.GetComponent<FriendData>();
+            friendData.Setup(friend, this);
+        }
+    }
+    public void InviteFriend(string id)
     {
         Debug.Log("Playfab_information_MyID:" + USerID + " friendID:" + friendID + "myname" + playerDisplayName);
 
-        SendInvitation(friendID, "TEST");
+        SendInvitation(id,_bossLobbyManager.RoomName);
 
     }
     private void GetFriends()
@@ -28,14 +51,9 @@ public class FriendInvitationSender : MonoBehaviour
         PlayFabClientAPI.GetFriendsList(new GetFriendsListRequest(),
         result =>
         {
-            foreach (var friend in result.Friends)
+            if (result.Friends != null)
             {
-                string friendPlayFabId = friend.FriendPlayFabId;
-                string friendUsername = friend.Username; // Nếu có
-                string friendDisplayName = friend.TitleDisplayName; // Nếu có
-                friendID = friendPlayFabId;
-                Debug.Log("Friend PlayFab ID: " + friendPlayFabId);
-                // Bạn có thể lưu trữ hoặc hiển thị danh sách bạn bè để người chơi chọn
+                friendsList = result.Friends;
             }
         },
         error =>
@@ -47,6 +65,7 @@ public class FriendInvitationSender : MonoBehaviour
     // Gửi lời mời cho bạn bè
     public void SendInvitation(string recipientPlayFabId, string sessionName)
     {
+        Debug.Log("Friend1013_" + recipientPlayFabId + "_" + sessionName);
         if (string.IsNullOrEmpty(playerDisplayName))
         {
             Debug.LogError("Player DisplayName is not set.");

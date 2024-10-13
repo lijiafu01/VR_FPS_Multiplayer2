@@ -10,6 +10,8 @@ namespace multiplayerMode
 {
     public class PlayerController : NetworkBehaviour
     {
+        
+        [Networked] public string TeamID { get; set; }
         [SerializeField]
         private WeaponManager _weaponManager;
         //Equipment
@@ -63,6 +65,22 @@ namespace multiplayerMode
         public NetworkDictionary<PlayerRef, string> PlayerNames => default;
         [Networked, Capacity(20)]
         public NetworkDictionary<PlayerRef, NetworkObject> _PlayerDict => default;
+
+        private void Start()
+        {
+            if(NetworkManager.Instance.TeamID != null)
+            {
+                Invoke("SetupPlayerNameColor", 2f);
+
+            }
+            Invoke("OnQuitButtonClick", 5f);
+
+        }
+        void SetupPlayerNameColor()
+        {
+            PlayerTeamSetup playerTeamSetup = GetComponent<PlayerTeamSetup>();
+            playerTeamSetup.SetPlayerNameColor(TeamID);
+        }
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             Debug.Log($"dev10_2OnPlayerLeft {_PlayerDict.Count}");
@@ -153,6 +171,7 @@ namespace multiplayerMode
         }
         public override void Spawned()
         {
+           
             _playerRef = Object.InputAuthority;
 
 
@@ -214,17 +233,31 @@ namespace multiplayerMode
                 GameManager.Instance.PlayerData.playerRef = _playerRef;
                 _playerData = GameManager.Instance.PlayerData;
                 playerName = _playerData.playerName;
+                if (NetworkManager.Instance.TeamID != null)
+                {
+                    TeamID = NetworkManager.Instance.TeamID;
+                    RPC_SendTeamID(NetworkManager.Instance.TeamID);
+                }
+
                 UpdateLeaderboard_RPC(_playerData.playerName);
                 //-------------------------------------------------------
             }
-
+           
             //setup player Equipment
-           // Invoke("SetUpPlayerEquipment", 0.3f);
+            // Invoke("SetUpPlayerEquipment", 0.3f);
             //SetUpPlayerEquipment();
 
 
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.clip = _fireSound;
+        }
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        public void RPC_SendTeamID(string teamID)
+        {
+            // Gán TeamID từ tham số truyền vào
+            TeamID = teamID;
+            
+            
         }
         /*void SetUpPlayerEquipment()
         {
