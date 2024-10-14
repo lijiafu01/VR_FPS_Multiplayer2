@@ -409,12 +409,13 @@ namespace multiplayerMode
             if (_playerList.TryGetValue(_playerRef, out var playerNetworkData))
             {
                 Runner.Despawn(playerNetworkData.Object);
-                _playerList.Remove(_playerRef);
-                
+                _playerList.Clear();
+
             }
             yield return new WaitForSeconds(1);
             Runner.Shutdown();
             yield return new WaitForSeconds(1);
+            Runner = null;
             SetPlayerName();
             JoinBossSession("BOSS");
         }

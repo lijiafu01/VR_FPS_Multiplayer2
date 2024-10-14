@@ -73,7 +73,7 @@ namespace multiplayerMode
                 Invoke("SetupPlayerNameColor", 1f);
 
             }
-            Invoke("OnQuitButtonClick", 5f);
+           // Invoke("OnQuitButtonClick", 5f);
 
         }
         void SetupPlayerNameColor()

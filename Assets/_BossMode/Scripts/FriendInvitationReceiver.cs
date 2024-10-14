@@ -103,7 +103,7 @@ public class FriendInvitationReceiver : MonoBehaviour
         // Hiển thị tên người mời
         if (_senderNameText != null)
         {
-            _senderNameText.text = $"Your friend invites you to play Boss {invitation.SenderName}";
+            _senderNameText.text = $"{invitation.SenderName} invites you to play Boss.";
             
         }
         if(invitation.SessionName != null)
@@ -111,6 +111,7 @@ public class FriendInvitationReceiver : MonoBehaviour
             _sessionName = invitation.SessionName;
 
         }
+      
         // Thiết lập các nút (để hàm rỗng)
         _acceptButton.onClick.RemoveAllListeners();
         _acceptButton.onClick.AddListener(OnAcceptInvitation);

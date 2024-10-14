@@ -15,24 +15,24 @@ namespace multiplayerMode
         public TMP_InputField usernameInput;
         public TMP_InputField passwordInput;
         [SerializeField]
-        private GameObject virtualKeyBoard;
+        //private GameObject virtualKeyBoard;
         private KeyboardManager keyboardManager; // Đảm bảo KeyboardManager được khai báo và hoạt động trong dự án của bạn
 
-        private void Start()
+       /* private void Start()
         {
-            virtualKeyBoard.SetActive(false);
+            //virtualKeyBoard.SetActive(false);
 
             // Đăng ký sự kiện khi trường nhập được chọn
             usernameInput.onSelect.AddListener(delegate { HandleInputSelected(usernameInput); });
             passwordInput.onSelect.AddListener(delegate { HandleInputSelected(passwordInput); });
-        }
+        }*/
         public void SwitchAccount()
         {
             usernameInput.text = "jack@gmail.com";
         }
-        private void HandleInputSelected(TMP_InputField selectedInputField)
+        /*private void HandleInputSelected(TMP_InputField selectedInputField)
         {
-            virtualKeyBoard.SetActive(true);
+            //virtualKeyBoard.SetActive(true);
             keyboardManager = virtualKeyBoard.GetComponent<KeyboardManager>();
             if (keyboardManager != null)
             {
@@ -42,7 +42,7 @@ namespace multiplayerMode
             {
                 Debug.LogError("KeyboardManager not assigned or not found in the project");
             }
-        }
+        }*/
 
         // Hàm xử lý nút đăng nhập
         public void LoginBtn()
