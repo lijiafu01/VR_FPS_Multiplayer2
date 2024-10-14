@@ -70,10 +70,10 @@ namespace multiplayerMode
         {
             if(NetworkManager.Instance.TeamID != null)
             {
-                Invoke("SetupPlayerNameColor", 2f);
+                Invoke("SetupPlayerNameColor", 1f);
 
             }
-            Invoke("OnQuitButtonClick", 5f);
+            //Invoke("OnQuitButtonClick", 5f);
 
         }
         void SetupPlayerNameColor()

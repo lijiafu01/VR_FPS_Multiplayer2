@@ -32,7 +32,18 @@ namespace multiplayerMode
 
             if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
-                string playerName = GameManager.Instance.PlayerData.playerName;
+                    PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
+
+                    PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
+                    if (myPlayerTeamSetup.teamID != null)
+                    {
+                        if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                        {
+                            return;
+                        }
+                    }
+
+                    string playerName = GameManager.Instance.PlayerData.playerName;
                 // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
                 hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
             }
@@ -57,7 +68,17 @@ namespace multiplayerMode
 
             if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
-                string playerName = GameManager.Instance.PlayerData.playerName;
+                    PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
+
+                    PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
+                    if (myPlayerTeamSetup.teamID != null)
+                    {
+                        if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                        {
+                            return;
+                        }
+                    }
+                    string playerName = GameManager.Instance.PlayerData.playerName;
                 // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
                 hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
             }
