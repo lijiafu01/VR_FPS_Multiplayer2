@@ -324,7 +324,7 @@ namespace multiplayerMode
         public async Task FriendInviteGame(string roomName)
         {
             StartBossLobby();
-            await Task.Delay(2000);
+            await Task.Delay(3000);
             await JoinRoomFromFriendInvitation(roomName);
         }
         public async Task JoinRoomFromFriendInvitation(string roomName)

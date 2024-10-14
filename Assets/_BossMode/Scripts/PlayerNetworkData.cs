@@ -1,5 +1,6 @@
 using Fusion;
 using multiplayerMode;
+using UnityEngine;
 
 public class PlayerNetworkData : NetworkBehaviour
 {
@@ -10,6 +11,7 @@ public class PlayerNetworkData : NetworkBehaviour
 
     public override void Spawned()
     {
+        Debug.Log("PlayerNetworkData_da duoc sinh ra");
         if (Object.HasInputAuthority)
         {
             SetPlayerName_RPC(NetworkManager.Instance.PlayerName);
@@ -41,11 +43,7 @@ public class PlayerNetworkData : NetworkBehaviour
         NetworkManager.Instance.MidFuntion_StartBossScene();
         
     }
-    /*[Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    public void SetTeamName_RPC(string teamName)
-    {
-        NetworkManager.Instance.UpdateTeamName(teamName);
-    }*/
+  
    
     private static void OnPlayerNameChanged(Changed<PlayerNetworkData> changed)
     {
