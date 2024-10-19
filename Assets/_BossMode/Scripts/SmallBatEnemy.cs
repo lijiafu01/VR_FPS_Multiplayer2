@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using multiplayerMode;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,12 +7,13 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkTransform))]
 public class SmallBatEnemy : NetworkBehaviour, IDamageable
 {
+    // Biến đếm thời gian giữa các lần gây sát thương
+    private float damageCooldownTimer = 0f;
+
     public int MaxHealth { get; set; } = 50;
 
     [Networked(OnChanged = nameof(OnHealthChanged))]
     public int CurrentHealth { get; set; }
-
-  
 
     [SerializeField]
     private Animator _animator;
@@ -41,20 +43,26 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
 
     // Biến lưu trữ trạng thái di chuyển hiện tại
     private bool isMoving = false;
+
+    [SerializeField]
+    private float heightOffset = -1.0f; // Độ lệch theo trục Y so với mục tiêu (âm nghĩa là thấp hơn)
+
     public static void OnHealthChanged(Changed<SmallBatEnemy> changed)
     {
         changed.Behaviour.UpdateHealthUI();
     }
+
     void UpdateHealthUI()
     {
-        Debug.Log("aaa");
-
+        Debug.Log("Health updated: " + CurrentHealth);
     }
+
     public override void Spawned()
     {
         if (Object.HasStateAuthority)
         {
             CurrentHealth = MaxHealth;
+
             // Gán Animator nếu chưa gán trong Inspector
             if (_animator == null)
             {
@@ -65,6 +73,7 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             FindAndSetRandomPlayer();
         }
     }
+
     public void TakeDamage(int damage)
     {
         if (Object.HasStateAuthority)
@@ -77,14 +86,21 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             }
         }
     }
+
     void Die()
     {
         Runner.Despawn(Object);
     }
+
     public override void FixedUpdateNetwork()
     {
         if (Object.HasStateAuthority)
         {
+            // Cập nhật bộ đếm thời gian gây sát thương
+            if (damageCooldownTimer > 0f)
+            {
+                damageCooldownTimer -= Runner.DeltaTime;
+            }
             // Kiểm tra thời gian sống
             if (lifeTimer.Expired(Runner))
             {
@@ -127,18 +143,11 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
     void FindAndSetRandomPlayer()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayerMask);
-
         if (hits.Length > 0)
         {
             // Chọn ngẫu nhiên một người chơi từ mảng hits
             int randomIndex = Random.Range(0, hits.Length);
             targetPlayer = hits[randomIndex].transform;
-            // Lấy vị trí của người chơi đã chọn
-            Vector3 newPos = targetPlayer.position;
-            // Hạ trục y của vị trí xuống 0.5f
-            newPos.y -= 0.9f;
-            // Gán vị trí mới cho người chơi đã chọn
-            targetPlayer.position = newPos;
         }
         else
         {
@@ -159,17 +168,25 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             }
         }
 
-        // Tính toán hướng tới mục tiêu
-        Vector3 direction = (targetPosition - transform.position).normalized;
+        // Tính toán hướng tới mục tiêu, bỏ qua trục Y
+        Vector3 direction = targetPosition - transform.position;
+        direction.y = 0; // Loại bỏ thành phần Y
+        direction = direction.normalized;
 
-        // Xoay hướng về phía người chơi
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Runner.DeltaTime * 5f);
+        // Xoay hướng về phía người chơi (chỉ xoay quanh trục Y)
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Runner.DeltaTime * 5f);
+        }
 
-        // Di chuyển về phía người chơi sử dụng vector hướng
-        transform.position += direction * moveSpeed * Runner.DeltaTime;
+        // Điều chỉnh vị trí Y của quái nhỏ
+        Vector3 newPosition = transform.position + direction * moveSpeed * Runner.DeltaTime;
+        newPosition.y = targetPlayer.position.y + heightOffset; // Điều chỉnh độ cao so với mục tiêu
+
+        // Cập nhật vị trí của quái nhỏ
+        transform.position = newPosition;
     }
-
 
     void StopMoving()
     {
@@ -183,6 +200,48 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
                 _animator.SetTrigger("Attack");
             }
         }
+
+        // Giữ nguyên vị trí Y của quái nhỏ
+        if (targetPlayer != null)
+        {
+            Vector3 position = transform.position;
+            position.y = targetPlayer.position.y + heightOffset;
+            transform.position = position;
+        }
+
         // Thực hiện các hành động khác khi dừng lại, nếu cần
     }
+    private void OnTriggerStay(Collider other)
+    {
+        if (!Object.HasStateAuthority)
+            return;
+
+        // Chỉ kiểm tra va chạm khi quái vật đã dừng lại
+        if (!isMoving)
+        {
+            // Kiểm tra xem đối tượng va chạm có phải là người chơi không
+            if (other.gameObject.TryGetComponent<PlayerController>(out PlayerController player))
+            {
+                // Chỉ gây sát thương khi damageCooldownTimer <= 0
+                if (damageCooldownTimer <= 0f)
+                {
+                    // Gây sát thương cho người chơi
+                    ApplyDamageToPlayer(player);
+                    _animator.SetTrigger("Attack");
+
+                    // Reset bộ đếm thời gian về 2 giây
+                    damageCooldownTimer = 2f;
+                }
+            }
+        }
+    }
+    void ApplyDamageToPlayer(PlayerController player)
+    {
+        if (player != null)
+        {
+            player.TakeDamage_Boss(10);
+        }
+    }
+
+
 }

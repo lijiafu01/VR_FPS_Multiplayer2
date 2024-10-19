@@ -1,5 +1,7 @@
 ﻿using Fusion;
+using multiplayerMode;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class FlameBreathSkill : NetworkBehaviour, IBossSkill
 {
@@ -32,7 +34,25 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     [SerializeField]
     private GameObject flameBreathObject; // Object con (tia laser)
 
+    [SerializeField]
+    private Transform raycastOrigin; // Điểm xuất phát của tia raycast
+
+    [SerializeField]
+    private float rayLength = 10f; // Độ dài của tia raycast
+
+    [SerializeField]
+    private int damageAmount = 10; // Lượng sát thương gây ra cho người chơi
+
+    [SerializeField]
+    private float rotationSpeed = 90f; // Tốc độ quay (độ mỗi giây)
+
+    [Networked]
+    private Quaternion currentRotation { get; set; }
+
     private Animator animator;
+
+    // Dictionary để lưu trữ thời gian gây sát thương cuối cùng cho mỗi người chơi
+    private Dictionary<PlayerController, float> damagedPlayers = new Dictionary<PlayerController, float>();
 
     void Awake()
     {
@@ -43,24 +63,24 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
         {
             flameBreathObject.SetActive(false);
         }
-
-        Debug.Log("Awake: Animator initialized and flameBreathObject set inactive.");
     }
 
     public void ActivateSkill(Transform target)
     {
-
         if (Object.HasStateAuthority && !IsOnCooldown && !IsCasting)
         {
             isCastingNetworked = true;
             castingTimer = TickTimer.CreateFromSeconds(Runner, CastingDuration);
             cooldownTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
 
+            // Xóa danh sách người chơi đã bị gây sát thương
+            damagedPlayers.Clear();
+
             // Đặt giá trị ban đầu cho currentRotation
             currentRotation = transform.parent.rotation;
+
             OnSkillStart?.Invoke();
             animator.SetTrigger("Skill3");
-            Debug.Log("ActivateSkill: Skill activated.");
 
             RPC_StartFlameBreath();
         }
@@ -73,13 +93,8 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
         {
             flameBreathObject.SetActive(true);
         }
-
-        Debug.Log("RPC_StartFlameBreath: Flame breath started.");
     }
-    [Networked]
-    private Quaternion currentRotation { get; set; }
-    [SerializeField]
-    private float rotationSpeed = 90f; // Tốc độ quay (độ mỗi giây)
+
     public void FixedUpdateSkill()
     {
         if (Object.HasStateAuthority)
@@ -87,13 +102,14 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             if (IsCasting && castingTimer.Expired(Runner))
             {
                 RPC_EndFlameBreath();
-                // Gán giá trị cho biến mạng nội bộ
                 isCastingNetworked = false;
-                Debug.Log("boss7_da ket thuc chieu 3");
+                animator.SetTrigger("Idle");
+
                 OnSkillEnd?.Invoke();
             }
-           if(isCastingNetworked)
-           {
+
+            if (isCastingNetworked)
+            {
                 // Tính toán góc quay mới dựa trên tốc độ và thời gian giữa các frame
                 float rotationStep = rotationSpeed * Runner.DeltaTime;
                 Quaternion deltaRotation = Quaternion.Euler(0f, rotationStep, 0f);
@@ -103,6 +119,9 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
 
                 // Áp dụng góc quay mới cho object
                 transform.parent.rotation = currentRotation;
+
+                // Thực hiện raycast để kiểm tra va chạm với người chơi
+                PerformRaycast();
             }
         }
     }
@@ -115,6 +134,61 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             flameBreathObject.SetActive(false);
         }
 
-        Debug.Log("RPC_EndFlameBreath: Flame breath ended.");
+        // Xóa danh sách người chơi đã bị gây sát thương
+        damagedPlayers.Clear();
+    }
+
+    void PerformRaycast()
+    {
+        if (raycastOrigin == null)
+            return;
+
+        // Tạo tia ray từ điểm xuất phát theo hướng forward của nó
+        Ray ray = new Ray(raycastOrigin.position, raycastOrigin.forward);
+        RaycastHit hit;
+
+        // Thực hiện raycast
+        if (Runner.GetPhysicsScene().Raycast(ray.origin, ray.direction, out hit, rayLength))
+        {
+            // Kiểm tra xem đối tượng va chạm có phải là người chơi không
+            if (hit.collider != null && hit.collider.gameObject != null)
+            {
+                if (hit.collider.gameObject.TryGetComponent<PlayerController>(out var player))
+                {
+                    // Gây sát thương cho người chơi
+                    ApplyDamageToPlayer(player);
+                }
+            }
+        }
+    }
+
+    void ApplyDamageToPlayer(PlayerController player)
+    {
+        if (player != null)
+        {
+            float currentTime = Runner.SimulationTime;
+
+            // Kiểm tra xem người chơi đã bị gây sát thương trước đó chưa
+            if (!damagedPlayers.ContainsKey(player))
+            {
+                // Gây sát thương cho người chơi
+                player.TakeDamage_Boss(damageAmount);
+
+                // Lưu thời gian gây sát thương
+                damagedPlayers[player] = currentTime;
+            }
+            else
+            {
+                // Kiểm tra xem đã qua ít nhất 1 giây kể từ lần gây sát thương cuối cùng chưa
+                if (currentTime - damagedPlayers[player] >= 1f)
+                {
+                    // Gây sát thương cho người chơi
+                    player.TakeDamage_Boss(damageAmount);
+
+                    // Cập nhật thời gian gây sát thương
+                    damagedPlayers[player] = currentTime;
+                }
+            }
+        }
     }
 }

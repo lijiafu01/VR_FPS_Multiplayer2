@@ -201,14 +201,19 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
             PlayerController playerController = hit.GetComponent<PlayerController>();
             if (playerController != null)
             {
+                
+                playerController.TakeDamage_Boss(15);
+            }
+            if(hit.gameObject.tag == "LocalPlayer")
+            {
                 Rigidbody rb = hit.GetComponent<Rigidbody>();
                 if (rb != null && rb != rbBoss)
                 {
                     rb.AddExplosionForce(explosionForce, explosionPosition, explosionRadius, upwardsModifier, ForceMode.Impulse);
 
                 }
-                playerController.TakeDamage_Boss(15);
             }
+           
             Debug.Log("Đã phát hiện Collider: " + hit.gameObject.name);
 
            
