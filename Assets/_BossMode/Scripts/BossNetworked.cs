@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-public class BossNetworked : NetworkBehaviour
+public class BossNetworked : NetworkBehaviour, IDamageable
 {
     [SerializeField]
     private Slider healthSlider;

@@ -1,5 +1,6 @@
 ﻿using Fusion;
 using UnityEngine;
+using static TrainerUI;
 
 public class SummonMinionsSkill : NetworkBehaviour, IBossSkill
 {
@@ -56,7 +57,7 @@ public class SummonMinionsSkill : NetworkBehaviour, IBossSkill
             OnSkillStart?.Invoke();
 
             // Kích hoạt animation nếu cần
-            animator.SetTrigger("Summon");
+            //animator.SetTrigger("Summon");
 
             // Gọi RPC để đồng bộ hóa trên tất cả các client
             RPC_SummonMinions();
@@ -73,7 +74,7 @@ public class SummonMinionsSkill : NetworkBehaviour, IBossSkill
             {
                 Vector3 spawnPosition = GetRandomPositionAroundBoss();
                 NetworkObject minion = Runner.Spawn(minionPrefab, spawnPosition, Quaternion.identity);
-
+                //var minionScript = minion.GetComponent<Minion>();
                 // Nếu quái nhỏ có script riêng, bạn có thể khởi tạo chúng ở đây
                 // Ví dụ:
                 // var minionScript = minion.GetComponent<Minion>();

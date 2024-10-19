@@ -9,14 +9,14 @@ public class AutoLogin : MonoBehaviour
 
     private void Start()
     {
-       /* if (PlayFabManager.Instance.isPC)
+        if (PlayFabManager.Instance.isPC)
         {
             LoginPC();
         }
         else
         {
             LoginQuest();
-        }*/
+        }
     }
     public void LoginPC()
     {
