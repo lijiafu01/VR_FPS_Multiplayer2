@@ -30,7 +30,8 @@ namespace multiplayerMode
                     _hitOptions))
         {
 
-            if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
+
+                if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
                     PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
 
@@ -49,7 +50,6 @@ namespace multiplayerMode
             }
             if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
             {
-
                     // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
                     hitBossNetworked.TakeDamage(damage);
             }
@@ -82,12 +82,12 @@ namespace multiplayerMode
                 // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
                 hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
             }
-            if (hit.GameObject.TryGetComponent<BossNetworked>(out var hitBossNetworked))
-            {
+                if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
+                {
 
-                // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                hitBossNetworked.TakeDamage(damage);
-            }
+                    // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
+                    hitBossNetworked.TakeDamage(damage);
+                }
             }
     }
 
