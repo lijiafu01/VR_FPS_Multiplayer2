@@ -1,6 +1,7 @@
 ﻿using Fusion;
 using multiplayerMode;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
 {
@@ -48,7 +49,7 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
 
     private TickTimer effectTimer;
 
-    private Vector3 targetPosition;
+    private Vector3 _targetPosition;
 
     [SerializeField]
     private float minJumpDistance = 1f; // Khoảng cách tối thiểu để thực hiện kỹ năng nhảy
@@ -99,24 +100,34 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
 
             // Đặt lại effectTimer
             effectTimer = TickTimer.None;
-
+           
             OnSkillStart?.Invoke();
 
-            animator.SetTrigger("Skill2");
 
-            // Tính toán và áp dụng vận tốc nhảy
-            JumpTowardsTarget(target.position);
+            Vector3 position = target.position;
+            RPC_Jump(position);
+
+           
         }
     }
-
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    void RPC_Jump(Vector3 position)
+    {
+        animator.SetTrigger("Skill2");
+        if(Object.HasStateAuthority)
+        {
+            // Tính toán và áp dụng vận tốc nhảy
+            JumpTowardsTarget(position);
+        }
+    }
     void JumpTowardsTarget(Vector3 targetPos)
     {
-        // Lưu trữ targetPosition
-        targetPosition = targetPos;
+        // Lưu trữ _targetPosition
+        _targetPosition = targetPos;
 
         // Tính toán khoảng cách ngang trên mặt phẳng XZ
         Vector3 startPosition = transform.position;
-        Vector3 horizontalDisplacement = new Vector3(targetPosition.x - startPosition.x, 0, targetPosition.z - startPosition.z);
+        Vector3 horizontalDisplacement = new Vector3(_targetPosition.x - startPosition.x, 0, _targetPosition.z - startPosition.z);
         float distance = horizontalDisplacement.magnitude;
 
         // Gia tốc trọng trường
@@ -169,13 +180,11 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
         if (Object.HasStateAuthority && isJumping)
         {
             // Kiểm tra nếu va chạm với mặt đất
-            if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("LocalPlayer"))
+            if (collision.gameObject.CompareTag("Ground") )/*|| collision.gameObject.CompareTag("LocalPlayer")*/
             {
-                animator.SetTrigger("Idle");
-
                 Debug.Log("Boss đã chạm đất");
                 // Gọi phương thức tạo lực đẩy
-                RPC_PlayShockwaveEffect();
+                RPC_PlayShockwaveEffect(_targetPosition, _explosionRadius);
 
                 // Đặt lại isJumping
                 isJumping = false;
@@ -183,18 +192,18 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
         }
     }
     [SerializeField]
-    private float explosionRadius = 15f;
+    private float _explosionRadius = 15f;
     [SerializeField]
     private float explosionForce = 8f;
     [SerializeField]
     private float upwardsModifier = 10f; // Cho phép điều chỉnh trong Inspector
 
-    void CreateShockwave()
+    void CreateShockwave(Vector3 targetPosition, float explosionRadius)
     {
-        Vector3 explosionPosition = targetPosition;
+        //Vector3 explosionPosition = _targetPosition;
 
         // Tìm các đối tượng trong bán kính vụ nổ
-        Collider[] colliders = Physics.OverlapSphere(explosionPosition, explosionRadius);
+        Collider[] colliders = Physics.OverlapSphere(targetPosition, explosionRadius);
        
         foreach (Collider hit in colliders)
         {
@@ -209,7 +218,7 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
                 Rigidbody rb = hit.GetComponent<Rigidbody>();
                 if (rb != null && rb != rbBoss)
                 {
-                    rb.AddExplosionForce(explosionForce, explosionPosition, explosionRadius, upwardsModifier, ForceMode.Impulse);
+                    rb.AddExplosionForce(explosionForce, targetPosition, explosionRadius, upwardsModifier, ForceMode.Impulse);
 
                 }
             }
@@ -222,17 +231,18 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
 
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    void RPC_PlayShockwaveEffect()
+    void RPC_PlayShockwaveEffect(Vector3 explosionPos,float explosionRadius)
     {
+        animator.SetTrigger("Idle");
         GameObject effect = Instantiate(EndJumpVFX, effectParent.position, Quaternion.identity, effectParent);
-        CreateShockwave();
+        CreateShockwave(explosionPos,explosionRadius);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void RPC_PlayPreLandingEffect()
     {
         // Sinh hiệu ứng trước khi hạ cánh
-        Instantiate(StartJumpVFX, targetPosition, Quaternion.identity);
+        Instantiate(StartJumpVFX, _targetPosition, Quaternion.identity);
     }
 
     public void FixedUpdateSkill()

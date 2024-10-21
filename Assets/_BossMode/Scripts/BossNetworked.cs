@@ -2,8 +2,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-public class BossNetworked : NetworkBehaviour, IDamageable
+public class BossNetworked : NetworkBehaviour
 {
+    // Thêm biến cho hiệu ứng máu
+    [SerializeField]
+    private ParticleSystem _bloodEffect;
     [SerializeField]
     private Slider healthSlider;
 
@@ -59,7 +62,6 @@ public class BossNetworked : NetworkBehaviour, IDamageable
     {
         if (healthSlider != null)
         {
-            Debug.Log("boss8_5 cogoi");
             healthSlider.value = (float)CurrentHealth / MaxHealth;
         }
         else
@@ -69,11 +71,21 @@ public class BossNetworked : NetworkBehaviour, IDamageable
     }
 
 
-
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)
     {
+        // Gửi RPC tới máy có State Authority
+        RPC_TakeDamage(damage,hitPosition,hitNormal,shooterName);
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    void RPC_TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)
+    {
+        Debug.Log("boss1takedamage_boss bi ban 111 ");
         if (Object.HasStateAuthority)
         {
+            PlayBloodEffect_RPC(hitPosition, hitNormal);
+            //PlayBloodEffect(hitPosition,hitNormal);
+            Debug.Log("boss1takedamage_boss bi ban 222");
             CurrentHealth -= damage;
             if (CurrentHealth <= 0)
             {
@@ -82,6 +94,45 @@ public class BossNetworked : NetworkBehaviour, IDamageable
             }
         }
     }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void PlayBloodEffect_RPC(Vector3 hitPosition, Vector3 hitNormal)
+    {
+
+        if (_bloodEffect != null)
+        {
+            // Đặt vị trí và hướng của ParticleSystem dựa trên vị trí va chạm và pháp tuyến
+            _bloodEffect.transform.position = hitPosition;
+            _bloodEffect.transform.rotation = Quaternion.LookRotation(hitNormal);
+
+            _bloodEffect.Play();
+            Invoke(nameof(StopBloodEffect), 1f); // Dừng hiệu ứng sau 1 giây
+        }
+        else
+        {
+            Debug.Log("dev_blood_effect_is_null");
+        }
+    }
+    private void StopBloodEffect()
+    {
+        if (_bloodEffect != null)
+        {
+            _bloodEffect.Stop();
+        }
+    }
+    /* public void TakeDamage(int damage)
+     {
+         Debug.Log("boss1takedamage_boss bi ban 111");
+         if (Object.HasStateAuthority)
+         {
+             Debug.Log("boss1takedamage_boss bi ban 222");
+             CurrentHealth -= damage;
+             if (CurrentHealth <= 0)
+             {
+                 CurrentHealth = 0;
+                 Die();
+             }
+         }
+     }*/
 
     void Die()
     {

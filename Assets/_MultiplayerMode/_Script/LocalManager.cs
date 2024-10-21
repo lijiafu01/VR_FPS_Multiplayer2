@@ -7,6 +7,7 @@ namespace multiplayerMode
 {
 public class LocalManager : MonoBehaviour
 {
+     public GameObject LocalPlayer;
     /*public GameObject MenuObject;  // Đối tượng menu
     private bool isMenuActive = false;  // Biến lưu trạng thái của menu*/
     // Biến tĩnh (static) giữ instance duy nhất của LocalManager

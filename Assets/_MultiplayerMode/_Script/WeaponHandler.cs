@@ -50,9 +50,13 @@ namespace multiplayerMode
             }
             if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
             {
+                    Debug.Log("boss1takedamage_boss "+hit.GameObject.name);
                     // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                    hitBossNetworked.TakeDamage(damage);
-            }
+
+                    string playerName = GameManager.Instance.PlayerData.playerName;
+
+                    hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName);
+                }
             }
     }
     public void PistolLeftFire()
@@ -85,8 +89,9 @@ namespace multiplayerMode
                 if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
                 {
 
-                    // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                    hitBossNetworked.TakeDamage(damage);
+                    string playerName = GameManager.Instance.PlayerData.playerName;
+
+                    hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName);
                 }
             }
     }

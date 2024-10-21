@@ -3,10 +3,16 @@ using multiplayerMode;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(NetworkTransform))]
 public class SmallBatEnemy : NetworkBehaviour, IDamageable
 {
+    // Thêm biến cho hiệu ứng máu
+    [SerializeField]
+    private ParticleSystem _bloodEffect;
+    [SerializeField]
+    private Slider healthSlider;
     // Biến đếm thời gian giữa các lần gây sát thương
     private float damageCooldownTimer = 0f;
 
@@ -54,7 +60,14 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
 
     void UpdateHealthUI()
     {
-        Debug.Log("Health updated: " + CurrentHealth);
+        if (healthSlider != null)
+        {
+            healthSlider.value = (float)CurrentHealth / MaxHealth;
+        }
+        else
+        {
+            Debug.Log("boss8_5 healthSlider is null");
+        }
     }
 
     public override void Spawned()
@@ -73,11 +86,20 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             FindAndSetRandomPlayer();
         }
     }
-
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)
     {
+        // Gửi RPC tới máy có State Authority
+        RPC_TakeDamage(damage,hitPosition,hitNormal,shooterName);
+    }
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    void RPC_TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)
+    {
+        Debug.Log("boss1takedamage_boss bi ban 111");
+
         if (Object.HasStateAuthority)
         {
+            PlayBloodEffect_RPC(hitPosition, hitNormal);
+            Debug.Log("boss1takedamage_boss bi ban 222");
             CurrentHealth -= damage;
             if (CurrentHealth <= 0)
             {
@@ -86,12 +108,35 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             }
         }
     }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void PlayBloodEffect_RPC(Vector3 hitPosition, Vector3 hitNormal)
+    {
 
+        if (_bloodEffect != null)
+        {
+            // Đặt vị trí và hướng của ParticleSystem dựa trên vị trí va chạm và pháp tuyến
+            _bloodEffect.transform.position = hitPosition;
+            _bloodEffect.transform.rotation = Quaternion.LookRotation(hitNormal);
+
+            _bloodEffect.Play();
+            Invoke(nameof(StopBloodEffect), 1f); // Dừng hiệu ứng sau 1 giây
+        }
+        else
+        {
+            Debug.Log("dev_blood_effect_is_null");
+        }
+    }
+    private void StopBloodEffect()
+    {
+        if (_bloodEffect != null)
+        {
+            _bloodEffect.Stop();
+        }
+    }
     void Die()
     {
         Runner.Despawn(Object);
     }
-
     public override void FixedUpdateNetwork()
     {
         if (Object.HasStateAuthority)

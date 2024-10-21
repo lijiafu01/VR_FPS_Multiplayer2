@@ -46,14 +46,27 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     [SerializeField]
     private float rotationSpeed = 90f; // Tốc độ quay (độ mỗi giây)
 
-    [Networked]
+    [Networked(OnChanged = nameof(OnCurrentRotationChanged))]
     private Quaternion currentRotation { get; set; }
 
     private Animator animator;
 
+    private bool canStateStart = false;
+
     // Dictionary để lưu trữ thời gian gây sát thương cuối cùng cho mỗi người chơi
     private Dictionary<PlayerController, float> damagedPlayers = new Dictionary<PlayerController, float>();
+    private static void OnCurrentRotationChanged(Changed<FlameBreathSkill> changed)
+    {
+        changed.Behaviour.UpdateParentRotation();
+    }
 
+    private void UpdateParentRotation()
+    {
+        if (transform.parent != null && !Object.HasStateAuthority)
+        {
+            transform.parent.rotation = currentRotation;
+        }
+    }
     void Awake()
     {
         animator = GetComponentInParent<Animator>();
@@ -80,7 +93,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             currentRotation = transform.parent.rotation;
 
             OnSkillStart?.Invoke();
-            animator.SetTrigger("Skill3");
+            
 
             RPC_StartFlameBreath();
         }
@@ -92,6 +105,8 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
         if (flameBreathObject != null)
         {
             flameBreathObject.SetActive(true);
+            animator.SetTrigger("Skill3");
+            canStateStart = true;
         }
     }
 
@@ -103,12 +118,12 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             {
                 RPC_EndFlameBreath();
                 isCastingNetworked = false;
-                animator.SetTrigger("Idle");
+                
 
                 OnSkillEnd?.Invoke();
             }
 
-            if (isCastingNetworked)
+            if (isCastingNetworked && canStateStart)
             {
                 // Tính toán góc quay mới dựa trên tốc độ và thời gian giữa các frame
                 float rotationStep = rotationSpeed * Runner.DeltaTime;
@@ -131,7 +146,9 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     {
         if (flameBreathObject != null)
         {
+            animator.SetTrigger("Idle");
             flameBreathObject.SetActive(false);
+            canStateStart = false;
         }
 
         // Xóa danh sách người chơi đã bị gây sát thương
