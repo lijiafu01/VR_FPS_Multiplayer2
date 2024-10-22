@@ -4,7 +4,9 @@ using static UnityEngine.GraphicsBuffer;
 
 public class ThrowBallSkill : NetworkBehaviour, IBossSkill
 {
-    [SerializeField] private NetworkPrefabRef fireballPrefab;
+    [SerializeField] private NetworkPrefabRef explosionPrefabNetworked;
+    public GameObject fireballPrefab;
+
     [SerializeField] private Transform firePoint;
     public string SkillName => "Throw Ball";
 
@@ -36,8 +38,8 @@ public class ThrowBallSkill : NetworkBehaviour, IBossSkill
 
     // Các biến cần thiết cho kỹ năng
     // Ví dụ: Prefab của quả bóng, vị trí ném, v.v.
-    [SerializeField]
-    private NetworkPrefabRef ballPrefab;
+   /* [SerializeField]
+    private NetworkPrefabRef ballPrefab;*/
 
     [SerializeField]
     private Transform throwPoint;
@@ -63,31 +65,34 @@ public class ThrowBallSkill : NetworkBehaviour, IBossSkill
 
             OnSkillStart?.Invoke();
             // Gọi RPC để đồng bộ hóa nếu cần
-            RPC_ActivateSkill(target.position);
+            RPC_SpawnFireball(firePoint.position, target.position);
         }
     }
    
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_ActivateSkill(Vector3 targetPosition)
-    {
-        Debug.Log("boss7_da bat dau chieu 1_RPC");
-        // Kích hoạt animation nếu cần
-        animator.SetTrigger("Skill1");
+    
 
-        // Sinh quả cầu lửa trên State Authority
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_SpawnFireball(Vector3 spawnPosition, Vector3 targetPosition)
+    {
+        animator.SetTrigger("Skill1");
+        // Tạo Fireball trên client
+        GameObject fireballObject = Instantiate(fireballPrefab, spawnPosition, Quaternion.identity);
+
+        // Lấy script Fireball và thiết lập các biến cần thiết
+        Fireball fireball = fireballObject.GetComponent<Fireball>();
+        if (fireball != null)
+        {
+            fireball.Initialize(targetPosition);
+
+        }
+
         if (Object.HasStateAuthority)
         {
-            Debug.Log("boss7_check HasStateAuthority");
-            NetworkObject fireballObject = Runner.Spawn(fireballPrefab, firePoint.position, Quaternion.identity, Object.InputAuthority);
-
-            // Truyền vị trí mục tiêu cho quả cầu lửa
-            var fireballScript = fireballObject.GetComponent<FireballNetworked>();
-            if (fireballScript != null)
-            {
-                fireballScript.SetTargetPosition(targetPosition);
-            }
+            fireball.ThrowBallSkill = this;
         }
+
     }
+
 
     public void FixedUpdateSkill()
     {
@@ -101,5 +106,9 @@ public class ThrowBallSkill : NetworkBehaviour, IBossSkill
                 OnSkillEnd?.Invoke();
             }
         }
+    }
+    public void Explode(Vector3 collisionPosition, Vector3 collisionNormal)
+    {
+        Runner.Spawn(explosionPrefabNetworked, collisionPosition, Quaternion.LookRotation(collisionNormal), Object.InputAuthority);
     }
 }

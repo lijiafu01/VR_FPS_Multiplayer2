@@ -167,7 +167,10 @@ namespace multiplayerMode
         }
         private void UpdateHpUI(int hp)
         {
-            hardwareRig.UpdateHP(hp);
+            if (Object.HasInputAuthority)
+            {
+                hardwareRig.UpdateHP(hp);
+            }
         }
         public override void Spawned()
         {
@@ -388,18 +391,46 @@ namespace multiplayerMode
                 Debug.LogError("HardwareRig not found!");
             }
         }
+        //Bosss
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void RPC_TakeDamage(int damage)
+        {
+            TakeDamage_Boss(damage);
+        }
+
 
         public void TakeDamage_Boss(int damage)
         {
+            Debug.Log("Bossfixbug_ 3_1_" + playerName);
+
             if (Object.HasStateAuthority)
             {
+                Debug.Log("Bossfixbug_ 3_" + playerName);
                 _currentHp -= damage;
 
+                Debug.Log("Bossfixbug_ 4_" + playerName + _currentHp);
 
                 if (_currentHp <= 0)
                 {
                     _currentHp = _maxHp;
-                 /*   Dead();
+                    /*Dead();
+                    Invoke("SetInitHp", 1f);*/
+                }
+            }
+        }
+        public void TakeDamage_Boss_Name(int damage)
+        {
+            if (Object.HasStateAuthority)
+            {
+                Debug.Log("Bossfixbug_ 3_" + playerName);
+                _currentHp -= damage;
+
+                Debug.Log("Bossfixbug_ 4_" + playerName + _currentHp);
+
+                if (_currentHp <= 0)
+                {
+                    _currentHp = _maxHp;
+                    /*Dead();
                     Invoke("SetInitHp", 1f);*/
                 }
             }

@@ -2,6 +2,7 @@
 using multiplayerMode;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class FlameBreathSkill : NetworkBehaviour, IBossSkill
 {
@@ -54,7 +55,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     private bool canStateStart = false;
 
     // Dictionary để lưu trữ thời gian gây sát thương cuối cùng cho mỗi người chơi
-    private Dictionary<PlayerController, float> damagedPlayers = new Dictionary<PlayerController, float>();
+   // private Dictionary<PlayerController, float> damagedPlayers = new Dictionary<PlayerController, float>();
     private static void OnCurrentRotationChanged(Changed<FlameBreathSkill> changed)
     {
         changed.Behaviour.UpdateParentRotation();
@@ -86,8 +87,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             castingTimer = TickTimer.CreateFromSeconds(Runner, CastingDuration);
             cooldownTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
 
-            // Xóa danh sách người chơi đã bị gây sát thương
-            damagedPlayers.Clear();
+            
 
             // Đặt giá trị ban đầu cho currentRotation
             currentRotation = transform.parent.rotation;
@@ -134,13 +134,19 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
 
                 // Áp dụng góc quay mới cho object
                 transform.parent.rotation = currentRotation;
-
-                // Thực hiện raycast để kiểm tra va chạm với người chơi
-                PerformRaycast();
+                PerformRaycast_RPC();
             }
         }
-    }
 
+        
+    }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    void PerformRaycast_RPC()
+    {
+        // Thực hiện raycast để kiểm tra va chạm với người chơi
+        PerformRaycast();
+    }
+    
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void RPC_EndFlameBreath()
     {
@@ -151,8 +157,6 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             canStateStart = false;
         }
 
-        // Xóa danh sách người chơi đã bị gây sát thương
-        damagedPlayers.Clear();
     }
 
     void PerformRaycast()
@@ -172,40 +176,30 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             {
                 if (hit.collider.gameObject.TryGetComponent<PlayerController>(out var player))
                 {
-                    // Gây sát thương cho người chơi
-                    ApplyDamageToPlayer(player);
+                    if(canTakeDamage)
+                    {
+                        // Gây sát thương cho người chơi
+                        ApplyDamageToPlayer(player);
+                    }
+                    
                 }
             }
         }
     }
-
+    bool canTakeDamage = true;
+    IEnumerator TakeDamageCountTime()
+    {
+        yield return new WaitForSeconds(1);
+        canTakeDamage = true;
+    }
     void ApplyDamageToPlayer(PlayerController player)
     {
+
         if (player != null)
         {
-            float currentTime = Runner.SimulationTime;
-
-            // Kiểm tra xem người chơi đã bị gây sát thương trước đó chưa
-            if (!damagedPlayers.ContainsKey(player))
-            {
-                // Gây sát thương cho người chơi
-                player.TakeDamage_Boss(damageAmount);
-
-                // Lưu thời gian gây sát thương
-                damagedPlayers[player] = currentTime;
-            }
-            else
-            {
-                // Kiểm tra xem đã qua ít nhất 1 giây kể từ lần gây sát thương cuối cùng chưa
-                if (currentTime - damagedPlayers[player] >= 1f)
-                {
-                    // Gây sát thương cho người chơi
-                    player.TakeDamage_Boss(damageAmount);
-
-                    // Cập nhật thời gian gây sát thương
-                    damagedPlayers[player] = currentTime;
-                }
-            }
+            player.TakeDamage_Boss(damageAmount);
+            canTakeDamage = false;
+            StartCoroutine(TakeDamageCountTime());
         }
     }
 }

@@ -2943,7 +2943,7 @@ MonoBehaviour:
   castingDuration: 2
   minionPrefab:
     RawGuidValue: d463bfe1498fb304baef798357316f2e
-  minionCount: 2
+  minionCount: 3
   summonRadius: 5
 --- !u!4 &894885380
 Transform:
@@ -49154,7 +49154,7 @@ MonoBehaviour:
   effectTime: 2.3
   minJumpDistance: 0.01
   effectParent: {fileID: 3767875587982089744}
-  explosionRadius: 10
+  _explosionRadius: 15
   explosionForce: 6
   upwardsModifier: 10
 --- !u!4 &2007788707472936378
@@ -52758,13 +52758,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  fireballPrefab:
-    RawGuidValue: f94113840e473794398ef47c56ac3862
+  explosionPrefabNetworked:
+    RawGuidValue: 1cc2a1b61af4bc847837b6369fc12289
+  fireballPrefab: {fileID: 7187195177625638121, guid: f94113840e473794398ef47c56ac3862, type: 3}
   firePoint: {fileID: 3266612754845763696}
   cooldown: 20
   castingDuration: 1
-  ballPrefab:
-    RawGuidValue: f94113840e473794398ef47c56ac3862
   throwPoint: {fileID: 3266612754845763696}
 --- !u!4 &2329038224324103850
 Transform:

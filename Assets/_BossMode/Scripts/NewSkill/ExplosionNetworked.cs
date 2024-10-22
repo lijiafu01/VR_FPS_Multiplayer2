@@ -7,7 +7,7 @@ public class ExplosionNetworked : NetworkBehaviour
     private float damageRadius = 5f;
 
     [SerializeField]
-    private float damageAmount = 20f;
+    private int damageAmount = 20;
 
 
     private TickTimer lifeTimer;
@@ -17,10 +17,7 @@ public class ExplosionNetworked : NetworkBehaviour
         // Khởi tạo TickTimer để hủy đối tượng sau 2 giây
         lifeTimer = TickTimer.CreateFromSeconds(Runner, 2f);
         // Gây sát thương ngay khi vụ nổ được sinh ra
-        if (Object.HasStateAuthority)
-        {
-            ApplyDamage();
-        }
+        ApplyDamage();
 
 
     }
@@ -45,7 +42,8 @@ public class ExplosionNetworked : NetworkBehaviour
                 var health = hit.GetComponent<PlayerController>();
                 if (health != null)
                 {
-                    health.TakeDamage_Boss((int)damageAmount);
+                    health.TakeDamage_Boss(damageAmount);
+                    return;
                 }
             }
         }

@@ -211,7 +211,7 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
             if (playerController != null)
             {
                 
-                playerController.TakeDamage_Boss(15);
+               playerController.TakeDamage_Boss(15);
             }
             if(hit.gameObject.tag == "LocalPlayer")
             {

@@ -270,9 +270,10 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
                 // Chỉ gây sát thương khi damageCooldownTimer <= 0
                 if (damageCooldownTimer <= 0f)
                 {
+                    Debug.Log("Bossfixbug_ " + player.playerName);
                     // Gây sát thương cho người chơi
                     ApplyDamageToPlayer(player);
-                    _animator.SetTrigger("Attack");
+                    RPC_TriggerAttackAnimation();
 
                     // Reset bộ đếm thời gian về 2 giây
                     damageCooldownTimer = 2f;
@@ -280,13 +281,24 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             }
         }
     }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    void RPC_TriggerAttackAnimation()
+    {
+
+        if (_animator != null)
+        {
+            _animator.ResetTrigger("Walk");
+            _animator.SetTrigger("Attack");
+        }
+    }
+    public int Damage = 1;
     void ApplyDamageToPlayer(PlayerController player)
     {
         if (player != null)
         {
-            player.TakeDamage_Boss(10);
+            Debug.Log("Bossfixbug_ 2_" + player.playerName);
+
+            player.RPC_TakeDamage(Damage);
         }
     }
-
-
 }
