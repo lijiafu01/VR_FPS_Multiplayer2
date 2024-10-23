@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using multiplayerMode;
 public class BossNetworked : NetworkBehaviour
 {
     // Thêm biến cho hiệu ứng máu
@@ -71,17 +72,18 @@ public class BossNetworked : NetworkBehaviour
     }
 
 
-    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)
+    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName, string teamID)
     {
         // Gửi RPC tới máy có State Authority
-        RPC_TakeDamage(damage,hitPosition,hitNormal,shooterName);
+        RPC_TakeDamage(damage,hitPosition,hitNormal,shooterName,teamID);
     }
 
+    bool isBossDie = false;
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    void RPC_TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)
+    void RPC_TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName, string teamID)
     {
         Debug.Log("boss1takedamage_boss bi ban 111 ");
-        if (Object.HasStateAuthority)
+        if (Object.HasStateAuthority && !isBossDie)
         {
             PlayBloodEffect_RPC(hitPosition, hitNormal);
             //PlayBloodEffect(hitPosition,hitNormal);
@@ -89,8 +91,11 @@ public class BossNetworked : NetworkBehaviour
             CurrentHealth -= damage;
             if (CurrentHealth <= 0)
             {
+                Debug.Log("bossreward_ 0 "+shooterName);
+
                 CurrentHealth = 0;
-                Die();
+                RPC_Die(shooterName,teamID);
+                isBossDie = true;
             }
         }
     }
@@ -133,10 +138,31 @@ public class BossNetworked : NetworkBehaviour
              }
          }
      }*/
-
-    void Die()
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_Die(string shooterName,string teamID)
     {
-        CurrentHealth = MaxHealth;
+        Debug.Log("testboss1024_ nhan thuong 1" + teamID);
+
+        if (teamID == NetworkManager.Instance.TeamID)
+        {
+            Debug.Log("testboss1024_ nhan thuong 2"+teamID);
+            NetworkManager.Instance.PlayerController.KillBossReward();
+        }
+        else
+        {
+            NetworkManager.Instance.PlayerController.ExitBoss();
+        }
+        Invoke("DestroyBoss", 1f);
+        // Chỉ State Authority mới thực hiện Despawn
+        
+
+    }
+    void DestroyBoss()
+    {
+        if (Object.HasStateAuthority)
+        {
+            Runner.Despawn(Object);
+        }
     }
     void Awake()
     {

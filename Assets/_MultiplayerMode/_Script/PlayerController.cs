@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using multiplayerMode;
 using System.Collections;
+using UnityEngine.SceneManagement;
 namespace multiplayerMode
 {
     public class PlayerController : NetworkBehaviour
@@ -304,7 +305,10 @@ namespace multiplayerMode
         }*/
         public void OnQuitButtonClick()
         {
-            if (Object.InputAuthority.IsValid)
+            string currentSceneName = SceneManager.GetActiveScene().name;
+
+           
+            if (Object.InputAuthority.IsValid && currentSceneName == "MainGame")
             {
                 
                 int playerScore = hardwareRig.GetPlayerScore(playerName);
@@ -326,6 +330,11 @@ namespace multiplayerMode
                 
                 StartCoroutine(QuitCountdown());
             }
+            else
+            {
+                StartCoroutine(QuitCountdown());
+            }
+
         }
 
 
@@ -397,8 +406,48 @@ namespace multiplayerMode
         {
             TakeDamage_Boss(damage);
         }
+       public void KillBossReward()
+        {
+            if(Object.HasInputAuthority)
+            {
+                RewardAndExitBoss();
 
+            }
+        }
+        void RewardAndExitBoss()
+        {
+            PlayFabManager.Instance.CurrencyManager.AddGoldCoin(15, (int coinsAdded) =>
+            {
+                rewardCanvas.SetActive(true);
+                _rankCointText.text = "+" + coinsAdded.ToString();  // Hiển thị số coin thực tế nhận được
+            });
 
+            StartCoroutine(QuitCountdown());
+        }
+        public void ExitBoss()
+        {
+            StartCoroutine(QuitCountdown());
+
+        }
+        /* [Rpc(RpcSources.All, RpcTargets.All)]
+         public void KillBossReward_RPC(string shooterName)
+         {
+
+             if (shooterName == playerName)
+             {
+                 Debug.Log("bossreward_ 6");
+                 TeamKillBossReward_RPC(TeamID);
+             }
+         }*/
+        /*[Rpc(RpcSources.All, RpcTargets.All)]
+        public void TeamKillBossReward_RPC(string teamID)
+        {
+            if(TeamID == teamID)
+            {
+                Debug.Log("bossreward_ team");
+
+            }
+        }*/
         public void TakeDamage_Boss(int damage)
         {
             Debug.Log("Bossfixbug_ 3_1_" + playerName);

@@ -55,7 +55,7 @@ namespace multiplayerMode
 
                     string playerName = GameManager.Instance.PlayerData.playerName;
 
-                    hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName);
+                    hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName,NetworkManager.Instance.TeamID);
                 }
             }
     }
@@ -91,7 +91,7 @@ namespace multiplayerMode
 
                     string playerName = GameManager.Instance.PlayerData.playerName;
 
-                    hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName);
+                    hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName, NetworkManager.Instance.TeamID);
                 }
             }
     }

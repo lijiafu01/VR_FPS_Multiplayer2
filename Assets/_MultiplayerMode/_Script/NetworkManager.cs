@@ -26,6 +26,7 @@ namespace multiplayerMode
 
         public PlayerRef _playerRef;
 
+        public PlayerController PlayerController { get; set; }
         public void UpdateTeamName(string newName)
         {
             TeamID = newName;

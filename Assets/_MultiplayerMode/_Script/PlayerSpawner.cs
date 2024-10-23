@@ -19,7 +19,6 @@ namespace multiplayerMode
 
         private Dictionary<PlayerRef, NetworkObject> _spawnedUsers = new Dictionary<PlayerRef, NetworkObject>();
         public NetworkObject _networkPlayerObject;
-
         void Start()
         {
             // Thêm callback để nhận sự kiện mạng từ NetworkRunner
@@ -64,6 +63,8 @@ namespace multiplayerMode
                         if (_networkPlayerObject != null)
                         {
                             NetworkManager.Instance.NetworkPlayerObject = _networkPlayerObject;
+                            NetworkManager.Instance.PlayerController = _networkPlayerObject.GetComponentInChildren<PlayerController>();
+                           
                         }
                         _spawnedUsers.Add(player, _networkPlayerObject);
                         Debug.Log("dev7_check3");

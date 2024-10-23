@@ -46635,7 +46635,7 @@ MonoBehaviour:
   _bloodEffect: {fileID: 1073206623}
   healthSlider: {fileID: 8818505191316360222}
   bossSkillTime: 5
-  _MaxHealth: 200
+  _MaxHealth: 10
   _CurrentHealth: 0
   detectionRadius: 40
   playerLayerMask:

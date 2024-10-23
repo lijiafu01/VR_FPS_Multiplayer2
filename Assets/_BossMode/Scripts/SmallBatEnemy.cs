@@ -86,13 +86,13 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             FindAndSetRandomPlayer();
         }
     }
-    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)
+    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName,string teamID)
     {
         // Gửi RPC tới máy có State Authority
-        RPC_TakeDamage(damage,hitPosition,hitNormal,shooterName);
+        RPC_TakeDamage(damage,hitPosition,hitNormal,shooterName,teamID);
     }
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    void RPC_TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)
+    void RPC_TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName, string teamID)
     {
         Debug.Log("boss1takedamage_boss bi ban 111");
 
