@@ -1,9 +1,11 @@
 ﻿using Fusion;
+using System.Collections;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+//using static UnityEngine.GraphicsBuffer;
 
 public class ThrowBallSkill : NetworkBehaviour, IBossSkill
 {
+    public AudioSource audioSource;
     [SerializeField] private NetworkPrefabRef explosionPrefabNetworked;
     public GameObject fireballPrefab;
 
@@ -68,32 +70,30 @@ public class ThrowBallSkill : NetworkBehaviour, IBossSkill
             RPC_SpawnFireball(firePoint.position, target.position);
         }
     }
-   
-    
-
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_SpawnFireball(Vector3 spawnPosition, Vector3 targetPosition)
     {
+        //audioSource.time = 0.3f;
+        audioSource.Play();
         animator.SetTrigger("Skill1");
+        StartCoroutine(SetAni(spawnPosition,targetPosition));    
+    }
+    IEnumerator SetAni(Vector3 spawnPosition, Vector3 targetPosition)
+    {
+        yield return new WaitForSeconds(0.3f); 
         // Tạo Fireball trên client
         GameObject fireballObject = Instantiate(fireballPrefab, spawnPosition, Quaternion.identity);
-
         // Lấy script Fireball và thiết lập các biến cần thiết
         Fireball fireball = fireballObject.GetComponent<Fireball>();
         if (fireball != null)
         {
             fireball.Initialize(targetPosition);
-
         }
-
         if (Object.HasStateAuthority)
         {
             fireball.ThrowBallSkill = this;
         }
-
     }
-
-
     public void FixedUpdateSkill()
     {
         if (Object.HasStateAuthority)

@@ -1,10 +1,19 @@
 ﻿using Fusion;
 using multiplayerMode;
+using System.Collections;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
 public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
 {
+    [SerializeField]
+    private AudioSource _jumpStartSFX;
+
+    [SerializeField]
+    private AudioSource _jumpEndSFX;
+
+    [SerializeField]
+    private AudioSource _jumpFlySFX;
     public GameObject StartJumpVFX;
     public GameObject EndJumpVFX;
     public string SkillName => "Powerful Jump";
@@ -113,12 +122,19 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void RPC_Jump(Vector3 position)
     {
+        _jumpStartSFX.Play();
         animator.SetTrigger("Skill2");
+        StartCoroutine(JumpFlySFX());
         if(Object.HasStateAuthority)
         {
             // Tính toán và áp dụng vận tốc nhảy
             JumpTowardsTarget(position);
         }
+    }
+    IEnumerator JumpFlySFX()
+    {
+        yield return new WaitForSeconds(0.5f);
+        _jumpFlySFX.Play();
     }
     void JumpTowardsTarget(Vector3 targetPos)
     {
@@ -233,6 +249,7 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void RPC_PlayShockwaveEffect(Vector3 explosionPos,float explosionRadius)
     {
+        _jumpEndSFX.Play();
         animator.SetTrigger("Idle");
         GameObject effect = Instantiate(EndJumpVFX, effectParent.position, Quaternion.identity, effectParent);
         CreateShockwave(explosionPos,explosionRadius);

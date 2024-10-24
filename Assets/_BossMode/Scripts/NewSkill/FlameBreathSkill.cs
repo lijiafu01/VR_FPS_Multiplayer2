@@ -6,6 +6,9 @@ using System.Collections;
 
 public class FlameBreathSkill : NetworkBehaviour, IBossSkill
 {
+    [SerializeField]
+    private AudioSource _dragonRoar;
+
     public string SkillName => "Flame Breath";
 
     [SerializeField]
@@ -63,10 +66,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
 
     private void UpdateParentRotation()
     {
-        if (transform.parent != null && !Object.HasStateAuthority)
-        {
-            transform.parent.rotation = currentRotation;
-        }
+        transform.parent.rotation = currentRotation;
     }
     void Awake()
     {
@@ -77,6 +77,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
         {
             flameBreathObject.SetActive(false);
         }
+        _dragonRoar.pitch = 0.9f;
     }
 
     public void ActivateSkill(Transform target)
@@ -86,9 +87,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             isCastingNetworked = true;
             castingTimer = TickTimer.CreateFromSeconds(Runner, CastingDuration);
             cooldownTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
-
-            
-
+         
             // Đặt giá trị ban đầu cho currentRotation
             currentRotation = transform.parent.rotation;
 
@@ -107,6 +106,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             flameBreathObject.SetActive(true);
             animator.SetTrigger("Skill3");
             canStateStart = true;
+            _dragonRoar.Play();
         }
     }
 
@@ -133,12 +133,10 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
                 currentRotation *= deltaRotation;
 
                 // Áp dụng góc quay mới cho object
-                transform.parent.rotation = currentRotation;
+                //transform.parent.rotation = currentRotation;
                 PerformRaycast_RPC();
             }
-        }
-
-        
+        }   
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void PerformRaycast_RPC()
@@ -156,7 +154,6 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             flameBreathObject.SetActive(false);
             canStateStart = false;
         }
-
     }
 
     void PerformRaycast()
@@ -194,7 +191,6 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     }
     void ApplyDamageToPlayer(PlayerController player)
     {
-
         if (player != null)
         {
             player.TakeDamage_Boss(damageAmount);

@@ -3,6 +3,8 @@ using UnityEngine;
 using multiplayerMode;
 public class ExplosionNetworked : NetworkBehaviour
 {
+    // Tham chiếu đến AudioSource
+    public AudioSource audioSource;
     [SerializeField]
     private float damageRadius = 5f;
 
@@ -14,6 +16,8 @@ public class ExplosionNetworked : NetworkBehaviour
     
     public override void Spawned()
     {
+        audioSource.time = 0.35f;
+        audioSource.Play();
         // Khởi tạo TickTimer để hủy đối tượng sau 2 giây
         lifeTimer = TickTimer.CreateFromSeconds(Runner, 2f);
         // Gây sát thương ngay khi vụ nổ được sinh ra
