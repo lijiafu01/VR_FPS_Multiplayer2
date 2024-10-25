@@ -11,6 +11,4 @@ public class HandleBossCollider : NetworkBehaviour,IDamageable
         Debug.Log("boss1takedamage_boss 1");
       BossNetworked.TakeDamage(damage,hitPosition,hitNormal,shooterName,teamID);
     }
-
-   
 }

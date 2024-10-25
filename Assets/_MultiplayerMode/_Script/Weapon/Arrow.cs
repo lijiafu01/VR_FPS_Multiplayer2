@@ -7,6 +7,11 @@ namespace multiplayerMode
 {
     public class Arrow : NetworkBehaviour
     {
+        [Networked] private NetworkBehaviourId hitObjectId { get; set; }
+        private Transform hitTransform;
+        private Vector3 localPosition;
+        private Quaternion localRotation;
+
         private Rigidbody rb;  // Reference to the Rigidbody component
         [SerializeField] private float penetrationDepth = 0.5f; // Configurable penetration depth
         private Vector3 lastVelocity; // Biến để lưu vận tốc cuối cùng trước khi va chạm
@@ -48,7 +53,7 @@ namespace multiplayerMode
             }
         }
 
-        private void Update()
+        public override void FixedUpdateNetwork()
         {
             if (rb != null && !rb.isKinematic && rb.velocity != Vector3.zero)
             {
@@ -80,9 +85,12 @@ namespace multiplayerMode
                 ProcessPlayerHit(hit);
             }
         }
-
+        bool isShoot = false;
         private void ProcessPlayerHit(LagCompensatedHit hit)
         {
+            Destroy(rb);
+
+            if (isShoot) return;
             // Gây sát thương cho người chơi
             if (Object.HasStateAuthority && hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
@@ -90,7 +98,7 @@ namespace multiplayerMode
                 hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
 
                 // Đảm bảo mũi tên không tiếp tục chịu ảnh hưởng vật lý sau va chạm
-                rb.isKinematic = true;
+                //rb.isKinematic = true;
 
                 // Căn chỉnh vị trí và hướng của mũi tên khi trúng người chơi
                 transform.position = hit.Point - lastVelocity.normalized * penetrationDepth;
@@ -99,14 +107,47 @@ namespace multiplayerMode
                 // Đặt mũi tên làm con của người chơi để nó dính vào người chơi
                 transform.SetParent(hit.GameObject.transform);
             }
-            /*if(Object.HasStateAuthority && hit.GameObject.tag == "Boss")
+            else if (Object.HasStateAuthority && hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
             {
-                BossNetworked bossNetworked = hit.GameObject.GetComponent<BossNetworked>();
-                bossNetworked.TakeDamage(10);
-            }*/
-        }
+                
+                string playerName = GameManager.Instance.PlayerData.playerName;
+                hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName, NetworkManager.Instance.TeamID);
+                isShoot = true;
+                // Đảm bảo mũi tên không tiếp tục chịu ảnh hưởng vật lý sau va chạm
+                //rb.isKinematic = true;
 
-        private void OnCollisionEnter(Collision collision)
+                // Căn chỉnh vị trí và hướng của mũi tên khi trúng người chơi
+                transform.position = hit.Point - lastVelocity.normalized * penetrationDepth;
+                transform.forward = lastVelocity.normalized;
+                if (hit.GameObject.tag == "BatEnemy")
+                {
+                    Runner.Despawn(Object);
+                   /* SmallBatEnemy smallBatEnemy = hit.GameObject.GetComponent<SmallBatEnemy>();
+                   transform.SetParent(smallBatEnemy.ArrowPos);*/
+                }
+                else
+                {
+                    // Đặt mũi tên làm con của người chơi để nó dính vào người chơi
+                    transform.SetParent(hit.GameObject.transform.parent);
+                }
+               
+
+            }
+            else
+            {
+                // Đảm bảo mũi tên không tiếp tục chịu ảnh hưởng vật lý sau va chạm
+                //rb.isKinematic = true;
+
+                // Căn chỉnh vị trí và hướng của mũi tên khi trúng người chơi
+                transform.position = hit.Point - lastVelocity.normalized * penetrationDepth;
+                transform.forward = lastVelocity.normalized;
+
+                // Đặt mũi tên làm con của người chơi để nó dính vào người chơi
+                transform.SetParent(hit.GameObject.transform);
+            }
+        }
+        
+      /*  private void OnCollisionEnter(Collision collision)
         {
             // Kiểm tra va chạm với tường, mặt đất, và mục tiêu
             if (collision.collider.CompareTag("target") || collision.collider.CompareTag("wall") || collision.collider.CompareTag("Ground") || collision.collider.CompareTag("Boss"))
@@ -126,7 +167,7 @@ namespace multiplayerMode
                 // Đặt mũi tên làm con của mục tiêu để đảm bảo nó dính vào đối tượng va chạm
                 transform.SetParent(collision.transform);
             }
-        }
+        }*/
 
         private void OnTriggerExit(Collider other)
         {

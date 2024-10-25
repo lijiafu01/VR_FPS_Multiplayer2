@@ -8,6 +8,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(NetworkTransform))]
 public class SmallBatEnemy : NetworkBehaviour, IDamageable
 {
+    public Transform ArrowPos;
     // Thêm biến cho hiệu ứng máu
     [SerializeField]
     private ParticleSystem _bloodEffect;
@@ -258,6 +259,7 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
     }
     private void OnTriggerStay(Collider other)
     {
+        if (Runner == null) return;
         if (!Object.HasStateAuthority)
             return;
 

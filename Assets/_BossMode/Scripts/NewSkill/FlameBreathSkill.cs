@@ -66,6 +66,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
 
     private void UpdateParentRotation()
     {
+        if (Object.HasStateAuthority) return;
         transform.parent.rotation = currentRotation;
     }
     void Awake()
@@ -77,19 +78,20 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
         {
             flameBreathObject.SetActive(false);
         }
-        _dragonRoar.pitch = 0.9f;
+        _dragonRoar.pitch = 0.8f;
     }
 
     public void ActivateSkill(Transform target)
     {
+        // Đặt giá trị ban đầu cho currentRotation
+        currentRotation = transform.parent.rotation;
         if (Object.HasStateAuthority && !IsOnCooldown && !IsCasting)
         {
             isCastingNetworked = true;
             castingTimer = TickTimer.CreateFromSeconds(Runner, CastingDuration);
             cooldownTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
          
-            // Đặt giá trị ban đầu cho currentRotation
-            currentRotation = transform.parent.rotation;
+            
 
             OnSkillStart?.Invoke();
             
@@ -133,7 +135,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
                 currentRotation *= deltaRotation;
 
                 // Áp dụng góc quay mới cho object
-                //transform.parent.rotation = currentRotation;
+                transform.parent.rotation = currentRotation;
                 PerformRaycast_RPC();
             }
         }   
@@ -150,7 +152,7 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     {
         if (flameBreathObject != null)
         {
-            animator.SetTrigger("Idle");
+           // animator.SetTrigger("Idle");
             flameBreathObject.SetActive(false);
             canStateStart = false;
         }

@@ -31,16 +31,26 @@ namespace multiplayerMode
         //private bool isPulled = false;
         private bool hasLeftCollider = false; // Biến để theo dõi khi tay rời khỏi collider
         [Networked] private bool isPulled { get; set; }
-
         protected void Start()
         {
             ResetString();
         }
+        /*public bool GetTriggerPressed()
+        {
+            // Lấy giá trị nút trigger bên trái
+            //float leftTrigger = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch);
 
+            // Lấy giá trị nút trigger bên phải
+            float rightTrigger = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+
+            // Kiểm tra xem có nút trigger nào được nhấn qua một ngưỡng nhất định không
+            // Ví dụ, sử dụng ngưỡng 0.1f để coi như là nhấn nút
+            return rightTrigger > 0.1f;
+        }*/      
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
-
+            
             // Kiểm tra input từ hệ thống mạng
             if (GetInput<RigState>(out var input))
             {
@@ -57,7 +67,6 @@ namespace multiplayerMode
                 // Cập nhật trạng thái nút trước đó
                 _previousButton = input.Button;
             }
-
             // Kiểm tra xem tay đã rời khỏi collider và người chơi đã thả nút
             if (hasLeftCollider && !isPulled && isStringPulled)
             {
@@ -65,8 +74,6 @@ namespace multiplayerMode
                 isStringPulled = false;
                 hasLeftCollider = false; // Reset trạng thái sau khi bắn
             }
-
-
             // Kiểm tra khi tay phải đang kéo và nút Bow được giữ
             if (RightHand != null && isPulled)
             {
@@ -120,7 +127,6 @@ namespace multiplayerMode
                 ResetString();
             }
         }
-
         // Tạo mũi tên mới
         private void CreateArrow()
         {
@@ -146,7 +152,6 @@ namespace multiplayerMode
                 currentArrow.transform.SetParent(bowHandle);  // Đặt mũi tên là con của bowHandle
             }
         }
-
         // Xử lý khi tay phải chạm vào cung
         private void OnTriggerEnter(Collider other)
         {
@@ -160,7 +165,6 @@ namespace multiplayerMode
                 Debug.Log("dev16: OnTriggerEnter detected non-RightHand object.");
             }
         }
-
         // Xử lý khi tay phải rời khỏi cung
         private void OnTriggerExit(Collider other)
         {
@@ -173,7 +177,6 @@ namespace multiplayerMode
                 Debug.Log("dev16: OnTriggerExit detected non-RightHand object.");
             }
         }
-
         // Bắn mũi tên
         private void ShootArrow()
         {
@@ -207,8 +210,6 @@ namespace multiplayerMode
                 Debug.LogError("dev16: Attempted to shoot, but no arrow available.");
             }
         }
-
-
         // Đặt lại dây cung về vị trí ban đầu
         private void ResetString()
         {
@@ -217,7 +218,6 @@ namespace multiplayerMode
                 Debug.LogError("dev16: bowHandle or bowstringCenter is not assigned.");
                 return;
             }
-
             bowHandle.position = bowstringCenter.position;
         }
     }

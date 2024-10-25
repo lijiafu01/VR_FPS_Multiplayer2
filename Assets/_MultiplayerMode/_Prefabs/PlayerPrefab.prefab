@@ -197,7 +197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHand: {fileID: 2407538687800826564}
   leftHand: {fileID: 3116965028751825055}
-  CurrenWeapon: 0
+  CurrenWeapon: 1
   Pistol:
   - {fileID: 5588585699794085985}
   - {fileID: 1041157782327699018}

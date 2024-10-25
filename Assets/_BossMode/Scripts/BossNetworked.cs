@@ -152,6 +152,7 @@ public class BossNetworked : NetworkBehaviour
         {
             NetworkManager.Instance.PlayerController.ExitBoss();
         }
+        animator.SetTrigger("Death");
         Invoke("DestroyBoss", 1f);
         // Chỉ State Authority mới thực hiện Despawn
         

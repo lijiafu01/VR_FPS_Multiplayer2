@@ -201,7 +201,7 @@ MonoBehaviour:
   damage: 10
   hitLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 200
   hitOptions: 11
 --- !u!114 &8668118897130701716
 MonoBehaviour:

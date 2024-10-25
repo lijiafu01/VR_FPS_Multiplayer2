@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class SummonMinionsSkill : NetworkBehaviour, IBossSkill
 {
+    [SerializeField]
+    private GameObject _summonVFX;
+    [SerializeField]
+    private AudioSource _dragonAttack;
+
     public string SkillName => "Summon Minions";
 
     [SerializeField]
@@ -67,6 +72,9 @@ public class SummonMinionsSkill : NetworkBehaviour, IBossSkill
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void RPC_SummonMinions()
     {
+        _dragonAttack.Play();
+        animator.SetTrigger("Skill4");
+
         // Triệu hồi quái nhỏ trên máy chủ
         if (Object.HasStateAuthority)
         {
@@ -74,6 +82,8 @@ public class SummonMinionsSkill : NetworkBehaviour, IBossSkill
             {
                 Vector3 spawnPosition = GetRandomPositionAroundBoss();
                 NetworkObject minion = Runner.Spawn(minionPrefab, spawnPosition, Quaternion.identity);
+                GameObject summonVFX = Instantiate(_summonVFX, minion.gameObject.transform.position, minion.gameObject.transform.rotation);
+                Destroy(summonVFX,1.5f );
                 //var minionScript = minion.GetComponent<Minion>();
                 // Nếu quái nhỏ có script riêng, bạn có thể khởi tạo chúng ở đây
                 // Ví dụ:
@@ -86,7 +96,7 @@ public class SummonMinionsSkill : NetworkBehaviour, IBossSkill
     Vector3 GetRandomPositionAroundBoss()
     {
         Vector2 randomCircle = Random.insideUnitCircle * summonRadius;
-        Vector3 spawnPosition = transform.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
+        Vector3 spawnPosition = transform.position + new Vector3(randomCircle.x, 1f, randomCircle.y);
 
         // Đảm bảo vị trí sinh quái nằm trên mặt đất (nếu cần)
         // Bạn có thể sử dụng Raycast hoặc đặt y-coordinate bằng vị trí mặt đất

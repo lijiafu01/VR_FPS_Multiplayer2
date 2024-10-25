@@ -207,9 +207,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  _dragonRoar: {fileID: 0}
   cooldown: 6
   castingDuration: 4
   flameBreathObject: {fileID: 4896272002118418748}
+  raycastOrigin: {fileID: 0}
+  rayLength: 10
+  damageAmount: 10
   rotationSpeed: 90
 --- !u!1 &457766585738384951
 GameObject:
@@ -917,7 +921,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  _bloodEffect: {fileID: 0}
+  healthSlider: {fileID: 0}
   bossSkillTime: 5
+  _MaxHealth: 100
+  _CurrentHealth: 0
   detectionRadius: 30
   playerLayerMask:
     serializedVersion: 2
@@ -971,8 +979,8 @@ MonoBehaviour:
     _value: 0
     _inverse: 0
     _hash: -814817977
-  StateHashes: 00000000b556ab02cde8a363a33148257d9a0946ff5156c611339eb3f2cb31dfefccf6987aa1104edfe5f7f1d82aa60677aa819551a41b5d70143c99e758c167e6528614254912f3a87b6ddda10244ce11f3fb900406e84a893497642afa8626a8b5caa3562ac6532b26f9982c50629fa1621db15ecb2deaf14b0a79a80dbb92b50a7cd510f2a6c5ce59e7a67b7318c503cd10a4a7e3efa965912e0b6fbb225581d9ea209f9b3205829cf542b6f3fa0dac62c0e754836a5967304f6e15b524dc47ef5bf5335c534470f260473cb1097a26203390f1172c321ad4a4cf702be2124398c725ede9d2f648ad35492475ddbf3ee4e7553dc265cbd601ed360e941b26f70de1607ef3f43f5f43d3fb02129f0f1f155848ee723f542e457f2ce0358c9f67b790046a1a50af17166f64fe32496451b26ef7c4530b823dcaf1c4d9013a483763f23d81dad21db269f72aa468b15e87d8b2f80b791646e0ba9ebb762b55e09de8dd1dbb7a5f4e88c97a790c582bd9d2f36aba65b5e0aa18b9df6117de45ead7e90592964a62357828aa408ed5e60b3e245955b15cc3d8732e027adfbb674b31d9af3e9defc78ebe5fc4286c8e0c83874d847e64da5eb357697b842b1a167c79406955336e528eb1211e0b901c5a3820ede5663366dec59ce6f956c9a3dea0303a24e63e870ada1f372d1e1d86113d2e35340ae661f07c432517c3a5940771862404d7c88b8d284ac4c1ad
-  TriggerHashes: 00000000fa334f4a2b1a167c406246d3d65241a4
+  StateHashes: 00000000b556ab02cde8a363a33148257d9a0946ff5156c611339eb3f2cb31dfefccf6987aa1104edfe5f7f1d82aa60677aa819551a41b5d70143c99e758c167e6528614254912f3a87b6ddda10244ce11f3fb900406e84a893497642afa8626a8b5caa3562ac6532b26f9982c50629fa1621db15ecb2deaf14b0a79a80dbb92b50a7cd510f2a6c5ce59e7a67b7318c503cd10a4a7e3efa965912e0b6fbb225581d9ea209f9b3205829cf542b6f3fa0dac62c0e754836a5967304f6e15b524dc47ef5bf5335c534470f260473cb1097a26203390f1172c321ad4a4cf702be2124398c725ede9d2f648ad35492475ddbf3ee4e7553dc265cbd601ed360e941b26f70de1607ef3f43f5f43d3fb02129f0f1f155848ee723f542e457f2ce0358c9f67b790046a1a50af17166f64fe32496451b26ef7c4530b823dcaf1c4d9013a483763f23d81dad21db269f72aa468b15e87d8b2f80b791646e0ba9ebb762b55e09de8dd1dbb7a5f4e88c97a790c582bd9d2f36aba65b5e0aa18b9df6117de45ead7e90592964a62357828aa408ed5e60b3e245955b15cc3d8732e027adfbb674b31d9af3e9defc78ebe5fc4286c8e0c83874d847e64da5eb357697b842b1a167c79406955336e528eb1211e0b901c5a3820ede5663366dec59ce6f956c9a3dea0303a24e63e870ada1f372d1e1d86113d2e35340ae661f07c432517c3a5940771862404d7c88b8d284ac4c1addadf8063a2618802f236c12aef31066d75c7253a36691639
+  TriggerHashes: 00000000fa334f4a2b1a167c406246d3d65241a42afa862675c7253a
 --- !u!114 &2649900055277957465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1539,13 +1547,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  fireballPrefab:
-    RawGuidValue: f94113840e473794398ef47c56ac3862
+  audioSource: {fileID: 0}
+  explosionPrefabNetworked:
+    RawGuidValue: 00000000000000000000000000000000
+  fireballPrefab: {fileID: 0}
   firePoint: {fileID: 3266612753763938358}
   cooldown: 6
   castingDuration: 1
-  ballPrefab:
-    RawGuidValue: f94113840e473794398ef47c56ac3862
   throwPoint: {fileID: 3266612753763938358}
 --- !u!1 &2904173782263399860
 GameObject:
@@ -2391,6 +2399,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  _jumpStartSFX: {fileID: 0}
+  _jumpEndSFX: {fileID: 0}
+  _jumpFlySFX: {fileID: 0}
   StartJumpVFX: {fileID: 4005589923573209433, guid: 647804489ad9e3441a43f0e1f9db0861, type: 3}
   EndJumpVFX: {fileID: 7266262107022294818, guid: 32603568d2fcc5c4ca59bb29e92a4eba, type: 3}
   cooldown: 6
@@ -2399,7 +2410,7 @@ MonoBehaviour:
   effectTime: 2.3
   minJumpDistance: 10
   effectParent: {fileID: 3767875586882692694}
-  explosionRadius: 10
+  _explosionRadius: 15
   explosionForce: 6
   upwardsModifier: 10
 --- !u!1 &4896903241406801443
