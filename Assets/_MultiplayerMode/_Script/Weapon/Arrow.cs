@@ -94,6 +94,17 @@ namespace multiplayerMode
             // Gây sát thương cho người chơi
             if (Object.HasStateAuthority && hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
+                /*PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
+
+                PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
+                if (myPlayerTeamSetup.teamID != null)
+                {
+                    if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                    {
+                        return;
+                    }
+                }*/
+
                 string playerName = GameManager.Instance.PlayerData.playerName;
                 hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
 

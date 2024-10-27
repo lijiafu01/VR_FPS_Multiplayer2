@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_MultiplayerMode/Scenes/Menu.unity
     guid: 317811750f09a9b44a5c4097b733eb9b
+  - enabled: 1
+    path: Assets/__TraningMode/_Scenes/Test/FreeModeTraining.unity
+    guid: 6debd21a0abd6fe42b32a562bd8ebc60
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: a53cf86b58095584fb0a29c838ed26b1, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 0b05fa55efd4b594da3fd4728e5560a2, type: 2}

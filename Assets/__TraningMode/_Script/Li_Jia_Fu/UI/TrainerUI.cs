@@ -85,6 +85,7 @@ public class TrainerUI : MonoBehaviour
                 // If it was the start phase, we might need to auto-start the end dialogues or wait for event
                 currentDialogueIndex = 0;
                 trainer.SetActive(false);
+                //tiep mp4
                 GameManager.Instance.isRun = true;
             }
             else

@@ -35,7 +35,7 @@ public class Bow : WeaponBehaviour
                 isStringPulled = true;
                 drawSound.Play();  // Play the drawing sound
             }
-            
+
             // Hướng kéo tuyến tính từ bowStringCenter đến attackTransform
             Vector3 pullDirection = (attackTransform.position - bowstringCenter.position).normalized;
 
@@ -112,8 +112,8 @@ public class Bow : WeaponBehaviour
             rb.AddForce(transform.forward * pullDistance * pullStrengthMultiplier);
             currentArrow = null;
             shootSound.Play();  // Play the shooting sound
-            //Invoke("SetBowCollider", 0.05f);          
-            
+                                //Invoke("SetBowCollider", 0.05f);          
+
         }
     }
     /*private void SetBowCollider()
@@ -126,5 +126,5 @@ public class Bow : WeaponBehaviour
         bowHandle.position = bowstringCenter.position;
     }
 
-    
+
 }

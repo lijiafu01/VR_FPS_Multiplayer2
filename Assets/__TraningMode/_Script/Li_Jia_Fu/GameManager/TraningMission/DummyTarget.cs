@@ -40,22 +40,26 @@ public class DummyTarget : MonoBehaviour
             }
         }
     }
-
     private void HandleMovement()
     {
-        // Tính toán góc dựa trên vị trí hiện tại và tốc độ
-        float angle = Mathf.Atan2(transform.position.z, transform.position.x) * Mathf.Rad2Deg;
-        angle += moveSpeed * Time.deltaTime;
+        transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
 
-        // Tính toán vị trí mới
-        float radius = Vector3.Distance(startPosition, Vector3.zero);
-        float x = Mathf.Cos(angle * Mathf.Deg2Rad) * radius;
-        float z = Mathf.Sin(angle * Mathf.Deg2Rad) * radius;
-        transform.position = new Vector3(x, transform.position.y, z);
-
-        // Nhìn về tâm (0, 0)
-        transform.LookAt(new Vector3(0, transform.position.y, 0));
     }
+    /* private void HandleMovement()
+     {
+         // Tính toán góc dựa trên vị trí hiện tại và tốc độ
+         float angle = Mathf.Atan2(transform.position.z, transform.position.x) * Mathf.Rad2Deg;
+         angle += moveSpeed * Time.deltaTime;
+
+         // Tính toán vị trí mới
+         float radius = Vector3.Distance(startPosition, Vector3.zero);
+         float x = Mathf.Cos(angle * Mathf.Deg2Rad) * radius;
+         float z = Mathf.Sin(angle * Mathf.Deg2Rad) * radius;
+         transform.position = new Vector3(x, transform.position.y, z);
+
+         // Nhìn về tâm (0, 0)
+         transform.LookAt(new Vector3(0, transform.position.y, 0));
+     }*/
 
     private void HandleRotation()
     {

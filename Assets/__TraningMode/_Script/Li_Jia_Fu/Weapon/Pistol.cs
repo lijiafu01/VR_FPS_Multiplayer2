@@ -2,7 +2,7 @@
 using TraningMode;
 public class Pistol : WeaponBehaviour
 {
-    
+
     [SerializeField] private float fireRate = 2f;
     [SerializeField] private float nextFireTime = 0f;
     [SerializeField] private Transform muzzle;
@@ -29,13 +29,13 @@ public class Pistol : WeaponBehaviour
     }
     public override void Fire()
     {
-        
+
         if (!InputManager.Instance.GetTriggerPressed()) return;
         if (!GameManager.Instance.isRun) return;
         if (Time.time >= nextFireTime)
         {
             //GameObject bullet = Instantiate(bulletPrefab, muzzle.position, muzzle.rotation);
-            GameObject bullet = ObjectPoolManager.Instance.SpawnFromPool("pistolbullet",muzzle.position,muzzle.rotation);
+            GameObject bullet = ObjectPoolManager.Instance.SpawnFromPool("pistolbullet", muzzle.position, muzzle.rotation);
 
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             rb.AddForce(muzzle.forward * shootForce);

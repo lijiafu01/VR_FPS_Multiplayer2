@@ -1,48 +1,74 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using TraningMode;
 
 [System.Serializable]
 public class Pool
 {
-    public string tag;
-    public GameObject prefab;
-    public int size;
+    public string tag;          // Nhãn để nhận diện pool
+    public GameObject prefab;   // Prefab của đối tượng trong pool
+    public int size;            // Số lượng đối tượng ban đầu trong pool
 }
 
 public class ObjectPoolManager : MonoBehaviour
 {
     public static ObjectPoolManager Instance;
-    public List<Pool> pools;
-    public Dictionary<string, Queue<GameObject>> poolDictionary;
+
+    public List<Pool> pools;    // Danh sách các pool được thiết lập trong Inspector
+
+    // Từ điển lưu trữ các pool, với key là tag và value là danh sách các đối tượng trong pool
+    private Dictionary<string, List<GameObject>> poolDictionary;
+
+    // Từ điển lưu trữ các poolHolder (GameObject chứa các đối tượng của pool)
+    private Dictionary<string, Transform> poolHolderDictionary;
 
     void Awake()
     {
-        Instance = this;
+        // Thiết lập Singleton
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Debug.LogWarning("Multiple instances of ObjectPoolManager detected. Destroying duplicate.");
+            Destroy(gameObject);
+            return;
+        }
 
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
+        // Khởi tạo từ điển
+        poolDictionary = new Dictionary<string, List<GameObject>>();
+        poolHolderDictionary = new Dictionary<string, Transform>();
 
+        // Tạo các pool
         foreach (Pool pool in pools)
         {
+            // Tạo một GameObject để chứa các đối tượng của pool
             GameObject poolHolder = new GameObject(pool.tag + " Pool");
             poolHolder.transform.SetParent(transform);
 
-            Queue<GameObject> objectPool = new Queue<GameObject>();
+            // Lưu trữ poolHolder vào từ điển
+            poolHolderDictionary[pool.tag] = poolHolder.transform;
+
+            // Tạo danh sách các đối tượng trong pool
+            List<GameObject> objectPool = new List<GameObject>();
 
             for (int i = 0; i < pool.size; i++)
             {
-                GameObject obj = Instantiate(pool.prefab, transform.position, Quaternion.identity);
-                obj.transform.parent = poolHolder.transform;
+                // Tạo đối tượng và thêm vào pool
+                GameObject obj = Instantiate(pool.prefab, Vector3.zero, Quaternion.identity);
+                obj.transform.SetParent(poolHolder.transform);
                 obj.SetActive(false);
-                objectPool.Enqueue(obj);
+                objectPool.Add(obj);
             }
 
+            // Lưu trữ pool vào từ điển
             poolDictionary[pool.tag] = objectPool;
         }
     }
 
-    private GameObject ExpandPoolAndGetObject(string tag)
+    // Phương thức mở rộng pool và tạo đối tượng mới
+    private GameObject ExpandPoolAndGetObject(string tag, Vector3 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(tag))
         {
@@ -57,23 +83,25 @@ public class ObjectPoolManager : MonoBehaviour
             return null;
         }
 
-        Transform poolHolder = GameObject.Find(tag + " Pool").transform;
-        if (poolHolder == null)
+        if (!poolHolderDictionary.TryGetValue(tag, out Transform poolHolder))
         {
             Debug.LogError("No pool holder found for tag " + tag);
             return null;
         }
 
-        GameObject obj = Instantiate(pool.prefab, transform.position, Quaternion.identity);
+        // Tạo đối tượng mới
+        GameObject obj = Instantiate(pool.prefab, position, rotation);
         obj.transform.SetParent(poolHolder);
         obj.SetActive(false);
 
-        poolDictionary[tag].Enqueue(obj);
+        // Thêm đối tượng mới vào pool
+        poolDictionary[tag].Add(obj);
 
         return obj;
     }
 
-    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion? rotation = null)
+    // Phương thức lấy đối tượng từ pool
+    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(tag))
         {
@@ -81,29 +109,29 @@ public class ObjectPoolManager : MonoBehaviour
             return null;
         }
 
-        if (AllObjectsActive(tag))
+        // Tìm đối tượng chưa được sử dụng trong pool
+        GameObject objectToSpawn = poolDictionary[tag].FirstOrDefault(obj => !obj.activeInHierarchy);
+
+        if (objectToSpawn == null)
         {
-            GameObject newObject = ExpandPoolAndGetObject(tag);
-            newObject.SetActive(true);
-            newObject.transform.position = position;
-            newObject.transform.rotation = rotation ?? Quaternion.identity;
-            return newObject;
+            // Mở rộng pool nếu tất cả đối tượng đều đang được sử dụng
+            objectToSpawn = ExpandPoolAndGetObject(tag, position, rotation);
+            if (objectToSpawn == null)
+            {
+                Debug.LogError("Failed to expand pool and get new object for tag " + tag);
+                return null;
+            }
         }
 
-        GameObject objectToSpawn = poolDictionary[tag].Dequeue();
+        // Kích hoạt và thiết lập vị trí, hướng cho đối tượng
         objectToSpawn.SetActive(true);
         objectToSpawn.transform.position = position;
-        objectToSpawn.transform.rotation = rotation ?? Quaternion.identity;
-        poolDictionary[tag].Enqueue(objectToSpawn);
+        objectToSpawn.transform.rotation = rotation;
 
         return objectToSpawn;
     }
 
-    private bool AllObjectsActive(string tag)
-    {
-        return poolDictionary[tag].All(obj => obj.activeInHierarchy);
-    }
-
+    // Phương thức trả đối tượng về pool
     public void ReturnToPool(string tag, GameObject objectToReturn)
     {
         if (!poolDictionary.ContainsKey(tag))
@@ -112,21 +140,58 @@ public class ObjectPoolManager : MonoBehaviour
             return;
         }
 
-        // Kiểm tra và thiết lập lại đối tượng cha của các đối tượng con
+        // Xử lý các đối tượng con (nếu có)
         foreach (Transform child in objectToReturn.transform)
         {
-            if (poolDictionary.ContainsKey(child.gameObject.tag))
+            string childTag = child.gameObject.tag;
+
+            if (poolDictionary.ContainsKey(childTag))
             {
-                // Thiết lập lại đối tượng cha của đối tượng con về holder của pool tương ứng
-                Transform poolHolder = GameObject.Find(child.gameObject.tag + " Pool").transform;
-                child.SetParent(poolHolder);
-                child.gameObject.SetActive(false);
-                poolDictionary[child.gameObject.tag].Enqueue(child.gameObject);
+                if (poolHolderDictionary.TryGetValue(childTag, out Transform childPoolHolder))
+                {
+                    // Đặt đối tượng con về pool tương ứng
+                    child.SetParent(childPoolHolder);
+                    child.gameObject.SetActive(false);
+
+                    // Reset các thuộc tính nếu cần
+                    ResetObject(child.gameObject);
+                }
+                else
+                {
+                    Debug.LogWarning("No pool holder found for child tag " + childTag);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("No pool found for child tag " + childTag);
             }
         }
 
-        // Reset các thuộc tính vật lý của đối tượng trả về pool
-        Rigidbody rb = objectToReturn.GetComponent<Rigidbody>();
+        // Reset các thuộc tính của đối tượng trả về pool
+        ResetObject(objectToReturn);
+
+        // Đặt lại đối tượng cha của objectToReturn
+        if (poolHolderDictionary.TryGetValue(tag, out Transform parentPoolHolder))
+        {
+            objectToReturn.transform.SetParent(parentPoolHolder);
+        }
+        else
+        {
+            Debug.LogWarning("No pool holder found for tag " + tag);
+        }
+
+        objectToReturn.SetActive(false);
+    }
+
+    // Phương thức reset các thuộc tính của đối tượng
+    private void ResetObject(GameObject obj)
+    {
+        // Reset vị trí và hướng
+        obj.transform.position = Vector3.zero;
+        obj.transform.rotation = Quaternion.identity;
+
+        // Reset Rigidbody nếu có
+        Rigidbody rb = obj.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.velocity = Vector3.zero;
@@ -134,16 +199,23 @@ public class ObjectPoolManager : MonoBehaviour
             rb.isKinematic = false;
         }
 
-        // Đặt lại vị trí và hướng của đối tượng
-        objectToReturn.transform.position = Vector3.zero;
-        objectToReturn.transform.rotation = Quaternion.identity;
+        // Reset Animator nếu có
+        Animator animator = obj.GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.Rebind();
+            animator.Update(0f);
+        }
 
-        // Đặt lại đối tượng cha của objectToReturn
-        Transform parentPoolHolder = GameObject.Find(tag + " Pool").transform;
-        objectToReturn.transform.SetParent(parentPoolHolder);
-        objectToReturn.SetActive(false);
-        poolDictionary[tag].Enqueue(objectToReturn);
+        // Reset ParticleSystem nếu có
+        ParticleSystem ps = obj.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            ps.Clear();
+            ps.Stop();
+        }
+
+        // Reset các thành phần khác nếu cần
+        // Ví dụ: Health, trạng thái nội bộ của script, v.v.
     }
-
-
 }

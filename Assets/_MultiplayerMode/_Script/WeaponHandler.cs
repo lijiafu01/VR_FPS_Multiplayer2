@@ -29,8 +29,6 @@ namespace multiplayerMode
                     _hitLayer,
                     _hitOptions))
         {
-
-
                 if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
                     PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();

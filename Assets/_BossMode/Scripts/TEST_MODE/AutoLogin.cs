@@ -6,7 +6,6 @@ using UnityEngine;
 public class AutoLogin : MonoBehaviour
 {
     public Login login;
-
     private void Start()
     {
         if (PlayFabManager.Instance.isPC)
