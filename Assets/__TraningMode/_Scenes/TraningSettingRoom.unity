@@ -4426,14 +4426,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dc08adec7a7b6e4dae77569475afd09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponRawImage: {fileID: 935629978}
-  weaponTextures:
-  - {fileID: 2800000, guid: 3e9307f77cef06f43adc36b11a87db95, type: 3}
-  - {fileID: 2800000, guid: ce13a07c12d122b489bdfa67b979b94c, type: 3}
-  - {fileID: 2800000, guid: 7952a1f05d40ee94792a52e2e40a4f28, type: 3}
+  _WeaponType: 0
   weaponNameText: {fileID: 1066670848}
-  nextButton: {fileID: 280774523}
-  previousButton: {fileID: 1878759130}
+  weaponRawImage: {fileID: 935629978}
+  bowtt: {fileID: 2800000, guid: 7952a1f05d40ee94792a52e2e40a4f28, type: 3}
+  Pistoltt: {fileID: 2800000, guid: 3e9307f77cef06f43adc36b11a87db95, type: 3}
 --- !u!222 &550282013
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12409,6 +12406,10 @@ PrefabInstance:
       propertyPath: _trackingToWorldTransformer
       value: 
       objectReference: {fileID: 1994952529}
+    - target: {fileID: 4369967455335210858, guid: ea16c3c8c1688234fa81a4f39339bf1b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4392756070075192809, guid: ea16c3c8c1688234fa81a4f39339bf1b, type: 3}
       propertyPath: _interactors.Array.size
       value: 2
@@ -18575,6 +18576,10 @@ PrefabInstance:
       propertyPath: _trackingToWorldTransformer
       value: 
       objectReference: {fileID: 1994952529}
+    - target: {fileID: 8762320472523328093, guid: fbfc588a949bb1a42b20e5bddc4cf8cf, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9193267195763093205, guid: fbfc588a949bb1a42b20e5bddc4cf8cf, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -19037,14 +19042,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dc08adec7a7b6e4dae77569475afd09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponRawImage: {fileID: 692304631}
-  weaponTextures:
-  - {fileID: 2800000, guid: 3e9307f77cef06f43adc36b11a87db95, type: 3}
-  - {fileID: 2800000, guid: ce13a07c12d122b489bdfa67b979b94c, type: 3}
-  - {fileID: 2800000, guid: 7952a1f05d40ee94792a52e2e40a4f28, type: 3}
+  _WeaponType: 0
   weaponNameText: {fileID: 1574738705833665601}
-  nextButton: {fileID: 1209789455}
-  previousButton: {fileID: 743782019}
+  weaponRawImage: {fileID: 692304631}
+  bowtt: {fileID: 0}
+  Pistoltt: {fileID: 0}
 --- !u!222 &1574738704798793314
 CanvasRenderer:
   m_ObjectHideFlags: 0

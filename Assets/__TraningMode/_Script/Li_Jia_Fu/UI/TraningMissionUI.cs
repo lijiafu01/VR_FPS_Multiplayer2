@@ -4,6 +4,7 @@ using System.Reflection;
 using TraningMode;
 public class TraningMissionUI : MonoBehaviour
 {
+    public bool isCompleteTraining = false;
     public TrainerUI trainerUI;
 
     static int HITNUM = 0;
@@ -11,7 +12,7 @@ public class TraningMissionUI : MonoBehaviour
     public TextMeshProUGUI missionText;
     // Static biến để giữ instance duy nhất của UIController
     public static TraningMissionUI Instance { get; private set; }
-
+    
     private void Awake()
     {
         // Kiểm tra nếu Instance đã tồn tại và không phải là 'this'
@@ -24,7 +25,7 @@ public class TraningMissionUI : MonoBehaviour
         {
             // Đặt instance này là instance duy nhất (singleton) và đảm bảo nó không bị hủy khi load scene mới
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
     }
     public void ShowMissionCurrent(int missionCurrent)

@@ -34,8 +34,8 @@ public class Pistol : WeaponBehaviour
         if (!GameManager.Instance.isRun) return;
         if (Time.time >= nextFireTime)
         {
-            //GameObject bullet = Instantiate(bulletPrefab, muzzle.position, muzzle.rotation);
-            GameObject bullet = ObjectPoolManager.Instance.SpawnFromPool("pistolbullet", muzzle.position, muzzle.rotation);
+            GameObject bullet = Instantiate(bulletPrefab, muzzle.position, muzzle.rotation);
+            //GameObject bullet = ObjectPoolManager.Instance.SpawnFromPool("pistolbullet", muzzle.position, muzzle.rotation);
 
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             rb.AddForce(muzzle.forward * shootForce);

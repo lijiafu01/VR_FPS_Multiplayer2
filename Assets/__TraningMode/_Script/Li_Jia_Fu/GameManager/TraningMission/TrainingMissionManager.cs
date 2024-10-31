@@ -3,6 +3,7 @@ using TraningMode;
 
 public class TrainingMissionManager : MonoBehaviour
 {
+    public GameObject FreeMode;
     public static TrainingMissionManager Instance { get; private set; }
     [SerializeField] private WeaponTraining[] weaponTrainings;
     private WeaponType trainingWeapon;
@@ -13,7 +14,7 @@ public class TrainingMissionManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional: Makes the object not be destroyed automatically when loading a new scene.
+            //DontDestroyOnLoad(gameObject); // Optional: Makes the object not be destroyed automatically when loading a new scene.
         }
         else
         {
@@ -34,6 +35,7 @@ public class TrainingMissionManager : MonoBehaviour
             if (training.weaponType == weaponType)
             {
                 _weaponTraining = training;
+                _weaponTraining.FreeMode = FreeMode;
                 training.gameObject.SetActive(true); // Kích hoạt GameObject tương ứng
                 training.StartNextMission(); // Bắt đầu nhiệm vụ tiếp theo
             }

@@ -8,7 +8,19 @@ using UnityEngine.SceneManagement;
 
 public class WeaponSelectionUI : MonoBehaviour
 {
-    public RawImage weaponRawImage; // Link this in the Unity Inspector
+    public WeaponType _WeaponType = WeaponType.Pistol;
+    public TextMeshProUGUI weaponNameText;
+    public RawImage weaponRawImage;
+    public Texture bowtt;
+    public Texture Pistoltt;
+
+    private void Start()
+    {
+        GameManager.Instance.playerChooseWeapon = WeaponType.Pistol;
+
+    }
+    //public List<Texture> weaponTextures = new List<Texture>();
+    /*public RawImage weaponRawImage; // Link this in the Unity Inspector
     public List<Texture> weaponTextures = new List<Texture>(); // This list should be populated with weapon textures in the same order as the weapons list
 
     public TextMeshProUGUI weaponNameText;  // Sử dụng TextMeshProUGUI
@@ -79,21 +91,48 @@ public class WeaponSelectionUI : MonoBehaviour
     public void NextTraningScene()
     {
         SceneManager.LoadScene("TraningWeaponMode");
+    }*/
+    public void NextTraningScene()
+    {
+        SceneManager.LoadScene("TraningWeaponMode");
     }
     public void NextWeapon()
     {
-        if (weapons.Count > 0)
+        if (_WeaponType == WeaponType.Pistol)
         {
-            currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Count;
-            UpdateWeaponDisplay();
+            _WeaponType = WeaponType.Bow;
+            weaponNameText.text = _WeaponType.ToString();
+            weaponRawImage.texture = bowtt;
         }
+        else
+        {
+            _WeaponType = WeaponType.Pistol;
+            weaponNameText.text = _WeaponType.ToString();
+            weaponRawImage.texture = Pistoltt;
+
+        }
+        GameManager.Instance.playerChooseWeapon = _WeaponType;
     }
+
     public void PreviousWeapon()
     {
-        if (weapons.Count > 0)
+        if (_WeaponType == WeaponType.Bow)
         {
-            currentWeaponIndex = (currentWeaponIndex - 1 + weapons.Count) % weapons.Count;
-            UpdateWeaponDisplay();
+            _WeaponType = WeaponType.Pistol;
+            weaponNameText.text = _WeaponType.ToString();
+            weaponRawImage.texture = Pistoltt;
+
+
+
         }
+        else
+        {
+            _WeaponType = WeaponType.Bow;
+            weaponNameText.text = _WeaponType.ToString();
+            weaponRawImage.texture = bowtt;
+
+        }
+        GameManager.Instance.playerChooseWeapon = _WeaponType;
     }
+
 }

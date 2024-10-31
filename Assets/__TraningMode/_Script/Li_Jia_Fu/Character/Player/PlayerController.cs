@@ -1,10 +1,14 @@
 ﻿using TraningMode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace TraningMode
 {
 public class PlayerController : MonoBehaviour
 {
+        public GameObject Trainer;
+        public GameObject QuitUI;
+        public GameObject QuitPanel;
     // Định nghĩa các biến private
     private PlayerAttack _playerAttack;
     private PlayerMovement _playerMovement;
@@ -30,13 +34,39 @@ public class PlayerController : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             AssignComponents();
         }
+            //Invoke("QuitGame", 5f);
     }
+        bool isPressMenu =  false;
+        private void Update()
+        {
+            if (OVRInput.GetDown(OVRInput.Button.Start) && TraningMissionUI.Instance.isCompleteTraining)
+            {
+                isPressMenu = !isPressMenu;
 
-    // Phương thức gán các components từ các GameObject con
-    private void AssignComponents()
+                if (isPressMenu)
+                {
+                    Trainer.SetActive(true);
+                    TraningMissionUI.Instance.trainerUI.dialogueText.text = "Are you quit?";
+                    QuitPanel.SetActive(true);
+                }
+                else
+                {
+                    TraningMissionUI.Instance.trainerUI.gameObject.SetActive(true);
+                }
+            }
+            
+        }
+        public void QuitGame()
+        {
+            GameManager.Instance.playerChooseWeapon = WeaponType.Pistol;
+            GameManager.Instance.isRun = false;
+            SceneManager.LoadScene("StartGame");
+        }
+        // Phương thức gán các components từ các GameObject con
+        private void AssignComponents()
     {
         _playerAttack = GetComponentInChildren<PlayerAttack>();
         _playerMovement = GetComponentInChildren<PlayerMovement>();

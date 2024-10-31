@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour
     }
     private void ReturnObjectPool()
     {
-        ObjectPoolManager.Instance.ReturnToPool("pistolbullet", transform.gameObject);
+        Destroy(gameObject);
+        //ObjectPoolManager.Instance.ReturnToPool("pistolbullet", transform.gameObject);
     }
 }

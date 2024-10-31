@@ -5,6 +5,7 @@ using TMPro;
 
 public class TrainerUI : MonoBehaviour
 {
+    public GameObject TrainingVideoObject;
     [System.Serializable]
     public class Mission
     {
@@ -24,9 +25,11 @@ public class TrainerUI : MonoBehaviour
 
     private void Start()
     {
-        trainer.SetActive(false);
-    }
+        TrainingVideoObject.SetActive(false);
 
+        trainer.SetActive(false);
+
+    }
     public void UpdateCurrentMission(int currentMissionId,bool isMissionStarting)
     {
         _isMissionStarting = isMissionStarting;
@@ -82,14 +85,21 @@ public class TrainerUI : MonoBehaviour
             // End of dialogues for the current phase
             if (_isMissionStarting)
             {
+                if(currentMissionIndex == 0)
+                {
+                    DisplayTrainingVideo();
+
+                }
+               
                 // If it was the start phase, we might need to auto-start the end dialogues or wait for event
                 currentDialogueIndex = 0;
                 trainer.SetActive(false);
-                //tiep mp4
                 GameManager.Instance.isRun = true;
             }
             else
             {
+                Debug.Log("dev20 4");
+
                 // Mission ending phase
                 TrainingMissionManager.Instance.WeaponTraining.CompleteMission(_currentMissionId);
                 trainer.SetActive(false);
@@ -99,7 +109,19 @@ public class TrainerUI : MonoBehaviour
             }
         }
     }
+    void DisplayTrainingVideo()
+    {
+        TrainingVideoObject.gameObject.SetActive(true);
+        TrainingVideo[] trainingVideos = TrainingVideoObject.GetComponentsInChildren<TrainingVideo>();
 
+        // Lặp qua từng script và kích hoạt hàm Show()
+        foreach (TrainingVideo video in trainingVideos)
+        {
+            video.Show();
+            Debug.Log("Hàm Show() của TrainingVideo đã được kích hoạt cho: " + video.gameObject.name);
+        }
+
+    }
     private void UpdateDialogueText()
     {
         List<string> dialogues = _isMissionStarting ? missions[currentMissionIndex].startDialogues : missions[currentMissionIndex].endDialogues;
@@ -109,9 +131,11 @@ public class TrainerUI : MonoBehaviour
         }
         else
         {
+
             // Handle no dialogues or invalid index
             Debug.LogError("No dialogues available or index out of range.");
             trainer.SetActive(false);
+            
         }
     }
 }

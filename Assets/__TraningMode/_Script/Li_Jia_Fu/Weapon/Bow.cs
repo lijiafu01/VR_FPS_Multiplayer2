@@ -81,8 +81,8 @@ public class Bow : WeaponBehaviour
     {
         if (currentArrow == null)
         {
-            currentArrow = ObjectPoolManager.Instance.SpawnFromPool("arrow", bowHandle.position, Quaternion.identity);
-            //currentArrow = Instantiate(arrowPrefab, bowHandle.position, Quaternion.identity);
+            //currentArrow = ObjectPoolManager.Instance.SpawnFromPool("arrow", bowHandle.position, Quaternion.identity);
+            currentArrow = Instantiate(arrowPrefab, bowHandle.position, Quaternion.identity);
             currentArrow.transform.SetParent(bowHandle);
         }
     }

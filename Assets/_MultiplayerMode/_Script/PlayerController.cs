@@ -227,6 +227,12 @@ namespace multiplayerMode
             {
 
                 WeaponManager weaponManager = GetComponentInParent<WeaponManager>();
+               /* if(UserEquipmentData.Instance.CurrentModelId == "Doctor")
+                {
+                    weaponManager.SwitchWeapon(Weapon.Bow);
+                }*/
+                Debug.Log("dev20_ "+ UserEquipmentData.Instance.CurrentModelId);
+
                 CurrentWeapon = weaponManager.CurrenWeapon;
                 _PlayerDict.Add(_playerRef, NetworkManager.Instance.PlayerSpawnerScript._networkPlayerObject);
 
@@ -252,9 +258,18 @@ namespace multiplayerMode
             //SetUpPlayerEquipment();
 
 
+
+
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.clip = _fireSound;
         }
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        private void SetUpPlayerEquipment_RPC()
+        {
+
+            
+        }
+
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
         public void RPC_SendTeamID(string teamID)
         {

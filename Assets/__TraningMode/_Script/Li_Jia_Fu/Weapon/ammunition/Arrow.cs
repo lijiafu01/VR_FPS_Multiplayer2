@@ -62,13 +62,13 @@ public class Arrow : MonoBehaviour
 
     private void ReturnObjectPool()
     {
-       // Destroy(gameObject);
-        ObjectPoolManager.Instance.ReturnToPool("arrow", gameObject);
+       Destroy(gameObject);
+        //ObjectPoolManager.Instance.ReturnToPool("arrow", gameObject);
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.CompareTag("target"))
+        if (collision.collider.CompareTag("target") || collision.collider.CompareTag("Ground"))
         {
             Debug.Log("dev co vam cham");
             rb.isKinematic = true; // Đảm bảo Rigidbody không ảnh hưởng đến mô phỏng va chạm
