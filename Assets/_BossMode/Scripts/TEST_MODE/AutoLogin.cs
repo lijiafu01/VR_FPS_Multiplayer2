@@ -6,7 +6,7 @@ using UnityEngine;
 public class AutoLogin : MonoBehaviour
 {
     public Login login;
-    private void Start()
+  /*  private void Start()
     {
         if (PlayFabManager.Instance.isPC)
         {
@@ -16,11 +16,11 @@ public class AutoLogin : MonoBehaviour
         {
             LoginQuest();
         }
-    }
+    }*/
     public void LoginPC()
     {
         PlayFabManager.Instance.isPC = true;
-        login.usernameInput.text = "tony@gmail.com";
+        login.usernameInput.text = "tony1@gmail.com";
         login.passwordInput.text = "aaaaaa";
         login.LoginBtn();
     }
@@ -28,7 +28,7 @@ public class AutoLogin : MonoBehaviour
     {
         PlayFabManager.Instance.isPC = false;
 
-        login.usernameInput.text = "jack@gmail.com";
+        login.usernameInput.text = "jack1@gmail.com";
         login.passwordInput.text = "aaaaaa";
         login.LoginBtn();
     }

@@ -7,6 +7,8 @@ using TMPro;
 public class PlayerModelInventory : MonoBehaviour
 {
     [SerializeField]
+    private EquipmentPanel _equipmentPanel;
+    [SerializeField]
     private GameObject _itemTemplate; // Template của item (Prefab)
     [SerializeField]
     private Transform _content; // Transform của Content trong ScrollView
@@ -89,9 +91,16 @@ public class PlayerModelInventory : MonoBehaviour
 
     private void OnUseButtonClicked(string modelId)
     {
+        
         UserEquipmentData.Instance.SetCurrentModel(modelId);
         PopulateInventory();
+
+        _equipmentPanel.UpdateEquipmentPanel();
     }
+   /* void SwitchHero()
+    {
+        _equipmentPanel.UpdateEquipmentPanel();
+    }*/
 
     private Sprite LoadSpriteFromResources(string modelId)
     {

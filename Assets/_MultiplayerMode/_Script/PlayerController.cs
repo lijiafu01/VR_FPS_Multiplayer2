@@ -11,15 +11,16 @@ namespace multiplayerMode
 {
     public class PlayerController : NetworkBehaviour
     {
-        
+        [SerializeField]
+        private Transform _playerModels;
         [Networked] public string TeamID { get; set; }
         [SerializeField]
         private WeaponManager _weaponManager;
         //Equipment
         [Header("SetUp Equipment")]
         [SerializeField] private Transform _modelParentObject;
-       /* [Networked]
-        private string _playerModelName { get; set; }*/
+        [Networked]
+        private string _playerModelName { get; set; }
 
         //UI
         [SerializeField] private GameObject rewardCanvas;
@@ -252,22 +253,94 @@ namespace multiplayerMode
                 UpdateLeaderboard_RPC(_playerData.playerName);
                 //-------------------------------------------------------
             }
-           
+
             //setup player Equipment
             // Invoke("SetUpPlayerEquipment", 0.3f);
             //SetUpPlayerEquipment();
+            if (Object.HasInputAuthority)
+            {
+                _playerModelName = UserEquipmentData.Instance.CurrentModelId;
+                Debug.Log("dev20_" + _playerModelName);
+                SetUpPlayerEquipment_RPC(_playerModelName);
+                //Debug.Log("dev20_" + _playerModelName);
+            }
+            else
+            {
+                SetUpPlayerEquipmentOther(_playerModelName);
+            }
+            //_playerModelName = UserEquipmentData.Instance.CurrentModelId;
 
-
-
-
+           
+            
+            /*if(Object.HasInputAuthority)
+            {
+                SetUpPlayerEquipmentAll_RPC(_playerModelName);
+            }*/
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.clip = _fireSound;
         }
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        private void SetUpPlayerEquipment_RPC()
+        private void SetUpPlayerEquipmentOther(string playerModelName)
         {
+            Transform modelObject = _playerModels.Find(playerModelName);
+
+
+            if (modelObject != null)
+            {
+                foreach (Transform child in _playerModels)
+                {
+                    if (child.name != playerModelName)
+                    {
+                        child.gameObject.SetActive(false);
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("dev20_ Không tìm thấy đối tượng con 'mage'.");
+            }
+        }
+        /*[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void SetUpPlayerEquipmentAll_RPC(string playerModelName)
+        {
+            Transform modelObject = _playerModels.Find(playerModelName);
+
+
+            if (modelObject != null)
+            {
+                foreach (Transform child in _playerModels)
+                {
+                    if (child.name != playerModelName)
+                    {
+                        child.gameObject.SetActive(false);
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("dev20_ Không tìm thấy đối tượng con 'mage'.");
+            }
+        }*/
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        private void SetUpPlayerEquipment_RPC(string playerModelName)
+        {
+            Debug.Log($"checkState_ playerName: {playerName} playerModelName:{playerModelName}");
+            Transform modelObject = _playerModels.Find(playerModelName);
 
             
+            if (modelObject != null)
+            {
+                foreach (Transform child in _playerModels)
+                {
+                    if (child.name != playerModelName)
+                    {
+                        child.gameObject.SetActive(false);
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("dev20_ Không tìm thấy đối tượng con 'mage'.");
+            }
         }
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]

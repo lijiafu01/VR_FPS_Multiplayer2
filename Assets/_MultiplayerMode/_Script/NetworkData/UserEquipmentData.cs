@@ -23,14 +23,55 @@ public enum ItemType
 
 public class UserEquipmentData : MonoBehaviour
 {
-    public string CurrentModelId;
+    private string _currentModelId;
 
     public static UserEquipmentData Instance;
 
     public Dictionary<ItemType, List<Item>> OwnedItems = new Dictionary<ItemType, List<Item>>();
 
     public bool DataLoaded = false;
+    public string CurrentModelId
+    {
+        get => _currentModelId;
+        set
+        {
+            if (_currentModelId != value)
+            {
+                _currentModelId = value;
+                NotifyObservers(_currentModelId); // Thông báo đến các observer khi giá trị thay đổi
+            }
+        }
+    }
 
+    // Danh sách các observer (các lớp kế thừa `IModelObserver`)
+    private List<IModelObserver> observers = new List<IModelObserver>();
+
+    // Phương thức để thêm observer
+    public void AddObserver(IModelObserver observer)
+    {
+        if (!observers.Contains(observer))
+        {
+            observers.Add(observer);
+        }
+    }
+
+    // Phương thức để loại bỏ observer
+    public void RemoveObserver(IModelObserver observer)
+    {
+        if (observers.Contains(observer))
+        {
+            observers.Remove(observer);
+        }
+    }
+
+    // Thông báo đến tất cả các observer
+    private void NotifyObservers(string newModelId)
+    {
+        foreach (var observer in observers)
+        {
+            observer.OnModelIdChanged(newModelId);
+        }
+    }
     private void Awake()
     {
         if (Instance == null)

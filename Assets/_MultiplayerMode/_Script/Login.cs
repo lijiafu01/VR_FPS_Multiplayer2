@@ -28,7 +28,7 @@ namespace multiplayerMode
         }*/
         public void SwitchAccount()
         {
-            usernameInput.text = "jack@gmail.com";
+            usernameInput.text = "jack1@gmail.com";
         }
         /*private void HandleInputSelected(TMP_InputField selectedInputField)
         {
@@ -68,10 +68,19 @@ namespace multiplayerMode
             PlayFabManager.Instance.UserData.Password = passwordInput.text;
             PlayFabManager.Instance.UserData.DisplayName = _displayName;
             PlayFabManager.Instance.UserData.UserID = result.PlayFabId;
-            Debug.Log("Đăng nhập thành công!");
+
+            PlayFabManager.Instance.UserData.LoadAttributesFromPlayFab();
+
+            /*// Khởi tạo dữ liệu thuộc tính mặc định
+            PlayFabManager.Instance.UserData.InitializeDefaultAttributes();
+            // Gọi hàm SaveAttributesToPlayFab() từ UserData
+            PlayFabManager.Instance.UserData.SaveAttributesToPlayFab();*/
+
+
             // Chuyển đổi đến scene có index 1          
-            SceneManager.LoadScene(1);
+            // SceneManager.LoadScene(1);
         }
+        
 
         private void OnLoginFailure(PlayFabError error)
         {
@@ -101,8 +110,24 @@ namespace multiplayerMode
             // Cập nhật TitleDisplayName với tên đã lấy từ email
             UpdateTitleDisplayName(username);
 
+            // Khởi tạo dữ liệu thuộc tính mặc định
+            PlayFabManager.Instance.UserData.InitializeDefaultAttributes();
+
+            // Gọi hàm SaveAttributesToPlayFab() từ UserData
+            PlayFabManager.Instance.UserData.SaveAttributesToPlayFab();
+
             // Thực hiện các thao tác sau khi đăng ký thành công, ví dụ như đăng nhập tự động
         }
+
+        /* private void OnDataSendSuccess(UpdateUserDataResult result)
+         {
+             Debug.Log("AttributeData_ Dữ liệu thuộc tính đã được lưu lên PlayFab thành công!");
+         }
+
+         private void OnDataSendError(PlayFabError error)
+         {
+             Debug.LogError("AttributeData_ Lỗi khi lưu dữ liệu lên PlayFab: " + error.GenerateErrorReport());
+         }*/
         private void UpdateTitleDisplayName(string displayName)
         {
             var request = new UpdateUserTitleDisplayNameRequest
