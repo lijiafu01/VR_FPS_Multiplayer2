@@ -23,8 +23,17 @@ public class ShopManager : MonoBehaviour
      }*/
     private void OnEnable()
     {
+        ClearAllChildren();
         PopulateShop();
         UpdateGoldCoinDisplay();
+    }
+    public void ClearAllChildren()
+    {
+        // Duyệt qua tất cả các đối tượng con của _content và xóa chúng
+        foreach (Transform child in _content)
+        {
+            Destroy(child.gameObject);
+        }
     }
     private void UpdateGoldCoinDisplay()
     {
@@ -71,9 +80,10 @@ public class ShopManager : MonoBehaviour
             {
                 BuySuccessTab.gameObject.SetActive(true);
 
-                Item newItem = new Item();
-                newItem.ItemId = item.itemName;
+                Item newItem = new Item(item.itemName, item.type,1);
+                /*newItem.ItemId = item.itemName;
                 newItem.Type = item.type;
+                newItem.Quantity = 1;*/
 
                 UserEquipmentData.Instance.AddItem(newItem);
                 Debug.Log($"dev3_Đã trừ thành công {amountSubtracted} coin.");

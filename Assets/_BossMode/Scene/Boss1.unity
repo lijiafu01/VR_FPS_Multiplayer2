@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 656dd4a840225fc4f8b23c0dc7cc9f9e, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: ab675e6698bde46fd87143fb0d7580cb, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.6260896, g: 0.40447557, b: 2.9482129, a: 1}
+  m_IndirectSpecularColor: {r: 0.008313335, g: 0.06361424, b: 0.1986785, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -46732,10 +46732,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  AmethystPrefab:
+  - RawGuidValue: fd5d9676421581841973749d8e02f794
+  - RawGuidValue: 2a054b5ec1e81764999a93735639d3b3
+  - RawGuidValue: fbd9d57bef5acba498070f685362f680
+  - RawGuidValue: 6af26d1f192a20447b44e7fd5026dad6
+  - RawGuidValue: 618ec61c6a3dbe84589065b2a84f9dc1
   _bloodEffect: {fileID: 1073206623}
   healthSlider: {fileID: 8818505191316360222}
   bossSkillTime: 5
-  _MaxHealth: 500
+  _MaxHealth: 1
   _CurrentHealth: 0
   detectionRadius: 40
   playerLayerMask:

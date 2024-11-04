@@ -9,13 +9,19 @@ namespace multiplayerMode
 {
     public class StartGameSceneUI : MonoBehaviour
     {
+        public TextMeshProUGUI AvatarNameText;
         public GameObject[] componentCanvas;
         public GameObject[] menuComponents;
         public GameObject MenuPanel;
         public TMP_InputField PlayerNameInput;
         public Button _button;
 
+        private void Start()
+        {
+            AvatarNameText.text = PlayFabManager.Instance.UserData.DisplayName;
 
+           // JoinBossRoom();
+        }
         public void NextTraningSettingRoomScene()
         {
             SceneManager.LoadScene("TraningSettingRoom");
@@ -31,7 +37,7 @@ namespace multiplayerMode
             // Kiểm tra nếu PlayerNameInput không bị null
             if (PlayerNameInput != null)
             {
-                GameManager.Instance.PlayerData.playerName = PlayerNameInput.text;
+                GameManager.Instance.PlayerData.playerName = PlayFabManager.Instance.UserData.DisplayName;
             }
             else
             {
@@ -54,20 +60,19 @@ namespace multiplayerMode
 
         public void JoinRoom()
         {
-
             SetPlayerName();
             NetworkManager.Instance.JoinSession("a");
         }
-       /* private void Start()
+       /* private void OnEnable()
         {
-            if (PlayFabManager.Instance.isPC)
+           *//* if (PlayFabManager.Instance.isPC)
             {
                 PlayerNameInput.text = "PC";
             }
             else
             {
                 PlayerNameInput.text = "MetaQuestVR";
-            }
+            }*//*
             JoinBossRoom();
         }*/
         public void JoinBossRoom()
@@ -79,28 +84,13 @@ namespace multiplayerMode
         {
             if (OVRInput.GetDown(OVRInput.Button.Start, OVRInput.Controller.LTouch))
             {
-                MenuPanel.SetActive(!MenuPanel.activeSelf);
-                if(MenuPanel.activeSelf == true)
+                foreach (GameObject MC in menuComponents)
                 {
-                    foreach (GameObject CC in componentCanvas)
-                    {
-                        CC.SetActive(false);
-                    }
-                    foreach (GameObject MC in menuComponents)
-                    {
-                        MC.SetActive(false);
-                    }
+                    MC.SetActive(false);
                 }
-                else
-                {                 
-                    foreach (GameObject MC in menuComponents)
-                    {
-                        MC.SetActive(false);
-                    }
-                    foreach (GameObject CC in componentCanvas)
-                    {
-                        CC.SetActive(true);
-                    }
+                foreach (GameObject CC in componentCanvas)
+                {
+                    CC.SetActive(true);
                 }
             }
         }

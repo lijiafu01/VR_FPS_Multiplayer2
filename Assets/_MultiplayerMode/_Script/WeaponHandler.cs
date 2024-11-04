@@ -31,20 +31,25 @@ namespace multiplayerMode
         {
                 if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
-                    PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
-
-                    PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
-                    if (myPlayerTeamSetup.teamID != null)
+                    if(NetworkManager.Instance.IsTeamMode)
                     {
-                        if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                        PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
+
+                        PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
+                        if (myPlayerTeamSetup.teamID != null)
                         {
-                            return;
+                            if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                            {
+                                return;
+                            }
                         }
                     }
+                    
+                   
 
                     string playerName = GameManager.Instance.PlayerData.playerName;
-                // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
+                    // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
+                    hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
             }
             if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
             {
@@ -70,19 +75,23 @@ namespace multiplayerMode
 
             if (hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
-                    PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
-
-                    PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
-                    if (myPlayerTeamSetup.teamID != null)
+                    if (NetworkManager.Instance.IsTeamMode)
                     {
-                        if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                        PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
+
+                        PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
+                        if (myPlayerTeamSetup.teamID != null)
                         {
-                            return;
+                            if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                            {
+                                return;
+                            }
                         }
                     }
+
                     string playerName = GameManager.Instance.PlayerData.playerName;
-                // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
-                hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
+                    // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
+                    hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
             }
                 if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
                 {

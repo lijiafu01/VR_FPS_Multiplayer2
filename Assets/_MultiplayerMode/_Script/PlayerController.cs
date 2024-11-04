@@ -76,7 +76,6 @@ namespace multiplayerMode
 
             }
            // Invoke("OnQuitButtonClick", 5f);
-
         }
         void SetupPlayerNameColor()
         {
@@ -663,6 +662,13 @@ namespace multiplayerMode
         }
         private void Dead()
         {
+            if (SceneManager.GetActiveScene().name == "Boss1")
+            {
+                Vector3 pos = new Vector3(0, 5, 0);
+
+                hardwareRig.gameObject.transform.position = pos;
+                return;
+            }
             Vector3 pos1 = new Vector3(0, 5, 0);
             Vector3 pos2 = new Vector3(29, 5, 50);
             Vector3 pos3 = new Vector3(58, 5, -10);

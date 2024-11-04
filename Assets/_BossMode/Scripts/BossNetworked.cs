@@ -3,8 +3,12 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using multiplayerMode;
+using System.Collections;
 public class BossNetworked : NetworkBehaviour
 {
+    [SerializeField]
+    private NetworkPrefabRef[] AmethystPrefab;
+
     // Thêm biến cho hiệu ứng máu
     [SerializeField]
     private ParticleSystem _bloodEffect;
@@ -141,30 +145,36 @@ public class BossNetworked : NetworkBehaviour
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_Die(string shooterName,string teamID)
     {
-        Debug.Log("testboss1024_ nhan thuong 1" + teamID);
-
-        if (teamID == NetworkManager.Instance.TeamID)
+        NetworkManager.Instance.DestroyBoss_MidFuntion(shooterName,teamID);
+        if (Object.HasStateAuthority)
         {
-            Debug.Log("testboss1024_ nhan thuong 2"+teamID);
-            NetworkManager.Instance.PlayerController.KillBossReward();
-        }
-        else
-        {
-            NetworkManager.Instance.PlayerController.ExitBoss();
+            SpawnRandomAmethysts();
         }
         animator.SetTrigger("Death");
-        Invoke("DestroyBoss", 1f);
-        // Chỉ State Authority mới thực hiện Despawn
-        
-
-    }
-    void DestroyBoss()
-    {
         if (Object.HasStateAuthority)
         {
             Runner.Despawn(Object);
         }
+            
+            
     }
+    private void SpawnRandomAmethysts()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            // Chọn ngẫu nhiên một prefab từ AmethystPrefab
+            int randomIndex = Random.Range(0, AmethystPrefab.Length);
+            NetworkPrefabRef selectedPrefab = AmethystPrefab[randomIndex];
+
+            // Tạo vị trí ngẫu nhiên trong phạm vi x,z = [-5, 5] và y = 0
+            Vector3 randomPosition = new Vector3(Random.Range(-3f, 3f), -2.35f, Random.Range(-5f, 5f));
+
+            // Spawn đối tượng tại vị trí ngẫu nhiên với hướng mặc định
+            Runner.Spawn(selectedPrefab, randomPosition, Quaternion.identity);
+        }
+    }
+   
+    
     void Awake()
     {
         Debug.Log("boss7_1");

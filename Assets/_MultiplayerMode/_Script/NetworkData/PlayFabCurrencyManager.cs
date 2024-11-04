@@ -143,7 +143,7 @@ public class PlayFabCurrencyManager : MonoBehaviour
     }
 
     // Hàm để thêm tiền tệ
-    private void AddCurrency(string currencyCode, int amount)
+    public void AddCurrency(string currencyCode, int amount)
     {
         Debug.Log($"dev3_AddCurrency called, Currency: {currencyCode}, Amount: {amount}");
 

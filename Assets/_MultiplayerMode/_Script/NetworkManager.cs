@@ -11,6 +11,7 @@ namespace multiplayerMode
 {
     public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
+        public bool IsTeamMode = false;
         public string TeamID = null;
         private List<SessionInfo> _sessionList = new List<SessionInfo>();
         public NetworkObject NetworkPlayerObject;
@@ -85,14 +86,17 @@ namespace multiplayerMode
         }
         public async void JoinSession(string roomCode)
         {
+            IsTeamMode = false;
            // GameManager.Instance.PlayerData.playerName = GameManager.Instance.PlayerNameInput.text; // Tạo một PlayerData mới cho người chơi
             // Thực hiện tương tự như CreateSession, nhưng dành cho người chơi tham gia vào một phiên đã có
+
             CreateRunner();
             await LoadScene();
             await Connect(roomCode);
         }
         public async void JoinBossSession(string roomCode)
         {
+            IsTeamMode = true;
            // GameManager.Instance.PlayerData.playerName = GameManager.Instance.PlayerNameInput.text; // Tạo một PlayerData mới cho người chơi
             // Thực hiện tương tự như CreateSession, nhưng dành cho người chơi tham gia vào một phiên đã có
             CreateRunner();
@@ -428,6 +432,26 @@ namespace multiplayerMode
                 GameManager.Instance.PlayerData = new PlayerData();
             }
             GameManager.Instance.PlayerData.playerName = PlayFabManager.Instance.UserData.DisplayName;
+        }
+
+        public void DestroyBoss_MidFuntion(string shooterName, string teamID)
+        {
+            StartCoroutine(DestroyBoss(shooterName, teamID));
+        }
+        IEnumerator DestroyBoss(string shooterName, string teamID)
+        {
+            yield return new WaitForSeconds(10f);
+            if (teamID == TeamID)
+            {
+                Debug.Log("testboss1024_ nhan thuong 2" + teamID);
+                PlayerController.KillBossReward();
+            }
+            else
+            {
+                PlayerController.ExitBoss();
+            }
+          
+
         }
     }
 }

@@ -19,6 +19,7 @@ TagManager:
   - LeftHand
   - evr
   - deadLine
+  - Amethyst
   layers:
   - Default
   - TransparentFX

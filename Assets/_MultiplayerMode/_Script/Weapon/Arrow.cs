@@ -94,16 +94,19 @@ namespace multiplayerMode
             // Gây sát thương cho người chơi
             if (Object.HasStateAuthority && hit.GameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
-                /*PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
-
-                PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
-                if (myPlayerTeamSetup.teamID != null)
+                if (NetworkManager.Instance.IsTeamMode)
                 {
-                    if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                    PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
+
+                    PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
+                    if (myPlayerTeamSetup.teamID != null)
                     {
-                        return;
+                        if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                        {
+                            return;
+                        }
                     }
-                }*/
+                }
 
                 string playerName = GameManager.Instance.PlayerData.playerName;
                 hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
@@ -158,27 +161,7 @@ namespace multiplayerMode
             }
         }
         
-      /*  private void OnCollisionEnter(Collision collision)
-        {
-            // Kiểm tra va chạm với tường, mặt đất, và mục tiêu
-            if (collision.collider.CompareTag("target") || collision.collider.CompareTag("wall") || collision.collider.CompareTag("Ground") || collision.collider.CompareTag("Boss"))
-            {
-                // Đảm bảo mũi tên không tiếp tục chịu ảnh hưởng vật lý sau va chạm
-                rb.isKinematic = true;
-
-                Vector3 contactPoint = collision.contacts[0].point;
-                Vector3 contactNormal = collision.contacts[0].normal;
-
-                // Đặt vị trí mũi tên tại điểm va chạm và điều chỉnh độ sâu
-                transform.position = contactPoint - lastVelocity.normalized * penetrationDepth;
-
-                // Căn chỉnh hướng của mũi tên theo vận tốc trước va chạm
-                transform.forward = lastVelocity.normalized;
-
-                // Đặt mũi tên làm con của mục tiêu để đảm bảo nó dính vào đối tượng va chạm
-                transform.SetParent(collision.transform);
-            }
-        }*/
+     
 
         private void OnTriggerExit(Collider other)
         {
