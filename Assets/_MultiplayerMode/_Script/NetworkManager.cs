@@ -105,6 +105,16 @@ namespace multiplayerMode
             await LoadSBosscene();
             await ConnectBoss(roomCode);
         }
+        public async void JoinBoss2Session(string roomCode)
+        {
+            IsTeamMode = true;
+            BossName = "Boss2";
+            // GameManager.Instance.PlayerData.playerName = GameManager.Instance.PlayerNameInput.text; // Tạo một PlayerData mới cho người chơi
+            // Thực hiện tương tự như CreateSession, nhưng dành cho người chơi tham gia vào một phiên đã có
+            CreateRunner();
+            await LoadSBoss2scene();
+            await ConnectBoss2(roomCode);
+        }
         public void CreateRunner()
         {
             // Kiểm tra nếu Runner đã tồn tại
@@ -141,6 +151,16 @@ namespace multiplayerMode
                 await Task.Yield();
             }
         }
+        public async Task LoadSBoss2scene()
+        {
+            // Tải scene không đồng bộ, chờ đến khi hoàn tất
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(4);
+
+            while (!asyncLoad.isDone)
+            {
+                await Task.Yield();
+            }
+        }
 
         private async Task Connect(string SessionName)
         {
@@ -166,7 +186,18 @@ namespace multiplayerMode
             };
             await Runner.StartGame(args);
         }
-
+        private async Task ConnectBoss2(string SessionName)
+        {
+            // Cấu hình và bắt đầu trò chơi với các tham số cần thiết
+            var args = new StartGameArgs()
+            {
+                GameMode = GameMode.Shared, // Chế độ game chia sẻ
+                SessionName = SessionName,  // Tên phiên
+                SceneManager = GetComponent<NetworkSceneManagerDefault>(), // Quản lý scene mạng
+                Scene = 4 // Scene đầu tiên (có thể là scene chính)
+            };
+            await Runner.StartGame(args);
+        }
         #region INetworkRunnerCallbacks
 
         // Trong NetworkManager.cs
