@@ -20,6 +20,7 @@ TagManager:
   - evr
   - deadLine
   - Amethyst
+  - Ruby
   layers:
   - Default
   - TransparentFX

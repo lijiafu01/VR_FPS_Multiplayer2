@@ -11,6 +11,7 @@ namespace multiplayerMode
 {
     public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
+        public string BossName = null;
         public bool IsTeamMode = false;
         public string TeamID = null;
         private List<SessionInfo> _sessionList = new List<SessionInfo>();
@@ -97,6 +98,7 @@ namespace multiplayerMode
         public async void JoinBossSession(string roomCode)
         {
             IsTeamMode = true;
+            BossName = "Boss1";
            // GameManager.Instance.PlayerData.playerName = GameManager.Instance.PlayerNameInput.text; // Tạo một PlayerData mới cho người chơi
             // Thực hiện tương tự như CreateSession, nhưng dành cho người chơi tham gia vào một phiên đã có
             CreateRunner();

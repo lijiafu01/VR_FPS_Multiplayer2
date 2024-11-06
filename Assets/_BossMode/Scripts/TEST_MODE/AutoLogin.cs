@@ -1,14 +1,17 @@
 ﻿using multiplayerMode;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class AutoLogin : MonoBehaviour
 {
+    
     public Login login;
     private void Start()
     {
-        if (PlayFabManager.Instance.isPC)
+       
+        if (Application.platform == RuntimePlatform.WindowsEditor)
         {
             LoginPC();
         }
@@ -19,17 +22,16 @@ public class AutoLogin : MonoBehaviour
     }
     public void LoginPC()
     {
-        PlayFabManager.Instance.isPC = true;
-        login.usernameInput.text = "tony1@gmail.com";
+        login.usernameInput.text = "tony2@gmail.com";
         login.passwordInput.text = "aaaaaa";
         login.LoginBtn();
     }
     public void LoginQuest()
     {
-        PlayFabManager.Instance.isPC = false;
-
-        login.usernameInput.text = "jack1@gmail.com";
+        login.usernameInput.text = "jack2@gmail.com";
         login.passwordInput.text = "aaaaaa";
         login.LoginBtn();
     }
+
+
 }

@@ -11,6 +11,10 @@ namespace multiplayerMode
 {
     public class PlayerController : NetworkBehaviour
     {
+        [Networked]
+        public string BossName { get; set; }
+        [Networked]
+        public int RubyNum {  get; set; }
         [SerializeField]
         private Transform _playerModels;
         [Networked] public string TeamID { get; set; }
@@ -183,7 +187,6 @@ namespace multiplayerMode
             {
                 // Nếu chưa tồn tại, thêm _playerRef và tên người chơi vào từ điển
                 PlayerNames.Add(_playerRef, GameManager.Instance.PlayerData.playerName);
-
             }
             if (PlayerNames.ContainsKey(_playerRef))
             {
@@ -253,31 +256,43 @@ namespace multiplayerMode
                 //-------------------------------------------------------
             }
 
-            //setup player Equipment
-            // Invoke("SetUpPlayerEquipment", 0.3f);
-            //SetUpPlayerEquipment();
+         
             if (Object.HasInputAuthority)
             {
                 _playerModelName = UserEquipmentData.Instance.CurrentModelId;
-                Debug.Log("dev20_" + _playerModelName);
                 SetUpPlayerEquipment_RPC(_playerModelName);
-                //Debug.Log("dev20_" + _playerModelName);
+                
+                if(NetworkManager.Instance.BossName != null)
+                {
+                    BossName = NetworkManager.Instance.BossName;
+                    RubyNum = 0;
+                }
+                else
+                {
+                    BossName = null;
+                }
+
             }
             else
             {
                 SetUpPlayerEquipmentOther(_playerModelName);
             }
-            //_playerModelName = UserEquipmentData.Instance.CurrentModelId;
-
-           
             
-            /*if(Object.HasInputAuthority)
-            {
-                SetUpPlayerEquipmentAll_RPC(_playerModelName);
-            }*/
+          
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.clip = _fireSound;
         }
+        /*private void OnTriggerEnter(Collider other)
+        {
+            if(Object.HasStateAuthority)
+            {
+                if(other.gameObject.tag == "Ruby")
+                {
+                    RubyNum = RubyNum + 1;
+                    Debug.Log("Pickup_ " + playerName +"da nhat duoc ruby");
+                }
+            }
+        }*/
         private void SetUpPlayerEquipmentOther(string playerModelName)
         {
             Transform modelObject = _playerModels.Find(playerModelName);
@@ -298,27 +313,7 @@ namespace multiplayerMode
                 Debug.Log("dev20_ Không tìm thấy đối tượng con 'mage'.");
             }
         }
-        /*[Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void SetUpPlayerEquipmentAll_RPC(string playerModelName)
-        {
-            Transform modelObject = _playerModels.Find(playerModelName);
-
-
-            if (modelObject != null)
-            {
-                foreach (Transform child in _playerModels)
-                {
-                    if (child.name != playerModelName)
-                    {
-                        child.gameObject.SetActive(false);
-                    }
-                }
-            }
-            else
-            {
-                Debug.Log("dev20_ Không tìm thấy đối tượng con 'mage'.");
-            }
-        }*/
+       
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         private void SetUpPlayerEquipment_RPC(string playerModelName)
         {
@@ -350,31 +345,7 @@ namespace multiplayerMode
             
             
         }
-        /*void SetUpPlayerEquipment()
-        {
-
-            // Tìm và tải prefab từ thư mục Resources/ModelPrefabs
-            GameObject modelPrefab = Resources.Load<GameObject>($"ModelPrefabs/{_playerModelName}");
-
-            // Kiểm tra xem có tìm thấy prefab không
-            if (modelPrefab != null)
-            {
-                // Tạo một object mới từ prefab
-                GameObject modelInstance = Instantiate(modelPrefab, _modelParentObject);
-
-                // Đặt vị trí, quay và tỉ lệ của object mới theo _modelParentObject
-                modelInstance.transform.localPosition = Vector3.zero;
-                modelInstance.transform.localRotation = Quaternion.identity;
-                modelInstance.transform.localScale = Vector3.one;
-
-                // Nếu cần, bạn có thể gắn thêm các hành vi hoặc thiết lập khác cho modelInstance tại đây
-            }
-            else
-            {
-                // Nếu không tìm thấy prefab, in ra thông báo lỗi
-                Debug.LogError($"Model prefab with name {_playerModelName} not found in Resources/ModelPrefabs!");
-            }
-        }*/
+        
         private void Update()
         {
             if (Object.HasStateAuthority)

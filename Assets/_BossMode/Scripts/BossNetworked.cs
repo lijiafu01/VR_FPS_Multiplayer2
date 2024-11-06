@@ -151,12 +151,16 @@ public class BossNetworked : NetworkBehaviour
             SpawnRandomAmethysts();
         }
         animator.SetTrigger("Death");
+
+        Invoke("DestroyBoss", 1f);
+            
+    }
+    void DestroyBoss()
+    {
         if (Object.HasStateAuthority)
         {
             Runner.Despawn(Object);
         }
-            
-            
     }
     private void SpawnRandomAmethysts()
     {
