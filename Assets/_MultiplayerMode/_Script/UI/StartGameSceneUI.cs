@@ -20,7 +20,7 @@ namespace multiplayerMode
         {
             AvatarNameText.text = PlayFabManager.Instance.UserData.DisplayName;
 
-           // JoinBossRoom();
+            //JoinBossRoom();
         }
         public void NextTraningSettingRoomScene()
         {

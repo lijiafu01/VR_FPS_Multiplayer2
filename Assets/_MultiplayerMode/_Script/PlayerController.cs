@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using multiplayerMode;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using static UnityEditor.Progress;
 namespace multiplayerMode
 {
     public class PlayerController : NetworkBehaviour
@@ -29,7 +30,7 @@ namespace multiplayerMode
         //UI
         [SerializeField] private GameObject rewardCanvas;
         [SerializeField] private TMP_Text quitTimeCountText;
-        [SerializeField] private TMP_Text _rankCointText;
+        [SerializeField] private RewardPanel _rewardPanel;
 
         // Biến mạng để lưu trữ vũ khí hiện tại
         [Networked(OnChanged = nameof(OnWeaponChanged))]
@@ -282,17 +283,7 @@ namespace multiplayerMode
             _audioSource = gameObject.AddComponent<AudioSource>();
             _audioSource.clip = _fireSound;
         }
-        /*private void OnTriggerEnter(Collider other)
-        {
-            if(Object.HasStateAuthority)
-            {
-                if(other.gameObject.tag == "Ruby")
-                {
-                    RubyNum = RubyNum + 1;
-                    Debug.Log("Pickup_ " + playerName +"da nhat duoc ruby");
-                }
-            }
-        }*/
+       
         private void SetUpPlayerEquipmentOther(string playerModelName)
         {
             Transform modelObject = _playerModels.Find(playerModelName);
@@ -376,16 +367,19 @@ namespace multiplayerMode
                     PlayFabManager.Instance.CurrencyManager.AddGoldCoin(playerScore, (int coinsAdded) =>
                     {
                         rewardCanvas.SetActive(true);
-                        _rankCointText.text = "+"+coinsAdded.ToString();  // Hiển thị số coin thực tế nhận được
+                       
+                        _rewardPanel.SpawnRewardItem(ItemRewardType.Coin, coinsAdded);
+                        //_rankCointText.text = "+"+coinsAdded.ToString();  // Hiển thị số coin thực tế nhận được
                     });
                 }
                 else
                 {
                     rewardCanvas.SetActive(true);
-                    _rankCointText.text = "+0";
+                    _rewardPanel.SpawnRewardItem(ItemRewardType.Coin, 0);
+
                 }
 
-                
+
                 StartCoroutine(QuitCountdown());
             }
             else
@@ -477,13 +471,24 @@ namespace multiplayerMode
             PlayFabManager.Instance.CurrencyManager.AddGoldCoin(15, (int coinsAdded) =>
             {
                 rewardCanvas.SetActive(true);
-                _rankCointText.text = "+" + coinsAdded.ToString();  // Hiển thị số coin thực tế nhận được
+                _rewardPanel.SpawnRewardItem(ItemRewardType.Coin, coinsAdded);
+                _rewardPanel.SpawnRewardItem(ItemRewardType.Amethyst, RubyNum);
+                Item newItem = new Item("Amethyst",ItemType.Ruby, RubyNum);
+                UserEquipmentData.Instance.AddItem(newItem);
             });
+
 
             StartCoroutine(QuitCountdown());
         }
         public void ExitBoss()
         {
+            if(RubyNum > 0)
+            {
+                rewardCanvas.SetActive(true);
+                _rewardPanel.SpawnRewardItem(ItemRewardType.Amethyst, RubyNum);
+                Item newItem = new Item("Amethyst", ItemType.Ruby, RubyNum);
+                UserEquipmentData.Instance.AddItem(newItem);
+            }
             StartCoroutine(QuitCountdown());
 
         }

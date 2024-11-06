@@ -81,9 +81,7 @@ public class ShopManager : MonoBehaviour
                 BuySuccessTab.gameObject.SetActive(true);
 
                 Item newItem = new Item(item.itemName, item.type,1);
-                /*newItem.ItemId = item.itemName;
-                newItem.Type = item.type;
-                newItem.Quantity = 1;*/
+                
 
                 UserEquipmentData.Instance.AddItem(newItem);
                 Debug.Log($"dev3_Đã trừ thành công {amountSubtracted} coin.");
