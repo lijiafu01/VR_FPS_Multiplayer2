@@ -55,7 +55,6 @@ public class NewBossSkill : NetworkBehaviour, IBossSkill
 
     public void ActivateSkill(Transform target)
     {
-        Debug.Log("boss2_ check1");
 
         // Kiểm tra quyền điều khiển và trạng thái kỹ năng
         if (Object.HasStateAuthority && !IsOnCooldown && !IsCasting)
@@ -67,7 +66,6 @@ public class NewBossSkill : NetworkBehaviour, IBossSkill
 
             // Gọi sự kiện bắt đầu kỹ năng
             OnSkillStart?.Invoke();
-            Debug.Log("boss2_ check");
             Runner.Spawn(_groundSmashPrefabs, skill1ActionPoint.position, transform.parent.rotation);
 
         }

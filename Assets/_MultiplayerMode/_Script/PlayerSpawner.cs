@@ -41,7 +41,7 @@ namespace multiplayerMode
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             Debug.Log("dev6_check join a1");
-            if (SceneManager.GetActiveScene().name == "Boss1" || SceneManager.GetActiveScene().name == "MainGame")
+            if (SceneManager.GetActiveScene().name == "Boss1" || SceneManager.GetActiveScene().name == "MainGame" || SceneManager.GetActiveScene().name == "Boss2")
             {
                 //Debug.Log("dev6_1OnPlayerJoined so player: " + _spawnedUsers.Count);
 
