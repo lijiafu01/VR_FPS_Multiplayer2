@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using multiplayerMode;
 using System.Collections;
+using System.ComponentModel;
 public class BossNetworked : NetworkBehaviour
 {
     [SerializeField]
@@ -75,7 +76,7 @@ public class BossNetworked : NetworkBehaviour
         }
     }
 
-
+  
     public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName, string teamID)
     {
         // Gửi RPC tới máy có State Authority
@@ -96,7 +97,6 @@ public class BossNetworked : NetworkBehaviour
             if (CurrentHealth <= 0)
             {
                 Debug.Log("bossreward_ 0 "+shooterName);
-
                 CurrentHealth = 0;
                 RPC_Die(shooterName,teamID);
                 isBossDie = true;
@@ -128,20 +128,6 @@ public class BossNetworked : NetworkBehaviour
             _bloodEffect.Stop();
         }
     }
-    /* public void TakeDamage(int damage)
-     {
-         Debug.Log("boss1takedamage_boss bi ban 111");
-         if (Object.HasStateAuthority)
-         {
-             Debug.Log("boss1takedamage_boss bi ban 222");
-             CurrentHealth -= damage;
-             if (CurrentHealth <= 0)
-             {
-                 CurrentHealth = 0;
-                 Die();
-             }
-         }
-     }*/
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_Die(string shooterName,string teamID)
     {
@@ -149,12 +135,25 @@ public class BossNetworked : NetworkBehaviour
         if (Object.HasStateAuthority)
         {
             SpawnRandomAmethysts();
+            Invoke("DestroyBoss", 5f);
         }
+        DeleteAllChildrenExceptBody(gameObject.transform);
         animator.SetTrigger("Death");
 
-        Invoke("DestroyBoss", 1f);
+       
             
     }
+    void DeleteAllChildrenExceptBody(Transform parent)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name != "Body")
+            {
+                Destroy(child.gameObject); // Xóa các đối tượng con trừ "Body"
+            }
+        }
+    }
+
     void DestroyBoss()
     {
         if (Object.HasStateAuthority)
@@ -207,7 +206,7 @@ public class BossNetworked : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (Object.HasStateAuthority)
+        if (Object.HasStateAuthority && !isBossDie)
         {
             // Cập nhật các kỹ năng
             foreach (var skill in bossSkills)

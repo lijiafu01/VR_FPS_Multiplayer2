@@ -218,7 +218,7 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
             isDie = true;
             Runner.Spawn(_HitTreeVFX, hitPosition, Quaternion.LookRotation(hitNormal));
             SetAnimationDie_RPC();
-            Invoke("DestroyObject", 2);
+            Invoke("DestroyObject", 1.2f);
             
         }
     }
