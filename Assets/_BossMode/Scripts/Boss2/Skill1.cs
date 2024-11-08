@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NewBossSkill : NetworkBehaviour, IBossSkill
@@ -6,7 +7,7 @@ public class NewBossSkill : NetworkBehaviour, IBossSkill
     [SerializeField] private Transform skill1ActionPoint;
     [SerializeField] private NetworkObject _groundSmashPrefabs;
     // Tên của kỹ năng
-    public string SkillName => "New Skill";
+    public string SkillName => "Skill1";
 
     // Thời gian hồi chiêu (cooldown) của kỹ năng
     [SerializeField]
@@ -52,7 +53,6 @@ public class NewBossSkill : NetworkBehaviour, IBossSkill
 
         // Khởi tạo các biến khác (nếu cần)
     }
-
     public void ActivateSkill(Transform target)
     {
 
@@ -66,15 +66,25 @@ public class NewBossSkill : NetworkBehaviour, IBossSkill
 
             // Gọi sự kiện bắt đầu kỹ năng
             OnSkillStart?.Invoke();
-            Runner.Spawn(_groundSmashPrefabs, skill1ActionPoint.position, transform.parent.rotation);
+            Invoke("SpawnVFX", 2f);
+            SetAnimator_RPC();
+        }        
 
-        }
     }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    void SetAnimator_RPC()
+    {
+        animator.SetTrigger("Skill1");
 
-  
+    }
+    void SpawnVFX()
+    {
+        Runner.Spawn(_groundSmashPrefabs, skill1ActionPoint.position, transform.parent.rotation);
+    }
 
     public void FixedUpdateSkill()
     {
+        
         if (Object.HasStateAuthority)
         {
             // Kiểm tra nếu kỹ năng đang thi triển và thời gian thi triển đã hết
@@ -82,11 +92,8 @@ public class NewBossSkill : NetworkBehaviour, IBossSkill
             {
                 // Kết thúc kỹ năng
                 isCastingNetworked = false;
-
                 // Gọi sự kiện kết thúc kỹ năng
-                OnSkillEnd?.Invoke();
-
-                
+                OnSkillEnd?.Invoke();              
             }
 
             // Thực hiện logic của kỹ năng trong quá trình thi triển (nếu cần)
@@ -96,6 +103,4 @@ public class NewBossSkill : NetworkBehaviour, IBossSkill
             }
         }
     }
-
-   
 }

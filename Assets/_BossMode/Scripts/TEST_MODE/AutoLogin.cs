@@ -8,10 +8,11 @@ public class AutoLogin : MonoBehaviour
 {
     
     public Login login;
+    bool isPC = Application.platform == RuntimePlatform.WindowsEditor;
     private void Start()
     {
-       
-        if (Application.platform == RuntimePlatform.WindowsEditor)
+      
+        if (isPC)
         {
             LoginPC();
         }

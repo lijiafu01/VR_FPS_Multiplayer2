@@ -43,8 +43,7 @@ public class SmashVFXNetworked : NetworkBehaviour
     private List<string> playerNames = new List<string>();
     private void OnTriggerEnter(Collider other)
     {
-
-
+        if(Object == null) { return; }
         if (Object.HasStateAuthority)
         {
             if (other.TryGetComponent<PlayerController>(out var health))
@@ -75,22 +74,5 @@ public class SmashVFXNetworked : NetworkBehaviour
             }
         }
     }
-    /* void ApplyDamage()
-     {
-         Collider[] hits = Physics.OverlapSphere(transform.position, damageRadius);
-
-         foreach (var hit in hits)
-         {
-             // Kiểm tra nếu đối tượng có thể nhận sát thương
-             if (hit.CompareTag("Player"))
-             {
-                 var health = hit.GetComponent<PlayerController>();
-                 if (health != null)
-                 {
-                     health.TakeDamage_Boss(damageAmount);
-                     return;
-                 }
-             }
-         }
-     }*/
+    
 }

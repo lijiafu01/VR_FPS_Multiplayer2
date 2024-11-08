@@ -12734,7 +12734,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d2890e7a223cee4b9f5a1468bd768d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPC: 1
   CurrencyManager: {fileID: 814170126}
   UserData: {fileID: 814170129}
 --- !u!4 &814170128

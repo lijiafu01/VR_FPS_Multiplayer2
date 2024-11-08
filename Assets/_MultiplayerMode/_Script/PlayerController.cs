@@ -7,7 +7,6 @@ using UnityEngine.UI;
 using multiplayerMode;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using static UnityEditor.Progress;
 namespace multiplayerMode
 {
     public class PlayerController : NetworkBehaviour
