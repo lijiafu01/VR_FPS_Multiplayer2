@@ -41,20 +41,17 @@ public class SpikeNetworked : NetworkBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (Object == null) { return; }
-        if (Object.HasStateAuthority)
+        if (other.TryGetComponent<PlayerController>(out var health))
         {
-            if (other.TryGetComponent<PlayerController>(out var health))
-            {
-                Debug.Log("boss2_ st");
+            Debug.Log("boss2_ st");
 
-                if (health != null)
+            if (health != null)
+            {
+                if (!playerNames.Contains(health.playerName))
                 {
-                    if (!playerNames.Contains(health.playerName))
-                    {
-                        Debug.Log("boss2_ gây sát thương cho " + health.playerName);
-                        playerNames.Add(health.playerName);
-                        health.TakeDamage_Boss(damageAmount);
-                    }
+                    Debug.Log("boss2_ gây sát thương cho " + health.playerName);
+                    playerNames.Add(health.playerName);
+                    health.TakeDamage_Boss(damageAmount);
                 }
             }
         }

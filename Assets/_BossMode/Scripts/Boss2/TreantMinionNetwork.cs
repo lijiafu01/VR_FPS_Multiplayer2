@@ -3,6 +3,7 @@ using multiplayerMode;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Fusion.NetworkCharacterController;
 
 public class TreantMinionNetwork : NetworkBehaviour, IDamageable
 {
@@ -68,8 +69,6 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
                 // Hủy đối tượng trên mạng
                 Runner.Despawn(Object);
             }
-
-
             if (Object.HasStateAuthority)
             {
                 // Kiểm tra và tìm người chơi mục tiêu nếu chưa có
@@ -101,6 +100,11 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
                         // Kích hoạt trạng thái "Tấn công" nếu chưa ở trong trạng thái tấn công
                         if (!isMoving && canAttack)
                         {
+                            if (targetPlayer != null)
+                            {
+                                Vector3 directionToTarget = (targetPlayer.position - transform.position).normalized;
+                                transform.rotation = Quaternion.LookRotation(directionToTarget);
+                            }
                             SetAnimator_RPC();
                             canAttack = false;
                             Invoke("Attacking", 2f);
@@ -131,67 +135,40 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
     
     private void OnTriggerEnter(Collider other)
     {
-        if (Object == null) { return; }
-        if (Object.HasStateAuthority)
+        /*Debug.Log("checkquyenhan_HasInputAuthority_treanMinion : " + Object.HasInputAuthority + " " );
+        Debug.Log("checkquyenhan_HasStateAuthority_treanMinion : " + Object.HasStateAuthority + " " );*/
+        if (other.TryGetComponent<PlayerController>(out var health))
         {
-            if (other.TryGetComponent<PlayerController>(out var health))
+
+            if (health != null)
             {
-                Debug.Log("boss2_ st");
-
-                if (health != null)
-                {
-                    health.TakeDamage_Boss(damageAmount);
-                    _boxCollider.enabled = false;
-                }
-            }
-            if(Object.HasInputAuthority)
-            {
-                if (other.CompareTag("LocalPlayer"))
-                {
-                    Debug.Log("boss2_va cham vat ly");
-                    Rigidbody rb = other.GetComponent<Rigidbody>();
-                    if (rb != null)
-                    {
-                        // Tính vector hướng từ boss đến người chơi
-                        Vector3 directionToPlayer = (other.transform.position - transform.position).normalized;
-
-                        // Đặt y thành 0 để chỉ có lực tác động trên trục x và z (ngang)
-                        directionToPlayer.y = 0;
-
-                        // Áp dụng lực đẩy về phía sau với ForceMode.Impulse
-
-                        rb.AddForce(directionToPlayer * forceStrength, ForceMode.Impulse);
-
-                        _boxCollider.enabled = false;
-
-                    }
-                }
+                health.TakeDamage_Boss(damageAmount);
+                _boxCollider.enabled = false;
             }
         }
-        if(!Object.HasStateAuthority)
+
+
+        if (other.CompareTag("LocalPlayer"))
         {
-            if (other.CompareTag("LocalPlayer"))
+            Debug.Log("boss2_va cham vat ly");
+            Rigidbody rb = other.GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                Debug.Log("boss2_va cham vat ly");
-                Rigidbody rb = other.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    // Tính vector hướng từ boss đến người chơi
-                    Vector3 directionToPlayer = (other.transform.position - transform.position).normalized;
+                // Tính vector hướng từ boss đến người chơi
+                Vector3 directionToPlayer = (other.transform.position - transform.position).normalized;
 
-                    // Đặt y thành 0 để chỉ có lực tác động trên trục x và z (ngang)
-                    directionToPlayer.y = 0;
+                // Đặt y thành 0 để chỉ có lực tác động trên trục x và z (ngang)
+                directionToPlayer.y = 0;
 
-                    // Áp dụng lực đẩy về phía sau với ForceMode.Impulse
+                // Áp dụng lực đẩy về phía sau với ForceMode.Impulse
 
-                    rb.AddForce(directionToPlayer * forceStrength, ForceMode.Impulse);
+                rb.AddForce(directionToPlayer * forceStrength, ForceMode.Impulse);
 
-                    _boxCollider.enabled = false;
+                //_boxCollider.enabled = false;
 
-                }
             }
         }
-        
+
     }
 
     Transform FindRandomPlayer()
@@ -210,17 +187,23 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
         // Nếu không tìm thấy đối tượng nào, trả về null
         return null;
     }
-
-    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName, string teamID)
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    void RPC_TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName, string teamID)
     {
-        if(Object.HasStateAuthority && !isDie)
-        {            
+        if (Object.HasStateAuthority && !isDie)
+        {
             isDie = true;
             Runner.Spawn(_HitTreeVFX, hitPosition, Quaternion.LookRotation(hitNormal));
             SetAnimationDie_RPC();
             Invoke("DestroyObject", 1.2f);
-            
+
         }
+    }
+    public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName, string teamID)
+    {
+        // Gửi RPC tới máy có State Authority
+        RPC_TakeDamage(damage, hitPosition, hitNormal, shooterName, teamID);
+        
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void SetAnimationDie_RPC()

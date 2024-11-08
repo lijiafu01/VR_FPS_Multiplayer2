@@ -139,6 +139,7 @@ public class BossNetworked : NetworkBehaviour
         }
         DeleteAllChildrenExceptBody(gameObject.transform);
         animator.SetTrigger("Death");
+        healthSlider.gameObject.SetActive(false);
 
        
             

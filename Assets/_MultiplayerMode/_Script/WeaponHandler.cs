@@ -53,7 +53,7 @@ namespace multiplayerMode
             }
             if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
             {
-                    Debug.Log("boss1takedamage_boss "+hit.GameObject.name);
+                    Debug.Log("treantMinion_ nguoi bi ban: "+hit.GameObject.name);
                     // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
 
                     string playerName = GameManager.Instance.PlayerData.playerName;

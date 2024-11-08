@@ -512,14 +512,13 @@ namespace multiplayerMode
         }*/
         public void TakeDamage_Boss(int damage)
         {
-            Debug.Log("Bossfixbug_ 3_1_" + playerName);
+            Debug.Log("checkquyenhan_HasInputAuthority: " + Object.HasInputAuthority +" "+playerName);
+            Debug.Log("checkquyenhan_HasStateAuthority: " + Object.HasStateAuthority + " " + playerName);
+
 
             if (Object.HasStateAuthority)
             {
-                Debug.Log("Bossfixbug_ 3_" + playerName);
                 _currentHp -= damage;
-
-                Debug.Log("Bossfixbug_ 4_" + playerName + _currentHp);
 
                 if (_currentHp <= 0)
                 {
