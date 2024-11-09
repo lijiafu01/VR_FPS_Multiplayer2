@@ -19,7 +19,7 @@ namespace multiplayerMode
         private void Start()
         {
             AvatarNameText.text = PlayFabManager.Instance.UserData.DisplayName;
-            JoinBoss2Room();
+            JoinBoss3Room();
 
             ///JoinBossRoom();
         }
@@ -85,6 +85,11 @@ namespace multiplayerMode
         {
             SetPlayerName();
             NetworkManager.Instance.JoinBoss2Session("BOSS2");
+        }
+        public void JoinBoss3Room()
+        {
+            SetPlayerName();
+            NetworkManager.Instance.JoinBoss3Session("BOSS3");
         }
         private void Update()
         {

@@ -25,7 +25,25 @@ namespace multiplayerMode
         public GameObject Template;
         // Từ điển để lưu trữ tên người chơi và điểm số
         public Dictionary<string, int> _playerScores = new Dictionary<string, int>();
+        private Rigidbody rb;
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+        public void ReceiveImpact(Vector3 direction, float force)
+        {
+            // Đảm bảo đối tượng có Rigidbody trước khi nhận lực
+            if (rb == null) return;
 
+            // Đặt y của hướng về 0 nếu bạn muốn lực chỉ theo trục x và z
+            direction.y = 0;
+
+            // Tính toán vector lực theo hướng và cường độ
+            Vector3 impactForce = direction.normalized * force;
+
+            // Áp dụng lực vào Rigidbody
+            rb.AddForce(impactForce, ForceMode.Impulse);
+        }
         public int GetPlayerScore(string playerName)
         {
             // Kiểm tra xem người chơi có tồn tại trong từ điển điểm số hay không

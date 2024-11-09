@@ -682,6 +682,15 @@ namespace multiplayerMode
                 _bloodEffect.Stop();
             }
         }
+        // Hàm nhận tác động vật lý từ bên ngoài
+        public void ReceiveImpact(Vector3 direction, float force)
+        {
+            if(Object.HasStateAuthority)
+            {
+                hardwareRig.ReceiveImpact(direction, force);
+
+            }
+        }
 
     }
 }
