@@ -9,7 +9,7 @@ public class AutoLogin : MonoBehaviour
     
     public Login login;
     bool isPC = Application.platform == RuntimePlatform.WindowsEditor;
-    /*private void Start()
+    private void Start()
     {
 
         if (isPC)
@@ -20,7 +20,7 @@ public class AutoLogin : MonoBehaviour
         {
             LoginQuest();
         }
-    }*/
+    }
     public void LoginPC()
     {
         login.usernameInput.text = "tony3@gmail.com";
