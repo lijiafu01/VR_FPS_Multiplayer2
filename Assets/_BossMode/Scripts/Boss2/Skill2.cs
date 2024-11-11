@@ -2,6 +2,8 @@
 using UnityEngine;
 public class SKill2 : NetworkBehaviour, IBossSkill
 {
+    [SerializeField] private AudioSource audioSource;
+
     [SerializeField] private NetworkObject _spikeVFX;
 
     [SerializeField] private float spawnRadius;
@@ -75,7 +77,12 @@ public class SKill2 : NetworkBehaviour, IBossSkill
     void SetAnimator_RPC()
     {
         animator.SetTrigger("Skill2");
+        Invoke("PlaySound", 2.1f);
 
+    }
+    void PlaySound()
+    {
+        audioSource.Play();
     }
     void SpawnObject()
     {
@@ -94,7 +101,7 @@ public class SKill2 : NetworkBehaviour, IBossSkill
             Vector3 parentPosition = transform.position;
 
             // Thiết lập vị trí với x và z từ vòng tròn ngẫu nhiên cộng với vị trí parent, y cố định ở -3.5
-            Vector3 spawnPosition = new Vector3(parentPosition.x + randomPos.x, -3.5f, parentPosition.z + randomPos.y);
+            Vector3 spawnPosition = new Vector3(parentPosition.x + randomPos.x, -0.5f, parentPosition.z + randomPos.y);
 
 
             // Kiểm tra nếu khoảng cách từ spawnPosition tới tâm (0, 0, 0) vượt quá radius cho phép

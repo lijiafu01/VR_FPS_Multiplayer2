@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Boss3Skill1 : NetworkBehaviour, IBossSkill
 {
+    [SerializeField] private AudioSource audioSource;
+
     public GameObject OwnSword;
     [SerializeField] private Transform skill1ActionPoint;
     [SerializeField] private NetworkObject _SwordPrefab;
@@ -68,7 +70,7 @@ public class Boss3Skill1 : NetworkBehaviour, IBossSkill
             OnSkillStart?.Invoke();
             _target = target;
             SetAnimator_RPC();
-            Invoke("SpawnObject", 1f);
+            Invoke("SpawnObject", 0.1f);
 
 
         }
@@ -78,8 +80,12 @@ public class Boss3Skill1 : NetworkBehaviour, IBossSkill
     void SetAnimator_RPC()
     {
         animator.SetTrigger("Skill1");
-        Invoke("SetHideObject",0.7f);
+        PlaySound();
+    }
 
+    void PlaySound()
+    {
+        audioSource.Play();
     }
     void SetHideObject()
     {

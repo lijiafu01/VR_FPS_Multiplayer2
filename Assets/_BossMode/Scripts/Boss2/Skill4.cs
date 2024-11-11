@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Skill4 : NetworkBehaviour, IBossSkill
 {
+    [SerializeField] private AudioSource audioSource;
+
     [SerializeField] private float _BuffHPPercent = 0.3f;
     [SerializeField] BossNetworked _BossNetworked;
     [SerializeField] private Transform skill4ActionPoint;
@@ -89,7 +91,11 @@ public class Skill4 : NetworkBehaviour, IBossSkill
     void SetAnimator_RPC()
     {
         animator.SetTrigger("Skill4");
-       
+        Invoke("PlaySound", 1f);
+    }
+    void PlaySound()
+    {
+        audioSource.Play();
     }
     void SpawnVFX()
     {

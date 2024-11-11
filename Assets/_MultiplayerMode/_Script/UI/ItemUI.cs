@@ -5,7 +5,9 @@ using TMPro;
 public enum ItemRewardType
 {
     Coin,
-    Amethyst
+    Amethyst,
+    Emerald,
+    Sapphire
 }
 
 public class ItemUI : MonoBehaviour
@@ -30,6 +32,7 @@ public class ItemUI : MonoBehaviour
 
         if (foundItem != null && foundItem.sprite != null)
         {
+            Debug.Log($"item_ {itemType} soluong: {quantity}");
             itemImage.sprite = foundItem.sprite;
         }
         else

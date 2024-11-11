@@ -11,7 +11,7 @@ namespace multiplayerMode
 
         public float respawnTime = 10f;
 
-        private void OnTriggerEnter(Collider other)
+        /*private void OnTriggerEnter(Collider other)
         {
             Debug.Log("dev15_haha");
             if (IsActive && other.CompareTag("Player"))
@@ -29,7 +29,7 @@ namespace multiplayerMode
             }
 
         }
-
+*/
         private void DespawnPickup()
         {
             IsActive = false; // Cập nhật trạng thái để đồng bộ với các client khác

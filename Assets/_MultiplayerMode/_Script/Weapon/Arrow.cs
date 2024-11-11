@@ -22,9 +22,21 @@ namespace multiplayerMode
         [SerializeField] private int damage = 10; // Số sát thương mũi tên gây ra
         [SerializeField] private LayerMask hitLayer; // Lớp đối tượng có thể nhận sát thương (người chơi)
         [SerializeField] private HitOptions hitOptions = HitOptions.IncludePhysX | HitOptions.SubtickAccuracy | HitOptions.IgnoreInputAuthority;
+        void SetupAttribute()
+        {
+            if (PlayFabManager.Instance.UserData.PlayerAttributes.TryGetValue(UserEquipmentData.Instance.CurrentModelId, out AttributeData heroAttributes))
+            {
+                HeroAttributeData heroAttributeData = PlayFabManager.Instance.UserData.GetHeroAttributeData();
+                if (heroAttributeData != null)
+                {
+                    damage = heroAttributeData.Damage;
+                }
+            }
 
+        }
         void Start()
         {
+            SetupAttribute();
             rb = GetComponent<Rigidbody>(); // Get the Rigidbody component
             bowCollider = GetComponent<CapsuleCollider>();
 

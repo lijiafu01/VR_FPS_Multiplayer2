@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class Skill3 : NetworkBehaviour, IBossSkill
 {
-  
+    [SerializeField] private AudioSource audioSource;
+
     [SerializeField]
     private int spawnNum = 5;
     [SerializeField] private NetworkObject _spawnVFX;
@@ -82,7 +83,11 @@ public class Skill3 : NetworkBehaviour, IBossSkill
     void SetAnimator_RPC()
     {
         animator.SetTrigger("Skill3");
-
+        Invoke("PlaySound", 2.01f);
+    }
+    void PlaySound()
+    {
+        audioSource.Play();
     }
     void SpawnObject()
     {

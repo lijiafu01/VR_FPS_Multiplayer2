@@ -11,8 +11,8 @@ namespace multiplayerMode
 {
     public class PlayerController : NetworkBehaviour
     {
-        [Networked]
-        public string BossName { get; set; }
+        [Networked] public string BossName { get; set; }
+
         [Networked]
         public int RubyNum {  get; set; }
         [SerializeField]
@@ -71,15 +71,111 @@ namespace multiplayerMode
         public NetworkDictionary<PlayerRef, string> PlayerNames => default;
         [Networked, Capacity(20)]
         public NetworkDictionary<PlayerRef, NetworkObject> _PlayerDict => default;
+        public override void Spawned()
+        {
+            _playerRef = Object.InputAuthority;
+            if (!PlayerNames.ContainsKey(_playerRef))
+            {
+                // Nếu chưa tồn tại, thêm _playerRef và tên người chơi vào từ điển
+                PlayerNames.Add(_playerRef, GameManager.Instance.PlayerData.playerName);
+            }
+            if (PlayerNames.ContainsKey(_playerRef))
+            {
+                string playerName = PlayerNames[_playerRef];
 
+                _playerNameText.text = playerName;
+            }
+            Debug.Log("dev14_1xxxxx" + playerName);
+            if (!Object.HasStateAuthority)
+            {
+                Debug.Log("dev14_2xxxxx" + playerName);
+                hardwareRig = FindObjectOfType<HardwareRig>();
+                Dictionary<string, int> playerScores = hardwareRig._playerScores;
+                // Gọi RPC để gửi thông tin người chơi tới tất cả người chơi
+                foreach (var entry in playerScores)
+                {
+                    SendPlayerDataToAll_RPC(entry.Key, entry.Value);
+                }
+            }
+            if (Object.HasStateAuthority)
+            {
+
+                _PlayerDict.Add(_playerRef, NetworkManager.Instance.PlayerSpawnerScript._networkPlayerObject);
+
+                //----------------------------------------------------------------
+                hardwareRig = FindObjectOfType<HardwareRig>();
+                
+                //cap nhat leaderboard
+                GameManager.Instance.PlayerData.playerRef = _playerRef;
+                _playerData = GameManager.Instance.PlayerData;
+                playerName = _playerData.playerName;
+                if (NetworkManager.Instance.TeamID != null)
+                {
+                    TeamID = NetworkManager.Instance.TeamID;
+                    RPC_SendTeamID(NetworkManager.Instance.TeamID);
+                }
+                UpdateLeaderboard_RPC(_playerData.playerName);
+                //-------------------------------------------------------
+            }
+            if (Object.HasInputAuthority)
+            {
+                _playerModelName = UserEquipmentData.Instance.CurrentModelId;
+                SetUpPlayerEquipment_RPC(_playerModelName);
+
+                if (NetworkManager.Instance.BossName != null)
+                {
+                    BossName = NetworkManager.Instance.BossName;
+                    RubyNum = 0;
+                }
+                else
+                {
+                    BossName = null;
+                }
+            }
+            else
+            {
+                SetUpPlayerEquipmentOther(_playerModelName);
+            }
+            SetupAttribute();
+            _audioSource = gameObject.AddComponent<AudioSource>();
+            _audioSource.clip = _fireSound;
+        }
+        private Transform[] spawnPos;
         private void Start()
         {
-            if(NetworkManager.Instance.TeamID != null)
+            if(!NetworkManager.Instance.IsTeamMode)
+            {
+                GameObject obj = GameObject.FindWithTag("Intermediary");
+                if (obj != null)
+                {
+                    Intermediary intermediary = obj.GetComponent<Intermediary>();
+                    spawnPos = intermediary.spawnPostions;
+                }
+                else
+                {
+                    Debug.Log("No object found with the specified tag.");
+                }
+            }
+            
+            if (NetworkManager.Instance.TeamID != null)
             {
                 Invoke("SetupPlayerNameColor", 1f);
 
             }
            // Invoke("OnQuitButtonClick", 5f);
+        }
+        void SetupAttribute()
+        {
+            if(Object.HasStateAuthority)
+            {
+                HeroAttributeData heroAttributeData = PlayFabManager.Instance.UserData.GetHeroAttributeData();
+                if (heroAttributeData != null)
+                {
+                    _maxHp = heroAttributeData.HP;
+                    _currentHp = _maxHp;
+                }
+            }
+           
         }
         void SetupPlayerNameColor()
         {
@@ -89,8 +185,7 @@ namespace multiplayerMode
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             Debug.Log($"dev10_2OnPlayerLeft {_PlayerDict.Count}");
-            //Debug.Log($"dev12_1player {_playerRef.PlayerId} da bi xoa");
-            // Kiểm tra xem người chơi này có phải là người đang giữ quyền trạng thái (State Authority) không
+            
             if (Object.HasStateAuthority)
             {
                 // Xóa người chơi khỏi danh sách PlayerNames
@@ -100,12 +195,7 @@ namespace multiplayerMode
                     if (_PlayerDict.ContainsKey(_playerRef))
                     {
                         NetworkObject networkObject = _PlayerDict[_playerRef];
-                        // Sử dụng runner để despawn đối tượng
-                        //runner.Despawn(networkObject);
-                        // Xóa đối tượng khỏi dictionary
-                        // Gửi RPC để thông báo cho tất cả client xóa đối tượng này
-                        //RemovePlayerOnClients_RPC(_playerRef); 
-                        //_PlayerDict.Remove(_playerRef);
+                        
                     }
                 }
             }
@@ -119,23 +209,7 @@ namespace multiplayerMode
                 Debug.Log($"dev3_Player {playerName} has been removed from leaderboard.");
             }
         }
-        public void SwitchWeapon(Weapon weapon)
-        {
-            Debug.Log($"dev1x_{playerName} switch weapon to {weapon}");
-
-            // Gọi RPC để thông báo cho tất cả các máy khách
-            RPC_SwitchWeapon(weapon);
-        }
-
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        private void RPC_SwitchWeapon(Weapon weapon)
-        {
-            // Cập nhật vũ khí hiện tại
-            CurrentWeapon = weapon;
-
-            // Chuyển đổi vũ khí trong WeaponManager
-            _weaponManager.SwitchWeapon(weapon);
-        }
+      
 
         // Hàm callback được gọi khi CurrentWeapon thay đổi
         private static void OnWeaponChanged(Changed<PlayerController> changed)
@@ -145,8 +219,12 @@ namespace multiplayerMode
 
         private void OnWeaponChanged()
         {
-            // Cập nhật vũ khí trong WeaponManager
-            _weaponManager.SwitchWeapon(CurrentWeapon);
+            if(Object.HasStateAuthority)
+            {
+                // Cập nhật vũ khí trong WeaponManager
+                //_weaponManager.SwitchWeapon(CurrentWeapon);
+            }
+            
         }
         private static void OnHpChanged(Changed<PlayerController> changed)
         {
@@ -174,114 +252,10 @@ namespace multiplayerMode
         {
             if (Object.HasInputAuthority)
             {
-                hardwareRig.UpdateHP(hp);
+                hardwareRig.UpdateHP(hp,_maxHp);
             }
         }
-        public override void Spawned()
-        {
-           
-            _playerRef = Object.InputAuthority;
-
-
-            if (!PlayerNames.ContainsKey(_playerRef))
-            {
-                // Nếu chưa tồn tại, thêm _playerRef và tên người chơi vào từ điển
-                PlayerNames.Add(_playerRef, GameManager.Instance.PlayerData.playerName);
-            }
-            if (PlayerNames.ContainsKey(_playerRef))
-            {
-
-                string playerName = PlayerNames[_playerRef];
-
-                _playerNameText.text = playerName;
-            }
-            Debug.Log("dev14_1xxxxx" + playerName);
-
-            //Rpc_SetNickname(GameManager.Instance.PlayerData.playerName);
-           /* if (Runner.LocalPlayer == GetHostPlayerRef())
-            {
-                Debug.Log("dev14_2xxxxx" + playerName);
-                hardwareRig = FindObjectOfType<HardwareRig>();
-                Dictionary<string, int> playerScores = hardwareRig._playerScores;
-                // Gọi RPC để gửi thông tin người chơi tới tất cả người chơi
-                foreach (var entry in playerScores)
-                {
-                    SendPlayerDataToAll_RPC(entry.Key, entry.Value);
-                }
-            }*/
-            if (!Object.HasStateAuthority)
-            {
-                Debug.Log("dev14_2xxxxx" + playerName);
-                hardwareRig = FindObjectOfType<HardwareRig>();
-                Dictionary<string, int> playerScores = hardwareRig._playerScores;
-                // Gọi RPC để gửi thông tin người chơi tới tất cả người chơi
-                foreach (var entry in playerScores)
-                {
-                    SendPlayerDataToAll_RPC(entry.Key, entry.Value);
-                }
-            }
-            /*if(Object.InputAuthority.IsValid)
-            {
-                _playerModelName = UserEquipmentData.Instance.CurrentModelId;
-                Debug.Log("dev20_" + _playerModelName);
-
-            }*/
-            if (Object.HasStateAuthority)
-            {
-
-                WeaponManager weaponManager = GetComponentInParent<WeaponManager>();
-               /* if(UserEquipmentData.Instance.CurrentModelId == "Doctor")
-                {
-                    weaponManager.SwitchWeapon(Weapon.Bow);
-                }*/
-                Debug.Log("dev20_ "+ UserEquipmentData.Instance.CurrentModelId);
-
-                CurrentWeapon = weaponManager.CurrenWeapon;
-                _PlayerDict.Add(_playerRef, NetworkManager.Instance.PlayerSpawnerScript._networkPlayerObject);
-
-                //----------------------------------------------------------------
-                hardwareRig = FindObjectOfType<HardwareRig>();
-                _currentHp = _maxHp;
-                //cap nhat leaderboard
-                GameManager.Instance.PlayerData.playerRef = _playerRef;
-                _playerData = GameManager.Instance.PlayerData;
-                playerName = _playerData.playerName;
-                if (NetworkManager.Instance.TeamID != null)
-                {
-                    TeamID = NetworkManager.Instance.TeamID;
-                    RPC_SendTeamID(NetworkManager.Instance.TeamID);
-                }
-
-                UpdateLeaderboard_RPC(_playerData.playerName);
-                //-------------------------------------------------------
-            }
-
-         
-            if (Object.HasInputAuthority)
-            {
-                _playerModelName = UserEquipmentData.Instance.CurrentModelId;
-                SetUpPlayerEquipment_RPC(_playerModelName);
-                
-                if(NetworkManager.Instance.BossName != null)
-                {
-                    BossName = NetworkManager.Instance.BossName;
-                    RubyNum = 0;
-                }
-                else
-                {
-                    BossName = null;
-                }
-
-            }
-            else
-            {
-                SetUpPlayerEquipmentOther(_playerModelName);
-            }
-            
-          
-            _audioSource = gameObject.AddComponent<AudioSource>();
-            _audioSource.clip = _fireSound;
-        }
+        
        
         private void SetUpPlayerEquipmentOther(string playerModelName)
         {
@@ -471,9 +445,29 @@ namespace multiplayerMode
             {
                 rewardCanvas.SetActive(true);
                 _rewardPanel.SpawnRewardItem(ItemRewardType.Coin, coinsAdded);
-                _rewardPanel.SpawnRewardItem(ItemRewardType.Amethyst, RubyNum);
-                Item newItem = new Item("Amethyst",ItemType.Ruby, RubyNum);
-                UserEquipmentData.Instance.AddItem(newItem);
+                if (RubyNum > 0)
+                {
+                    rewardCanvas.SetActive(true);
+                    if (NetworkManager.Instance.BossName == "Boss1")
+                    {
+                        _rewardPanel.SpawnRewardItem(ItemRewardType.Amethyst, RubyNum);
+                        Item newItem = new Item("Amethyst", ItemType.Ruby, RubyNum);
+                        UserEquipmentData.Instance.AddItem(newItem);
+                    }
+                    else if (NetworkManager.Instance.BossName == "Boss2")
+                    {
+                        _rewardPanel.SpawnRewardItem(ItemRewardType.Emerald, RubyNum);
+                        Item newItem = new Item("Emerald", ItemType.Ruby, RubyNum);
+                        UserEquipmentData.Instance.AddItem(newItem);
+                    }
+                    else if (NetworkManager.Instance.BossName == "Boss3")
+                    {
+                        _rewardPanel.SpawnRewardItem(ItemRewardType.Sapphire, RubyNum);
+                        Item newItem = new Item("Sapphire", ItemType.Ruby, RubyNum);
+                        UserEquipmentData.Instance.AddItem(newItem);
+                    }
+
+                }
             });
 
 
@@ -481,12 +475,29 @@ namespace multiplayerMode
         }
         public void ExitBoss()
         {
+            
             if(RubyNum > 0)
             {
                 rewardCanvas.SetActive(true);
-                _rewardPanel.SpawnRewardItem(ItemRewardType.Amethyst, RubyNum);
-                Item newItem = new Item("Amethyst", ItemType.Ruby, RubyNum);
-                UserEquipmentData.Instance.AddItem(newItem);
+                if(NetworkManager.Instance.BossName == "Boss1")
+                {
+                    _rewardPanel.SpawnRewardItem(ItemRewardType.Amethyst, RubyNum);
+                    Item newItem = new Item("Amethyst", ItemType.Ruby, RubyNum);
+                    UserEquipmentData.Instance.AddItem(newItem);
+                }
+                else if(NetworkManager.Instance.BossName == "Boss2")
+                {
+                    _rewardPanel.SpawnRewardItem(ItemRewardType.Emerald, RubyNum);
+                    Item newItem = new Item("Emerald", ItemType.Ruby, RubyNum);
+                    UserEquipmentData.Instance.AddItem(newItem);
+                }
+                else if(NetworkManager.Instance.BossName == "Boss3")
+                {
+                    _rewardPanel.SpawnRewardItem(ItemRewardType.Sapphire, RubyNum);
+                    Item newItem = new Item("Sapphire", ItemType.Ruby, RubyNum);
+                    UserEquipmentData.Instance.AddItem(newItem);
+                }
+               
             }
             StartCoroutine(QuitCountdown());
 
@@ -512,9 +523,9 @@ namespace multiplayerMode
         }*/
         public void TakeDamage_Boss(int damage)
         {
-            Debug.Log("checkquyenhan_HasInputAuthority: " + Object.HasInputAuthority +" "+playerName);
+           /* Debug.Log("checkquyenhan_HasInputAuthority: " + Object.HasInputAuthority +" "+playerName);
             Debug.Log("checkquyenhan_HasStateAuthority: " + Object.HasStateAuthority + " " + playerName);
-
+*/
 
             if (Object.HasStateAuthority)
             {
@@ -522,9 +533,9 @@ namespace multiplayerMode
 
                 if (_currentHp <= 0)
                 {
-                    _currentHp = _maxHp;
-                    /*Dead();
-                    Invoke("SetInitHp", 1f);*/
+                    _currentHp = 0;
+                    Dead();
+                    Invoke("SetInitHp", 1f);
                 }
             }
         }
@@ -565,7 +576,11 @@ namespace multiplayerMode
         }
         private void SetInitHp()
         {
-            _currentHp = _maxHp; // Đặt lại HP khi player chết
+            if(Object.HasStateAuthority)
+            {
+                _currentHp = _maxHp; // Đặt lại HP khi player chết
+
+            }
         }
         public override void FixedUpdateNetwork()
         {
@@ -590,7 +605,10 @@ namespace multiplayerMode
                     }
                 }
             }
+
         }
+       
+
         private void FirePistolRight()
         {
             _weaponHandler.PistolRightFire();
@@ -636,21 +654,19 @@ namespace multiplayerMode
         }
         private void Dead()
         {
-            if (SceneManager.GetActiveScene().name == "Boss1")
+            if(Object.HasStateAuthority)
             {
-                Vector3 pos = new Vector3(0, 5, 0);
+                if (NetworkManager.Instance.IsTeamMode)
+                {
+                    Vector3 pos = new Vector3(0, 5, 0);
 
-                hardwareRig.gameObject.transform.position = pos;
-                return;
+                    hardwareRig.Death(pos);
+
+                    return;
+                }               
+                int randomIndex = Random.Range(0, spawnPos.Length);
+                hardwareRig.Death(spawnPos[randomIndex].position);
             }
-            Vector3 pos1 = new Vector3(0, 5, 0);
-            Vector3 pos2 = new Vector3(29, 5, 50);
-            Vector3 pos3 = new Vector3(58, 5, -10);
-
-            Vector3[] positions = new Vector3[] { pos1, pos2, pos3 };
-            int randomIndex = Random.Range(0, positions.Length);
-            hardwareRig.gameObject.transform.position = positions[randomIndex];
-
         }
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void TakeDamage_RPC(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName)

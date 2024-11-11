@@ -487,7 +487,18 @@ namespace multiplayerMode
             yield return new WaitForSeconds(1);
             Runner = null;
             SetPlayerName();
-            JoinBossSession("BOSS");
+            if(BossName == "Boss1")
+            {
+                JoinBossSession("BOSS");
+            }
+            if (BossName == "Boss2")
+            {
+                JoinBoss2Session("BOSS2");
+            }
+            if (BossName == "Boss3")
+            {
+                JoinBoss3Session("BOSS3");
+            }
         }
         public void SetPlayerName()
         {

@@ -19,6 +19,7 @@ namespace multiplayerMode
         private void Start()
         {
             AvatarNameText.text = PlayFabManager.Instance.UserData.DisplayName;
+            //JoinRoom();
             JoinBoss3Room();
 
             ///JoinBossRoom();
@@ -54,10 +55,24 @@ namespace multiplayerMode
             // Gán tên người chơi với 4 số ngẫu nhiên phía sau
             PlayerNameInput.text = "Player" + formattedNumber;
         }
-        public void PlayBoss1Btn()
+        public void CreateRoom1()
         {
+            NetworkManager.Instance.BossName = "Boss1";
             NetworkManager.Instance.StartBossLobby();
         }
+        public void CreateRoom2()
+        {
+            NetworkManager.Instance.BossName = "Boss2";
+
+            NetworkManager.Instance.StartBossLobby();
+        }
+        public void CreateRoom3()
+        {
+            NetworkManager.Instance.BossName = "Boss3";
+
+            NetworkManager.Instance.StartBossLobby();
+        }
+
 
         public void JoinRoom()
         {

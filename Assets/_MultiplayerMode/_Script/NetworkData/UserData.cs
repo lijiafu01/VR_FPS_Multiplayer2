@@ -1,6 +1,7 @@
 ﻿using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,6 +16,26 @@ namespace multiplayerMode
         public string Email { get; set; }
         public string Password { get; set; }
         public string DisplayName { get; set; }
+
+        private const int _hpIncrease = 20;
+        private const int _attackIncrease = 5;
+        private const int _moveSpeedIncrease = 2;
+
+        public HeroAttributeData GetHeroAttributeData()
+        {
+            HeroAttributeData heroAttributeData = new HeroAttributeData();
+            if (PlayerAttributes.TryGetValue(UserEquipmentData.Instance.CurrentModelId, out AttributeData heroAttributes))
+            {
+                AttributeData _currentHeroData = heroAttributes;
+
+                // Sửa lại các phép gán giá trị đúng
+                heroAttributeData.Damage = (_currentHeroData.originAttack + (_currentHeroData.Attack_Level * _attackIncrease));
+                heroAttributeData.HP = (_currentHeroData.originHP + (_currentHeroData.HP_Level * _hpIncrease));
+                heroAttributeData.Movespeed = Mathf.Round((_currentHeroData.originMoveSpeed + (_currentHeroData.MoveSpeed_Level * _moveSpeedIncrease))) / 10f;
+                return heroAttributeData;
+            }
+            return null;
+        }
 
         public void SetAccount(string email, string passW)
         {

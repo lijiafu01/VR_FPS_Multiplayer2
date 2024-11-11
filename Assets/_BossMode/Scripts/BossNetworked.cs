@@ -7,6 +7,10 @@ using System.Collections;
 using System.ComponentModel;
 public class BossNetworked : NetworkBehaviour
 {
+    public Transform spawnRubyPos;
+    private TickTimer _FakeBodylifeTimer;
+
+  
     [SerializeField]
     private NetworkPrefabRef[] AmethystPrefab;
 
@@ -43,11 +47,24 @@ public class BossNetworked : NetworkBehaviour
 
     [Networked(OnChanged = nameof(OnHealthChanged))]
     public int CurrentHealth { get; set; }
+    bool isFakeBoss = false;
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void SetBossFake_RPC()
+    {
+        isFakeBoss = true;
+        if (Object.HasStateAuthority)
+        {
+            Invoke("DestroyBoss", 10f);
+        }
+
+    }
+    
     public override void Spawned()
     {
         if (Object.HasStateAuthority)
         {
+            
             // Khởi tạo bộ đếm thời gian kỹ năng
             skillTimer = TickTimer.CreateFromSeconds(Runner, bossSkillTime);
             isRotating = false;
@@ -96,10 +113,18 @@ public class BossNetworked : NetworkBehaviour
             CurrentHealth -= damage;
             if (CurrentHealth <= 0)
             {
-                Debug.Log("bossreward_ 0 "+shooterName);
-                CurrentHealth = 0;
-                RPC_Die(shooterName,teamID);
-                isBossDie = true;
+                if (isFakeBoss)
+                {
+                    Runner.Despawn(Object);
+                    return;
+                }
+                else
+                {
+                    CurrentHealth = 0;
+                    RPC_Die(shooterName, teamID);
+                    isBossDie = true;
+                }
+               
             }
         }
     }
@@ -131,6 +156,7 @@ public class BossNetworked : NetworkBehaviour
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_Die(string shooterName,string teamID)
     {
+      
         NetworkManager.Instance.DestroyBoss_MidFuntion(shooterName,teamID);
         if (Object.HasStateAuthority)
         {
@@ -170,15 +196,19 @@ public class BossNetworked : NetworkBehaviour
             int randomIndex = Random.Range(0, AmethystPrefab.Length);
             NetworkPrefabRef selectedPrefab = AmethystPrefab[randomIndex];
 
-            // Tạo vị trí ngẫu nhiên trong phạm vi x,z = [-5, 5] và y = 0
-            Vector3 randomPosition = new Vector3(Random.Range(-3f, 3f), -2.35f, Random.Range(-5f, 5f));
+            // Tạo vị trí ngẫu nhiên xung quanh đối tượng hiện tại trong phạm vi x,z = [-5, 5] và y = 0
+            Vector3 randomOffset = new Vector3(Random.Range(-3f, 3f), 0, Random.Range(-5f, 5f));
+            Vector3 spawnPosition = transform.position + randomOffset;
+
+            spawnPosition.y = spawnRubyPos.position.y;
 
             // Spawn đối tượng tại vị trí ngẫu nhiên với hướng mặc định
-            Runner.Spawn(selectedPrefab, randomPosition, Quaternion.identity);
+            Runner.Spawn(selectedPrefab, spawnPosition, Quaternion.identity);
         }
     }
-   
-    
+
+
+
     void Awake()
     {
         Debug.Log("boss7_1");
@@ -207,6 +237,7 @@ public class BossNetworked : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
+       
         if (Object.HasStateAuthority && !isBossDie)
         {
             // Cập nhật các kỹ năng

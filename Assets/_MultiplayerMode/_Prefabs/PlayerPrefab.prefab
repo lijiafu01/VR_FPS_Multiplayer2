@@ -198,6 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8048aeb5ef6a6004894ded3186f76166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   rightHand: {fileID: 2407538687800826564}
   leftHand: {fileID: 3116965028751825055}
   CurrenWeapon: 0
@@ -430,6 +431,10 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: c79b1e9a7c5e77d4b989630fcee58aaf, type: 3}
   - itemType: 1
     sprite: {fileID: 21300000, guid: 125ffcf071e898846b29216f27f2ee6a, type: 3}
+  - itemType: 2
+    sprite: {fileID: 21300000, guid: 3685f16a71012e245b5af605d981f9c5, type: 3}
+  - itemType: 3
+    sprite: {fileID: 21300000, guid: 127b9971e5f973c4586d7125bc4f26e0, type: 3}
 --- !u!1 &846467213091695541
 GameObject:
   m_ObjectHideFlags: 0
@@ -1404,6 +1409,7 @@ MonoBehaviour:
   - {fileID: 3096357846806891736}
   - {fileID: 7547475702387617892}
   - {fileID: 7465314911950937190}
+  - {fileID: 3491195057938197728}
   - {fileID: 3116965028751825055}
   - {fileID: 948176427351285390}
   - {fileID: 596741459171847849}

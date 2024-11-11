@@ -90,12 +90,17 @@ public class Boss3Sword : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("checkclientGetdamege_ 1");
         
         if (other.gameObject.TryGetComponent<PlayerController>(out var health))
         {
-            Boss3Skill1Script.OwnSword.SetActive(true);
+            Debug.Log("checkclientGetdamege_ 2");
+
+            //Boss3Skill1Script.OwnSword.SetActive(true);
             if (health != null)
             {
+                Debug.Log("checkclientGetdamege_ 3");
+
                 health.TakeDamage_Boss(damageAmount);
                 // Tính toán hướng từ BossNetworkedScript đến PlayerController
                 Vector3 impactDirection = (other.transform.position - transform.position).normalized;
@@ -106,10 +111,9 @@ public class Boss3Sword : NetworkBehaviour
                 Vector3 collisionPoint = other.ClosestPoint(transform.position);
 
                 // Giữ nguyên giá trị Y là 0
-                collisionPoint.y = 0;
+                collisionPoint.y = -1;
                 if (Object.HasStateAuthority)
                 {
-                    
 
                     // Đặt vị trí của BossNetworkedScript về điểm va chạm với Y cố định là 0
                     BossNetworkedScript.transform.position = collisionPoint;
@@ -117,9 +121,14 @@ public class Boss3Sword : NetworkBehaviour
                 // Instantiate một object tại một vị trí và xoay cụ thể
                 Vector3 SpawVFXPos = new Vector3(collisionPoint.x, -1, collisionPoint.z);
                 GameObject newObject = Instantiate(_Skill1VFX, SpawVFXPos, Quaternion.identity);
-                Destroy( newObject,1.5f );
+                Destroy(newObject, 1.5f);
                 // Hủy đối tượng sau khi xử lý
                 Runner.Despawn(Object);
+            }
+            else
+            {
+                Debug.Log("checkclientGetdamege_ helth null");
+
             }
         }
         

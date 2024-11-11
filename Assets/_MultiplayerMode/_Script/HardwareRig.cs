@@ -8,10 +8,14 @@ using System.Linq;
 using TMPro;
 using System.Xml;
 using multiplayerMode;
+using UnityEngine.UI;
 namespace multiplayerMode
 {
     public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
     {
+        [SerializeField]
+        private Slider healthSlider;
+        [SerializeField]
         private TextMeshProUGUI hpText;
         [SerializeField]
         private GameObject hpCanvas;
@@ -26,6 +30,11 @@ namespace multiplayerMode
         // Từ điển để lưu trữ tên người chơi và điểm số
         public Dictionary<string, int> _playerScores = new Dictionary<string, int>();
         private Rigidbody rb;
+        public void Death(Vector3 spawnPoint)
+        {
+            rb.velocity = Vector3.zero;
+            transform.position = spawnPoint;
+        }
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
@@ -59,9 +68,14 @@ namespace multiplayerMode
             }
         }
 
-        public void UpdateHP(int hp)
+        public void UpdateHP(int hp,int maxHP)
         {
-            string displayHP = "HP : " + hp.ToString() + " / " + "100";
+            if (healthSlider != null)
+            {
+                healthSlider.value = (float)hp / maxHP;
+            }
+
+            string displayHP = "HP : " + hp.ToString() + " / " + maxHP;
             hpText.text = displayHP;
         }
 
@@ -164,7 +178,7 @@ namespace multiplayerMode
         {
             // Đăng ký HardwareRig để nhận callback từ NetworkRunner
             NetworkManager.Instance.Runner.AddCallbacks(this);
-            hpText = hpCanvas.transform.Find("HpText").GetComponent<TextMeshProUGUI>();
+            //hpText = hpCanvas.transform.Find("HpText").GetComponent<TextMeshProUGUI>();
 
         }
 

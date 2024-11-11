@@ -21,6 +21,7 @@ TagManager:
   - deadLine
   - Amethyst
   - Ruby
+  - Intermediary
   layers:
   - Default
   - TransparentFX

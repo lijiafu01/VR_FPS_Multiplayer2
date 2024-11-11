@@ -11,7 +11,7 @@ namespace multiplayerMode
         Bow
     }
 
-    public class WeaponManager : MonoBehaviour
+    public class WeaponManager : NetworkBehaviour
     {
         public NetworkTransform rightHand;
         public NetworkTransform leftHand;
@@ -24,49 +24,159 @@ namespace multiplayerMode
         // Dictionary lưu trữ các loại vũ khí
         private Dictionary<Weapon, GameObject[]> weaponDict;
 
-        private void Start()
+        //private string weaponName;
+        [Networked(OnChanged = nameof(OnWeaponNameChanged))]
+        public string weaponName { get; set; }
+        private static void OnWeaponNameChanged(Changed<WeaponManager> changed)
         {
+            Debug.Log($"playerName: 1");
 
-            // Khởi tạo Dictionary
+            // Gọi hàm không tĩnh để xử lý logic
+            changed.Behaviour.OnWeaponNameChanged();
+        }
+        private void OnWeaponNameChanged()
+        {
+            Debug.Log($"playerName: 2");
+            if (weaponName == "Pistol")
+            {
+                SwitchWeapon(Weapon.Pistol);
+            }
+            else if (weaponName == "Bow")
+            {
+                SwitchWeapon(Weapon.Bow);
+            }
+        }
+        private void Awake()
+        {
+            Debug.Log("Awake: Initializing weaponDict");
             weaponDict = new Dictionary<Weapon, GameObject[]>();
 
             // Thêm các vũ khí vào Dictionary với key là loại vũ khí
             weaponDict.Add(Weapon.Pistol, Pistol);
             weaponDict.Add(Weapon.Bow, Bow);
+        }
 
-            // Tắt tất cả các vũ khí khi khởi đầu
-            DeactivateAllWeapons();
-
-            // Kích hoạt vũ khí hiện tại
-            ActivateWeapon(CurrenWeapon);
+        public override void Spawned()
+        {
            
+            if (weaponDict == null)
+            {
+                Debug.Log("Spawned: Initializing weaponDict");
+                weaponDict = new Dictionary<Weapon, GameObject[]>();
+                weaponDict.Add(Weapon.Pistol, Pistol);
+                weaponDict.Add(Weapon.Bow, Bow);
+            }
 
+
+            if (weaponName != "")
+            {
+                Debug.Log($"playerName: !null "+ weaponName +" ok");
+
+                if (weaponName == "Pistol")
+                {
+                    SwitchWeapon(Weapon.Pistol);
+                }
+                else if (weaponName == "Bow")
+                {
+                    SwitchWeapon(Weapon.Bow);
+                }
+            }
+            else
+            {
+                if(Object.HasInputAuthority)
+                {
+                    Debug.Log($"playerName: {name} quyenhan: {Object.HasStateAuthority}");
+
+                    if (UserEquipmentData.Instance.CurrentModelId == "Police")
+                    {                        //CurrenWeapon = Weapon.Pistol;
+                        weaponName = "Pistol";
+                    }
+                    else if (UserEquipmentData.Instance.CurrentModelId == "Angel")
+                    {
+                        Debug.Log($"playerName: {name} quyenhan: {Object.HasStateAuthority}");
+
+                        weaponName = "Bow";
+                        
+                    }
+                }
+               
+            }
+            
         }
-       /* void SwitchWeaponWrapper()
+
+        private void SwitchWeapon2()
         {
-            // Gọi phương thức SwitchWeapon và truyền tham số
-            SwitchWeapon(CurrentWeapon.Pistol);
+            if (UserEquipmentData.Instance.CurrentModelId == "Police")
+            {
+                Debug.Log($"playerName: {name} quyenhan: {Object.HasStateAuthority}");
+                weaponName = "Pistol";
+            }
+            else if (UserEquipmentData.Instance.CurrentModelId == "Angel")
+            {
+                Debug.Log($"playerName: {name} quyenhan: {Object.HasStateAuthority}");
+
+                weaponName = "Bow";
+            }
         }
-        void SwitchWeaponWrapper2()
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_SwitchWeapon2(string weapon)
         {
-            // Gọi phương thức SwitchWeapon và truyền tham số
-            SwitchWeapon(CurrentWeapon.Bow);
-        }*/
-        // Phương thức để tắt tất cả các vũ khí
+            name = GetComponent<PlayerController>().playerName;
+            Debug.Log("RPC_SwitchWeapon2 da nhan duoc weapoName: "+weapon+ " cua "+ name);
+            if (weapon == "Pistol")
+            {
+                SwitchWeapon(Weapon.Pistol);
+            }
+            else if (weapon == "Bow")
+            {
+                SwitchWeapon(Weapon.Bow);
+            }
+        }
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        private void RPC_SwitchWeapon(string weapon)
+        {
+            if (weapon == "Pistol")
+            {
+                SwitchWeapon(Weapon.Pistol);
+            }
+            else if (weapon == "Bow")
+            {
+                SwitchWeapon(Weapon.Bow);
+            }
+        }
         private void DeactivateAllWeapons()
         {
+            Debug.Log("DeactivateAllWeapons: Start deactivating all weapons.");
+
+            if (weaponDict == null)
+            {
+                Debug.LogError("DeactivateAllWeapons: weaponDict is null.");
+                return;
+            }
+
             foreach (var weaponArray in weaponDict.Values)
             {
+                if (weaponArray == null)
+                {
+                    Debug.LogWarning("DeactivateAllWeapons: Found a null weaponArray in weaponDict.");
+                    continue;
+                }
+
                 foreach (var weaponObject in weaponArray)
                 {
-                    if (weaponObject != null) // Kiểm tra nếu object không null
+                    if (weaponObject != null)
                     {
+                        Debug.Log("DeactivateAllWeapons: Deactivating weapon " + weaponObject.name);
                         weaponObject.SetActive(false); // Tắt đối tượng
+                    }
+                    else
+                    {
+                        Debug.LogWarning("DeactivateAllWeapons: Found a null weaponObject in weaponArray.");
                     }
                 }
             }
+            Debug.Log("DeactivateAllWeapons: Finished deactivating all weapons.");
         }
-
         // Phương thức để kích hoạt vũ khí hiện tại
         private void ActivateWeapon(Weapon currentWeapon)
         {
@@ -101,19 +211,13 @@ namespace multiplayerMode
                 Debug.LogError($"CurrentWeapon {currentWeapon} not found in the dictionary.");
             }
         }
-
         // Phương thức để chuyển đổi vũ khí
-        public void SwitchWeapon(Weapon newWeapon)
+        private void SwitchWeapon(Weapon newWeapon)
         {
-            // Tắt vũ khí hiện tại
+            PlayerController playerController = GetComponent<PlayerController>();
+            playerController.CurrentWeapon = newWeapon;
             DeactivateAllWeapons();
-
-            // Cập nhật vũ khí và kích hoạt vũ khí mới
-            CurrenWeapon = newWeapon;
-            ActivateWeapon(CurrenWeapon);
-            PlayerController player = GetComponentInParent<PlayerController>();
-            player.CurrentWeapon = CurrenWeapon;
-
+            ActivateWeapon(newWeapon);
         }
     }
 }
