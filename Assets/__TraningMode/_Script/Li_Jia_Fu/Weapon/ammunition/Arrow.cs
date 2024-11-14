@@ -11,6 +11,7 @@ public class Arrow : MonoBehaviour
 
     void Start()
     {
+        Destroy(gameObject,5f);
         rb = GetComponent<Rigidbody>(); // Get the Rigidbody component
         bowCollider = GetComponent<CapsuleCollider>();
     }

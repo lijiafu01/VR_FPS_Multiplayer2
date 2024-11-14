@@ -2,7 +2,11 @@
 
 public class Card : MonoBehaviour
 {
-    [SerializeField] private float _ForceMultiplier = 2.0f;
+    [SerializeField] private GameObject _CardModel;
+    [SerializeField] private AudioSource audioSource;
+
+    [SerializeField] private float maxForce = 10.0f; // Lực đẩy tối đa
+    [SerializeField] private float forceMultiplier = 2.0f; // Hệ số nhân lực đẩy
     public GameObject cardPrefab; // Prefab của thẻ bài
     public Transform rightHandAnchor; // Vị trí của controller phải
     public float minimumVelocity = 0.5f; // Vận tốc tối thiểu để bắt đầu theo dõi
@@ -37,7 +41,7 @@ public class Card : MonoBehaviour
             if (dotProduct > dotThreshold)
             {
                 // Hướng di chuyển trong phạm vi 180 độ phía trước của controller
-                SpawnCard(previousVelocity);
+                SpawnCard(previousVelocity.magnitude);
             }
 
             isTracking = false;
@@ -46,9 +50,14 @@ public class Card : MonoBehaviour
         // Cập nhật vận tốc trước đó cho lần kiểm tra tiếp theo
         previousVelocity = currentVelocity;
     }
-
-    void SpawnCard(Vector3 initialVelocity)
+    bool _isShooting = false;
+    void SpawnCard(float swingForce)
     {
+        if (_isShooting) return;
+        _CardModel.SetActive(false);
+        _isShooting = true;
+        Invoke("SetShootActive",0.5f);
+        audioSource.Play();
         // Tạo một instance của thẻ bài tại vị trí của controller phải
         GameObject cardInstance = Instantiate(cardPrefab, rightHandAnchor.position, rightHandAnchor.rotation);
 
@@ -59,8 +68,18 @@ public class Card : MonoBehaviour
             rb = cardInstance.AddComponent<Rigidbody>();
         }
 
+        // Tính toán lực đẩy, áp dụng hệ số nhân và giới hạn bởi lực tối đa
+        float force = Mathf.Min(swingForce * forceMultiplier, maxForce);
+
         // Đặt vận tốc ban đầu cho thẻ bài theo hướng phía trước của controller phải
         Vector3 throwDirection = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch) * Vector3.forward;
-        rb.velocity = throwDirection.normalized * initialVelocity.magnitude * _ForceMultiplier; // Điều chỉnh hệ số nhân nếu cần
+
+        // Sử dụng AddForce với ForceMode.Impulse để áp dụng lực tức thời
+        rb.AddForce(throwDirection.normalized * force, ForceMode.Impulse);
+    }
+    void SetShootActive()
+    {
+        _CardModel.SetActive(true);
+        _isShooting = false;
     }
 }

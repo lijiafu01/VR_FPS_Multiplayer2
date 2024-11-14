@@ -4,13 +4,24 @@ using UnityEngine;
 using TraningMode;
 public class Bullet : MonoBehaviour
 {
-    private void OnEnable()
+    private void Start()
     {
-        Invoke("ReturnObjectPool", 5f);
+        Destroy(gameObject,5f);
     }
-    private void ReturnObjectPool()
+    private void OnCollisionEnter(Collision collision)
     {
-        Destroy(gameObject);
-        //ObjectPoolManager.Instance.ReturnToPool("pistolbullet", transform.gameObject);
+        if(collision.gameObject.tag == "Ground")
+        {
+            Destroy(gameObject);
+        }
     }
+    /* private void OnEnable()
+     {
+         Invoke("ReturnObjectPool", 5f);
+     }
+    *//* private void ReturnObjectPool()
+     {
+         Destroy(gameObject);
+         //ObjectPoolManager.Instance.ReturnToPool("pistolbullet", transform.gameObject);
+     }*/
 }
