@@ -3,5 +3,6 @@ public enum WeaponType
 {
     Pistol,
     Grenade,
-    Bow
+    Bow,
+    Card,
 }

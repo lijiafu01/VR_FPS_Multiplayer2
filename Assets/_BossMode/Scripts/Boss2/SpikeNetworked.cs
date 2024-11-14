@@ -22,7 +22,7 @@ public class SpikeNetworked : NetworkBehaviour
     {
         //audioSource.time = 0.35f;
         //audioSource.Play();
-        lifeTimer = TickTimer.CreateFromSeconds(Runner, 10f);
+        lifeTimer = TickTimer.CreateFromSeconds(Runner, 8f);
 
     }
     public override void FixedUpdateNetwork()

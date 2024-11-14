@@ -2,137 +2,92 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System.Collections;
-using TraningMode;
 using UnityEngine.SceneManagement;
 
 public class WeaponSelectionUI : MonoBehaviour
 {
-    public WeaponType _WeaponType = WeaponType.Pistol;
-    public TextMeshProUGUI weaponNameText;
-    public RawImage weaponRawImage;
-    public Texture bowtt;
-    public Texture Pistoltt;
-
-    private void Start()
+    // Lớp chứa thông tin của mỗi nhân vật
+    [System.Serializable]
+    public class Character
     {
-        GameManager.Instance.playerChooseWeapon = WeaponType.Pistol;
-
-    }
-    //public List<Texture> weaponTextures = new List<Texture>();
-    /*public RawImage weaponRawImage; // Link this in the Unity Inspector
-    public List<Texture> weaponTextures = new List<Texture>(); // This list should be populated with weapon textures in the same order as the weapons list
-
-    public TextMeshProUGUI weaponNameText;  // Sử dụng TextMeshProUGUI
-    public Button nextButton;    // Link this in the Unity Inspector
-    public Button previousButton;  // Link this in the Unity Inspector
-
-    private int currentWeaponIndex = 0;
-    private List<WeaponType> weapons = new List<WeaponType> { WeaponType.Pistol, WeaponType.Grenade, WeaponType.Bow };
-
-    private void Start()
-    {
-        UpdateWeaponDisplay();
-        nextButton.onClick.AddListener(NextWeapon);
-        previousButton.onClick.AddListener(PreviousWeapon);
+        public Sprite characterImage;
+        public string characterName;
+        [TextArea]
+        public string characterDescription;
+        public WeaponType weaponType;
     }
 
-    IEnumerator FadeWeaponImage(Texture newTexture)
+    // Danh sách các nhân vật
+    public List<Character> characters = new List<Character>();
+
+    // Chỉ số của nhân vật hiện tại
+    private int currentCharacterIndex = 0;
+
+    // Tham chiếu đến các thành phần UI
+    public Image characterImageUI;
+    public TextMeshProUGUI characterNameUI;
+    public TextMeshProUGUI characterDescriptionUI;
+
+    // Nút Next
+    public Button nextButton;
+
+    // **Thêm nút Start**
+    public Button startButton;
+
+    void Start()
     {
-        float duration = 0.3f; // Duration of the fade
-        float currentTime = 0f;
-
-        // Fade out
-        while (currentTime < duration)
+        // Kiểm tra xem danh sách nhân vật có rỗng không
+        if (characters.Count == 0)
         {
-            float alpha = Mathf.Lerp(1f, 0f, currentTime / duration);
-            weaponRawImage.color = new Color(1f, 1f, 1f, alpha);
-            currentTime += Time.deltaTime;
-            yield return null;
+            Debug.LogError("Danh sách nhân vật trống!");
+            return;
         }
 
-        weaponRawImage.texture = newTexture; // Change the texture
+        // Hiển thị thông tin nhân vật đầu tiên
+        UpdateCharacterUI();
 
-        // Fade in
-        currentTime = 0f;
-        while (currentTime < duration)
-        {
-            float alpha = Mathf.Lerp(0f, 1f, currentTime / duration);
-            weaponRawImage.color = new Color(1f, 1f, 1f, alpha);
-            currentTime += Time.deltaTime;
-            yield return null;
-        }
+        // Gắn sự kiện cho nút Next
+        nextButton.onClick.AddListener(OnNextButtonClicked);
+
+        // **Gắn sự kiện cho nút Start**
+        startButton.onClick.AddListener(OnStartButtonClicked);
     }
 
-    void UpdateWeaponDisplay()
+    void UpdateCharacterUI()
     {
-        if (weapons.Count > 0 && weaponTextures.Count > 0)
-        {
-            weaponNameText.text = weapons[currentWeaponIndex].ToString();
-            StartCoroutine(FadeWeaponImage(weaponTextures[currentWeaponIndex])); // Use coroutine to fade texture
-            GameManager.Instance.playerChooseWeapon = weapons[currentWeaponIndex];
-        }
+        // Lấy nhân vật hiện tại
+        Character currentCharacter = characters[currentCharacterIndex];
+
+        // Cập nhật các thành phần UI
+        characterImageUI.sprite = currentCharacter.characterImage;
+        characterNameUI.text = currentCharacter.characterName;
+        characterDescriptionUI.text = currentCharacter.characterDescription;
     }
-    private void Update()
+
+    void OnNextButtonClicked()
     {
-        if (Input.GetKeyUp(KeyCode.A))
+        // Tăng chỉ số nhân vật hiện tại
+        currentCharacterIndex++;
+
+        // Kiểm tra nếu đã đến cuối danh sách thì quay lại đầu
+        if (currentCharacterIndex >= characters.Count)
         {
-            PreviousWeapon();
+            currentCharacterIndex = 0;
         }
-        if (Input.GetKeyUp(KeyCode.S))
-        {
-            NextWeapon();
-        }
-        if (Input.GetKeyUp(KeyCode.D))
-        {
-            NextTraningScene();
-        }
+
+        // Cập nhật UI
+        UpdateCharacterUI();
     }
-    public void NextTraningScene()
+
+    // **Hàm xử lý khi nhấn nút Start**
+    void OnStartButtonClicked()
     {
-        SceneManager.LoadScene("TraningWeaponMode");
-    }*/
-    public void NextTraningScene()
-    {
+        // Lấy nhân vật hiện tại
+        Character selectedCharacter = characters[currentCharacterIndex];
+
+        // Gán weaponType của nhân vật được chọn vào GameManager.Instance.currentWeapon
+        GameManager.Instance.playerChooseWeapon = selectedCharacter.weaponType;
+
         SceneManager.LoadScene("TraningWeaponMode");
     }
-    public void NextWeapon()
-    {
-        if (_WeaponType == WeaponType.Pistol)
-        {
-            _WeaponType = WeaponType.Bow;
-            weaponNameText.text = _WeaponType.ToString();
-            weaponRawImage.texture = bowtt;
-        }
-        else
-        {
-            _WeaponType = WeaponType.Pistol;
-            weaponNameText.text = _WeaponType.ToString();
-            weaponRawImage.texture = Pistoltt;
-
-        }
-        GameManager.Instance.playerChooseWeapon = _WeaponType;
-    }
-
-    public void PreviousWeapon()
-    {
-        if (_WeaponType == WeaponType.Bow)
-        {
-            _WeaponType = WeaponType.Pistol;
-            weaponNameText.text = _WeaponType.ToString();
-            weaponRawImage.texture = Pistoltt;
-
-
-
-        }
-        else
-        {
-            _WeaponType = WeaponType.Bow;
-            weaponNameText.text = _WeaponType.ToString();
-            weaponRawImage.texture = bowtt;
-
-        }
-        GameManager.Instance.playerChooseWeapon = _WeaponType;
-    }
-
 }

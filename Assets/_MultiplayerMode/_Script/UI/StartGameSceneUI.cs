@@ -19,8 +19,9 @@ namespace multiplayerMode
         private void Start()
         {
             AvatarNameText.text = PlayFabManager.Instance.UserData.DisplayName;
-            JoinRoom();
-            //JoinBoss3Room();
+           // SceneManager.LoadScene("NewWeapon");
+            //JoinRoom();
+           // JoinBoss3Room();
 
             ///JoinBossRoom();
         }

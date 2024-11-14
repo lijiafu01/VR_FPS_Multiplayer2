@@ -1,8 +1,7 @@
 ﻿using Fusion;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class NewBossSkill : NetworkBehaviour, IBossSkill
+public class Skill1 : NetworkBehaviour, IBossSkill
 {
     [SerializeField] private Transform skill1ActionPoint;
     [SerializeField] private NetworkObject _groundSmashPrefabs;

@@ -90,6 +90,7 @@ public class DummyTarget : MonoBehaviour
         {
             VFXManager.Instance.WoodHitBig(collision);
             StartCoroutine(WaitForAnimation("hit"));
+            Destroy(collision.gameObject);  
         }
     }
     public void GrenadeCollider()

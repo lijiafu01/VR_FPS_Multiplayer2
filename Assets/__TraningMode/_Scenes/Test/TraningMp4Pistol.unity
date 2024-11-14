@@ -2397,7 +2397,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &394419901
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3636,7 +3636,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!95 &618064139
 Animator:
   serializedVersion: 5
@@ -3773,7 +3773,6 @@ MonoBehaviour:
   bulletPrefab: {fileID: 5304055121516845748, guid: 66debc95b64e1f845a8112a7415b3764, type: 3}
   shootSound: {fileID: 618064140}
   Anim: {fileID: 618064139}
-  isStop: 1
 --- !u!4 &618064142
 Transform:
   m_ObjectHideFlags: 0
@@ -4000,7 +3999,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &681367032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4588,7 +4587,6 @@ MonoBehaviour:
   shootSound: {fileID: 716701783}
   attackTransform: {fileID: 1518592372}
   bowstringCenter: {fileID: 1094681997}
-  isPress: 1
 --- !u!4 &716701786
 Transform:
   m_ObjectHideFlags: 0
@@ -5791,7 +5789,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &838384346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9842,7 +9840,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1689259343
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -10153,7 +10151,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &1723788328
 AudioListener:
   m_ObjectHideFlags: 0

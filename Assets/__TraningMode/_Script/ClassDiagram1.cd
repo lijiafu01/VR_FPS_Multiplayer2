@@ -1,28 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="RandomEnvironmentSpawner">
-    <Position X="5.25" Y="4.25" Width="1.5" />
-    <Compartments>
-      <Compartment Name="Nested Types" Collapsed="false" />
-    </Compartments>
-    <NestedTypes>
-      <Class Name="RandomEnvironmentSpawner.SpawnableObject">
-        <TypeIdentifier>
-          <NewMemberFileName>Assets\__TraningMode\_Script\Li_Jia_Fu\Environment\RandomEnvironmentSpawner.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-    </NestedTypes>
+  <Class Name="Skill1" BaseTypeListCollapsed="true">
+    <Position X="6.5" Y="4" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAGCAAAAAQgAAAAAAAAAAAAAAAAAAIAEAAAA=</HashCode>
-      <FileName>Assets\__TraningMode\_Script\Li_Jia_Fu\Environment\RandomEnvironmentSpawner.cs</FileName>
+      <HashCode>BAAAAAAAAAAAAAAAEAVACAAAAClAABAgAAAAAgCA4kA=</HashCode>
+      <FileName>Assets\_BossMode\Scripts\Boss2\Skill1.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SKill2" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAAEAAAAIACAAAIAEAUACAgAAClAEBAgAAAAAgCAQkA=</HashCode>
+      <FileName>Assets\_BossMode\Scripts\Boss2\Skill2.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Skill3" BaseTypeListCollapsed="true">
+    <Position X="11.75" Y="4" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>BABBAAAAAACAAAIAEAUACAgAAClAkBAgAAAAQgCAQkA=</HashCode>
+      <FileName>Assets\_BossMode\Scripts\Boss2\Skill3.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Skill4" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="4" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAQAAAAAAAAEAVECAgAAClAEBAgAAAQAgCAYkA=</HashCode>
+      <FileName>Assets\_BossMode\Scripts\Boss2\Skill4.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="BossNetworked">
+    <Position X="3.25" Y="4" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>BEgMIAAQAgCACAAEEIgGCC0AREEABBAAAgAggIAQwEA=</HashCode>
+      <FileName>Assets\_BossMode\Scripts\BossNetworked.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="TraningArea">
-    <Position X="9" Y="4" Width="1.5" />
+  <Interface Name="IBossSkill">
+    <Position X="17.75" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAACCIAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\__TraningMode\_Script\Li_Jia_Fu\Environment\TraningArea.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAlAABAgAAAAAACAQAA=</HashCode>
+      <FileName>Assets\_BossMode\Scripts\Interface\IBossSkill.cs</FileName>
     </TypeIdentifier>
-  </Class>
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

@@ -23,7 +23,7 @@ public class AutoLogin : MonoBehaviour
     }
     public void LoginPC()
     {
-        login.usernameInput.text = "tony3@gmail.com";
+        login.usernameInput.text = "jack5@gmail.com";
         login.passwordInput.text = "aaaaaa";
         login.LoginBtn();
     }
