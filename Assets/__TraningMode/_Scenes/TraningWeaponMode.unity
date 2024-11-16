@@ -6891,7 +6891,7 @@ MonoBehaviour:
   forceMultiplier: 10
   cardPrefab: {fileID: 4669239573623809468, guid: 180a2b825e8af4544939d2843e16a4df, type: 3}
   rightHandAnchor: {fileID: 460136926}
-  minimumVelocity: 1.2
+  minimumVelocity: 1.4
 --- !u!4 &732138230
 Transform:
   m_ObjectHideFlags: 0

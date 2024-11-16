@@ -18,33 +18,7 @@ public class FlashFXNetworked : NetworkBehaviour
             Debug.LogError("Rigidbody không được gán.");
         }
     }
-    /*[SerializeField]
-    private float forceAmount = 500f; // Lực đẩy về phía trước*/
-    /*public void FlyObject(Transform Target)
-    {
-
-        // Kiểm tra nếu có mục tiêu
-        if (Target != null && rb != null)
-        {
-            // Tính toán hướng đến mục tiêu
-            Vector3 directionToTarget = (Target.position - transform.position).normalized;
-
-            // Áp dụng lực đẩy về phía mục tiêu
-            rb.AddForce(directionToTarget * _Force, ForceMode.Impulse);
-
-            // Giới hạn vận tốc để tránh đẩy đối tượng đi quá xa
-            float maxVelocity = 10f; // Tùy chỉnh giá trị vận tốc tối đa này
-            if (rb.velocity.magnitude > maxVelocity)
-            {
-                rb.velocity = rb.velocity.normalized * maxVelocity;
-            }
-        }
-        else
-        {
-            Debug.LogError("Transform Null");
-        }
-
-    }*/
+    
     public override void Spawned()
     {
         lifeTimer = TickTimer.CreateFromSeconds(Runner, 3f);

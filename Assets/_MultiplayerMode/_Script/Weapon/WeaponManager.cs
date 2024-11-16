@@ -8,7 +8,8 @@ namespace multiplayerMode
     public enum Weapon
     {
         Pistol,
-        Bow
+        Bow,
+        Card
     }
 
     public class WeaponManager : NetworkBehaviour
@@ -20,6 +21,7 @@ namespace multiplayerMode
         // Các mảng GameObject cho từng loại vũ khí
         public GameObject[] Pistol;
         public GameObject[] Bow;
+        public GameObject[] Card;
 
         // Dictionary lưu trữ các loại vũ khí
         private Dictionary<Weapon, GameObject[]> weaponDict;
@@ -45,6 +47,10 @@ namespace multiplayerMode
             {
                 SwitchWeapon(Weapon.Bow);
             }
+            else if (weaponName == "Card")
+            {
+                SwitchWeapon(Weapon.Card);
+            }
         }
         private void Awake()
         {
@@ -54,6 +60,7 @@ namespace multiplayerMode
             // Thêm các vũ khí vào Dictionary với key là loại vũ khí
             weaponDict.Add(Weapon.Pistol, Pistol);
             weaponDict.Add(Weapon.Bow, Bow);
+            weaponDict.Add(Weapon.Card, Card);
         }
 
         public override void Spawned()
@@ -65,6 +72,7 @@ namespace multiplayerMode
                 weaponDict = new Dictionary<Weapon, GameObject[]>();
                 weaponDict.Add(Weapon.Pistol, Pistol);
                 weaponDict.Add(Weapon.Bow, Bow);
+                weaponDict.Add(Weapon.Card, Card);
             }
 
 
@@ -79,6 +87,10 @@ namespace multiplayerMode
                 else if (weaponName == "Bow")
                 {
                     SwitchWeapon(Weapon.Bow);
+                }
+                else if (weaponName == "Card")
+                {
+                    SwitchWeapon(Weapon.Card);
                 }
             }
             else
@@ -98,13 +110,20 @@ namespace multiplayerMode
                         weaponName = "Bow";
                         
                     }
+                    else if (UserEquipmentData.Instance.CurrentModelId == "Mage")
+                    {
+                        Debug.Log($"playerName: {name} quyenhan: {Object.HasStateAuthority}");
+
+                        weaponName = "Card";
+
+                    }
                 }
                
             }
             
         }
 
-        private void SwitchWeapon2()
+       /* private void SwitchWeapon2()
         {
             if (UserEquipmentData.Instance.CurrentModelId == "Police")
             {
@@ -143,7 +162,7 @@ namespace multiplayerMode
             {
                 SwitchWeapon(Weapon.Bow);
             }
-        }
+        }*/
         private void DeactivateAllWeapons()
         {
             Debug.Log("DeactivateAllWeapons: Start deactivating all weapons.");

@@ -109,7 +109,7 @@ namespace multiplayerMode
                 GameManager.Instance.PlayerData.playerRef = _playerRef;
                 _playerData = GameManager.Instance.PlayerData;
                 playerName = _playerData.playerName;
-                if (NetworkManager.Instance.TeamID != null)
+                if (NetworkManager.Instance.IsTeamMode)
                 {
                     TeamID = NetworkManager.Instance.TeamID;
                     RPC_SendTeamID(NetworkManager.Instance.TeamID);

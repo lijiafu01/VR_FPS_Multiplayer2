@@ -27840,6 +27840,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Car_01 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7502797728575006973, guid: 9f7751bd887cf124bae4c583f11dcae3, type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     - target: {fileID: 7502797728575239389, guid: 9f7751bd887cf124bae4c583f11dcae3, type: 3}
       propertyPath: m_RootOrder
       value: 44
@@ -28660,6 +28664,10 @@ PrefabInstance:
     - target: {fileID: 7502797728575006973, guid: 9f7751bd887cf124bae4c583f11dcae3, type: 3}
       propertyPath: m_Name
       value: Car_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 7502797728575006973, guid: 9f7751bd887cf124bae4c583f11dcae3, type: 3}
+      propertyPath: m_TagString
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 7502797728575239389, guid: 9f7751bd887cf124bae4c583f11dcae3, type: 3}
       propertyPath: m_RootOrder
@@ -39485,6 +39493,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 723462f76df923a40b96097d41bdbb65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RightHandAnchor: {fileID: 7079690333450744570}
+  LeftHandAnchor: {fileID: 7079690333450733310}
   healthSlider: {fileID: 27498152}
   hpText: {fileID: 535715871}
   hpCanvas: {fileID: 1893750521}
@@ -55289,7 +55299,7 @@ CapsuleCollider:
   m_Radius: 0.2
   m_Height: 1.5
   m_Direction: 1
-  m_Center: {x: 0, y: 0.75, z: 0}
+  m_Center: {x: 0, y: 1.6, z: 0}
 --- !u!4 &4616568002727657611
 Transform:
   m_ObjectHideFlags: 0
@@ -56918,6 +56928,7 @@ GameObject:
   - component: {fileID: 1797203640}
   - component: {fileID: 1797203637}
   - component: {fileID: 6567937549012227407}
+  - component: {fileID: 6567937549012227408}
   m_Layer: 0
   m_Name: InteractionRigOVR-Basic
   m_TagString: Untagged
@@ -58225,6 +58236,27 @@ MonoBehaviour:
   Speed: 5
   CameraRig: {fileID: 7079690333460868838}
   jumpForce: 5
+--- !u!65 &6567937549012227408
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5519807742466672423}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.2, y: 0.4, z: 0.2}
+  m_Center: {x: 0, y: 0.7, z: 0}
 --- !u!114 &6573283048085393019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59389,7 +59421,7 @@ GameObject:
   - component: {fileID: 7079690333450733310}
   m_Layer: 0
   m_Name: LeftHandAnchor
-  m_TagString: Untagged
+  m_TagString: LeftHand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -64634,6 +64666,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1623013759}
+  - {fileID: 5519807742466672422}
   - {fileID: 315136621}
   - {fileID: 2079483091}
   - {fileID: 1237077186}
@@ -64644,7 +64677,6 @@ SceneRoots:
   - {fileID: 1129542276}
   - {fileID: 2098451474}
   - {fileID: 1893750522}
-  - {fileID: 5519807742466672422}
   - {fileID: 759681308}
   - {fileID: 1107224905}
   - {fileID: 945699017}

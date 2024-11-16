@@ -13,6 +13,8 @@ namespace multiplayerMode
 {
     public class HardwareRig : MonoBehaviour, INetworkRunnerCallbacks
     {
+        public Transform RightHandAnchor;
+        public Transform LeftHandAnchor;
         [SerializeField]
         private Slider healthSlider;
         [SerializeField]
@@ -230,6 +232,7 @@ namespace multiplayerMode
                 Debug.LogWarning("rightHandTransform is null or has been destroyed.");
             }
 
+            xrRigState.ForceControllerLeft = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
             // Ghi nhận trạng thái vào NetworkInput để truyền qua mạng
             xrRigState.Button.Set(InputButton.Fire, OVRInputState.Instance.TriggerPressed);
             xrRigState.Button.Set(InputButton.Fire2, OVRInputState.Instance.LeftTriggerPressed);
@@ -279,6 +282,7 @@ namespace multiplayerMode
 // Cấu trúc RigState lưu trữ trạng thái vị trí và hướng của các thành phần
 public struct RigState : INetworkInput
 {
+    public Vector3 ForceControllerLeft;
     public NetworkButtons Button;
     public Vector3 PlayerPosition;
     public Quaternion PlayerRotation;

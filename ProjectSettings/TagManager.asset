@@ -22,6 +22,7 @@ TagManager:
   - Amethyst
   - Ruby
   - Intermediary
+  - LeftHandAnchor
   layers:
   - Default
   - TransparentFX

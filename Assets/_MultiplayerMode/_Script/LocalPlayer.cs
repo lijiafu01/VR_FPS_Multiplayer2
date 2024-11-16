@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Oculus.Interaction;
+using System;
 using UnityEngine;
 
 public class LocalPlayer : MonoBehaviour
@@ -94,7 +95,7 @@ public class LocalPlayer : MonoBehaviour
         if (moveDir != Vector3.zero)
         {
             moveDir = moveDir.normalized;
-            _rigidbody.AddForce(moveDir * 60, ForceMode.Acceleration);
+            _rigidbody.AddForce(moveDir * 10, ForceMode.Acceleration);
         }
 
         // Xử lý xoay bằng chuột trên PC
@@ -161,27 +162,11 @@ public class LocalPlayer : MonoBehaviour
     // Thêm hàm xử lý nhảy
     void HandleJump()
     {
-        if (isGrounded &&( OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)) )
+        if ((OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)) && _rigidbody.velocity.y <= 1f)
         {
             _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
-            isGrounded = false; // Đặt lại trạng thái không đứng trên mặt đất
         }
     }
 
-    // Kiểm tra va chạm với mặt đất để cập nhật trạng thái isGrounded
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = true;
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
-    }
+   
 }
