@@ -95,7 +95,7 @@ public class LocalPlayer : MonoBehaviour
         if (moveDir != Vector3.zero)
         {
             moveDir = moveDir.normalized;
-            _rigidbody.AddForce(moveDir * 10, ForceMode.Acceleration);
+            _rigidbody.AddForce(moveDir * 15, ForceMode.Acceleration);
         }
 
         // Xử lý xoay bằng chuột trên PC
@@ -162,7 +162,7 @@ public class LocalPlayer : MonoBehaviour
     // Thêm hàm xử lý nhảy
     void HandleJump()
     {
-        if ((OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)) && _rigidbody.velocity.y <= 1f)
+        if ((OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)) && _rigidbody.velocity.y <= 2f)
         {
             _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         }

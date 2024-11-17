@@ -41,6 +41,18 @@ namespace multiplayerMode
         {
             rb = GetComponent<Rigidbody>();
         }
+        public void ReceiveImpact2(Vector3 direction, float force)
+        {
+            // Đảm bảo đối tượng có Rigidbody trước khi nhận lực
+            if (rb == null) return;
+
+            // Tính toán vector lực theo hướng và cường độ
+            Vector3 impactForce = direction.normalized * force;
+
+            // Áp dụng lực vào Rigidbody
+            rb.AddForce(impactForce, ForceMode.Impulse);
+        }
+
         public void ReceiveImpact(Vector3 direction, float force)
         {
             // Đảm bảo đối tượng có Rigidbody trước khi nhận lực

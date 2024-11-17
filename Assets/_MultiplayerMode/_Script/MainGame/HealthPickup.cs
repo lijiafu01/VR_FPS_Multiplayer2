@@ -5,7 +5,7 @@ namespace multiplayerMode
 {
     public class HealthPickup : NetworkBehaviour
 {
-    private int health = 30;
+    [SerializeField] private int health = 30;
     [Networked(OnChanged = nameof(OnStateChanged))]
     private bool IsActive { get; set; } = true;
 

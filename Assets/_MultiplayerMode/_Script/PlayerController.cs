@@ -239,10 +239,9 @@ namespace multiplayerMode
         public void IncreaseHealth(int newHp)
         {
             if (Object.HasStateAuthority)
-            {
-                if (_currentHp >= _maxHp) return;
-                _currentHp += newHp;
-                if (_currentHp < _maxHp)
+            {            
+                _currentHp += newHp;              
+                if (_currentHp > _maxHp)
                 {
                     _currentHp = _maxHp;
                 }

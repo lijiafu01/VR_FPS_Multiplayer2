@@ -80,8 +80,13 @@ namespace multiplayerMode
                         string playerName = GameManager.Instance.PlayerData.playerName;
 
                         hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName,NetworkManager.Instance.TeamID);
-                    }
                 }
+                if (hit.GameObject.TryGetComponent<IEnvironmentInteractable>(out var hitIEnvironmentInteractable))
+                {
+
+                    hitIEnvironmentInteractable.OnHitByWeapon();
+                }
+            }
         }
         public void PistolLeftFire()
         {
@@ -114,14 +119,19 @@ namespace multiplayerMode
                         // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
                         hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
                 }
-                    if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
-                    {
+                if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
+                {
 
-                        string playerName = GameManager.Instance.PlayerData.playerName;
+                    string playerName = GameManager.Instance.PlayerData.playerName;
 
-                        hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName, NetworkManager.Instance.TeamID);
-                    }
+                    hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName, NetworkManager.Instance.TeamID);
                 }
+                if (hit.GameObject.TryGetComponent<IEnvironmentInteractable>(out var hitIEnvironmentInteractable))
+                {
+
+                    hitIEnvironmentInteractable.OnHitByWeapon();
+                }
+            }
         }
 
     }
