@@ -1,55 +1,78 @@
 ﻿using UnityEngine;
 using Photon.Voice.Unity;
 using multiplayerMode;
+using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class VoiceController : MonoBehaviour
 {
-    private Recorder recorder = null;
     private bool _isMute = false;
-    private void Start()
+    private bool _isStop = false;
+    public Image micImage;
+    public Image volumImage;
+    public void MuteAllPlayers()
     {
-        Invoke("Init", 1.3f);
-        Invoke("DisableVoice", 10f);
+        Speaker[] speakers = FindObjectsOfType<Speaker>();
+
+        foreach (Speaker speaker in speakers)
+        {
+            if (speaker != null)
+            {
+                speaker.enabled = false; // Tắt âm thanh
+            }
+        }
     }
-    void Init()
+
+    public void UnmuteAllPlayers()
     {
-        recorder = NetworkManager.Instance.RecorderScr;
+        Speaker[] speakers = FindObjectsOfType<Speaker>();
 
+        foreach (Speaker speaker in speakers)
+        {
+            if (speaker != null)
+            {
+                speaker.enabled = true; // Bật âm thanh lại
+            }
+        }
     }
-
     public void MicBtn()
     {
         _isMute = !_isMute;
         UpdateMic();
+    }
+    public void VolumeBtn()
+    {
+        _isStop = !_isStop;
+        if(_isStop )
+        {
+            MuteAllPlayers();
+            volumImage.color = Color.black;
+        }
+        else
+        {
+            UnmuteAllPlayers();
+            volumImage.color = Color.red;
+        }
     }
     private void UpdateMic()
     {
         if (_isMute)
         {
             DisableVoice();
+            micImage.color = Color.black; // Đặt màu đỏ khi mic bị tắt
         }
         else
         {
             EnableVoice();
+            micImage.color = Color.red; // Đặt màu đen khi mic được bật
         }
     }
 
     public void DisableVoice()
     {
-        Debug.Log("DisableVoice: Bắt đầu phương thức");
-
-        if (recorder != null)
+        if (NetworkManager.Instance.RecorderScr != null)
         {
-            Debug.Log("DisableVoice: Recorder không null, tiếp tục tắt mic");
-
-            recorder.RecordingEnabled = false;
-            Debug.Log("DisableVoice: RecordingEnabled đã được đặt thành false");
-
-            recorder.TransmitEnabled = false;
-            Debug.Log("DisableVoice: TransmitEnabled đã được đặt thành false");
-
-            Debug.Log("DisableVoice: Mic đã được tắt thành công");
-
+            NetworkManager.Instance.RecorderScr.TransmitEnabled = false;
         }
         else
         {
@@ -57,12 +80,11 @@ public class VoiceController : MonoBehaviour
         }
     }
 
-
     public void EnableVoice()
     {
-        if (recorder == null) return;
-        recorder.RecordingEnabled = true;
-        recorder.TransmitEnabled = true;
+        if (NetworkManager.Instance.RecorderScr != null)
+        {
+            NetworkManager.Instance.RecorderScr.TransmitEnabled = true;
+        }
     }
-
 }

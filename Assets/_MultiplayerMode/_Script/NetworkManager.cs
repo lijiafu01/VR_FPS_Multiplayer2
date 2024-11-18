@@ -56,11 +56,10 @@ namespace multiplayerMode
             // Cố định máy chủ vào một khu vực cụ thể
             Fusion.Photon.Realtime.PhotonAppSettings.Instance.AppSettings.FixedRegion = "asia";
             PlayerSpawnerScript = _runnerPrefab.GetComponent<PlayerSpawner>();
-            Invoke("SetRecorder", 1f);
         }
-        void SetRecorder()
+        public void Init(Recorder recorder) 
         {
-            RecorderScr = _runnerPrefab.GetComponentInChildren<Recorder>();
+            RecorderScr = recorder;
 
         }
         public async void StartBossLobby()

@@ -5,6 +5,7 @@ using Fusion.Sockets;
 using System;
 using multiplayerMode;
 using UnityEngine.SceneManagement;
+using Photon.Voice.Unity;
 namespace multiplayerMode
 {
     public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
@@ -64,7 +65,7 @@ namespace multiplayerMode
                         {
                             NetworkManager.Instance.NetworkPlayerObject = _networkPlayerObject;
                             NetworkManager.Instance.PlayerController = _networkPlayerObject.GetComponentInChildren<PlayerController>();
-                           
+                            NetworkManager.Instance.Init(transform.GetComponentInChildren<Recorder>());
                         }
                         _spawnedUsers.Add(player, _networkPlayerObject);
                         Debug.Log("dev7_check3");
