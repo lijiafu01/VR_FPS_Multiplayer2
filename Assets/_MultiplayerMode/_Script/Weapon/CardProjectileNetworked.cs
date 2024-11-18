@@ -45,7 +45,7 @@ namespace multiplayerMode
                     {
                         health.TakeDamage_RPC(_damage, hitPoint, hitNormal, playerName);
                     }
-                    GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+                    GameObject vfx = Instantiate(hitVFX, other.gameObject.transform.position, Quaternion.identity);
                     Destroy(vfx, 1f);
                     Runner.Despawn(Object);
 
@@ -56,7 +56,7 @@ namespace multiplayerMode
                     string playerName = GameManager.Instance.PlayerData.playerName;
 
                     hitBossNetworked.TakeDamage(_damage, hitPoint, hitNormal, playerName, NetworkManager.Instance.TeamID);
-                    GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+                    GameObject vfx = Instantiate(hitVFX, other.gameObject.transform.position, Quaternion.identity);
                     Destroy(vfx, 1f);
                     Runner.Despawn(Object);
                 }
@@ -64,7 +64,7 @@ namespace multiplayerMode
                 {
 
                     hitIEnvironmentInteractable.OnHitByWeapon();
-                    GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+                    GameObject vfx = Instantiate(hitVFX, other.gameObject.transform.position, Quaternion.identity);
                     Destroy(vfx, 1f);
                     Runner.Despawn(Object);
                 }

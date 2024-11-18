@@ -156,7 +156,7 @@ namespace multiplayerMode
                     Debug.Log("No object found with the specified tag.");
                 }
             }
-            if(!NetworkManager.Instance.IsTeamMode)
+            if(NetworkManager.Instance.IsTeamMode)
             {
                 if (NetworkManager.Instance.TeamID != null)
                 {

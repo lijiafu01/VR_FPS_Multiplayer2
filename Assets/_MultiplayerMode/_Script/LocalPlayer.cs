@@ -80,6 +80,16 @@ public class LocalPlayer : MonoBehaviour
             manaText.text = $"Mana:{currentMana}/{maxMana}";
         }
     }
+    private bool jumpRequested = false;
+
+    private void Update()
+    {
+        // Kiểm tra nếu người chơi nhấn nút nhảy
+        if (OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V))
+        {
+            jumpRequested = true;
+        }
+    }
     private void FixedUpdate()
     {
         if (CameraUpdated != null) CameraUpdated();
@@ -93,8 +103,12 @@ public class LocalPlayer : MonoBehaviour
         if (EnableLinearMovement) StickMovement();
         if (EnableRotation) SnapTurn();
 
-        // Kiểm tra và thực hiện nhảy
-        HandleJump();
+        // Nếu đã yêu cầu nhảy, thực hiện lệnh nhảy và đặt lại trạng thái
+        if (jumpRequested)
+        {
+            HandleJump();
+            jumpRequested = false;
+        }
     }
 
     void HandlePCInput()

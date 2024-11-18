@@ -4,7 +4,7 @@ public class HPCanvas : MonoBehaviour
 {
     public Transform cameraTransform;
     public float distanceFromCamera = 5f; // Khoảng cách từ Canvas tới camera trên mặt phẳng XZ
-    private float verticalOffset = -1.5f; // Độ dịch chuyển thẳng đứng để đẩy Canvas xuống
+    private float verticalOffset = -1.4f; // Độ dịch chuyển thẳng đứng để đẩy Canvas xuống
     private float initialYOffset; // Độ chênh lệch Y giữa Canvas và camera
 
     void Start()
