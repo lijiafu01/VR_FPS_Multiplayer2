@@ -9,6 +9,7 @@ namespace multiplayerMode
 {
     public class StartGameSceneUI : MonoBehaviour
     {
+        
         public TextMeshProUGUI AvatarNameText;
         public GameObject[] componentCanvas;
         public GameObject[] menuComponents;

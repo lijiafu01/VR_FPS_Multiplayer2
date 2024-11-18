@@ -7,6 +7,7 @@ using System;
 using UnityEngine.SceneManagement;
 using multiplayerMode;
 using System.Collections;
+using Photon.Voice.Unity;
 namespace multiplayerMode
 {
     public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
@@ -29,6 +30,8 @@ namespace multiplayerMode
         public PlayerRef _playerRef;
 
         public PlayerController PlayerController { get; set; }
+
+        public Recorder RecorderScr { get; set; }
         public void UpdateTeamName(string newName)
         {
             TeamID = newName;
@@ -53,8 +56,13 @@ namespace multiplayerMode
             // Cố định máy chủ vào một khu vực cụ thể
             Fusion.Photon.Realtime.PhotonAppSettings.Instance.AppSettings.FixedRegion = "asia";
             PlayerSpawnerScript = _runnerPrefab.GetComponent<PlayerSpawner>();
+            Invoke("SetRecorder", 1f);
         }
-      
+        void SetRecorder()
+        {
+            RecorderScr = _runnerPrefab.GetComponentInChildren<Recorder>();
+
+        }
         public async void StartBossLobby()
         {
             CreateRunner();

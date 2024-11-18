@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Fusion;
 
 namespace multiplayerMode
 {
+    
     public class Arrow : NetworkBehaviour
     {
+       
         [Networked] private NetworkBehaviourId hitObjectId { get; set; }
         private Transform hitTransform;
         private Vector3 localPosition;

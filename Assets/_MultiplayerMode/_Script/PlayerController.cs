@@ -581,9 +581,19 @@ namespace multiplayerMode
 
             }
         }
+        
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
+            if (Object.HasStateAuthority)
+            {
+                if (transform.root.position.y < -20f)
+                {
+                    int randomIndex = Random.Range(0, spawnPos.Length);
+                    Invoke("SetInitHp", 1f);
+                    hardwareRig.Death(spawnPos[randomIndex].position);
+                }
+            }
             if (GetInput<RigState>(out var input))
             {
                 var buttonPressed = input.Button.GetPressed(_previousButton);

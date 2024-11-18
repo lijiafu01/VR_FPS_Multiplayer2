@@ -32,6 +32,11 @@ namespace multiplayerMode
         // Từ điển để lưu trữ tên người chơi và điểm số
         public Dictionary<string, int> _playerScores = new Dictionary<string, int>();
         private Rigidbody rb;
+        private void Start()
+        {
+            NetworkManager.Instance.Runner.AddCallbacks(this);
+        }
+       
         public void Death(Vector3 spawnPoint)
         {
             rb.velocity = Vector3.zero;
@@ -45,7 +50,7 @@ namespace multiplayerMode
         {
             // Đảm bảo đối tượng có Rigidbody trước khi nhận lực
             if (rb == null) return;
-
+            rb.velocity = Vector3.zero;
             // Tính toán vector lực theo hướng và cường độ
             Vector3 impactForce = direction.normalized * force;
 
@@ -185,16 +190,16 @@ namespace multiplayerMode
             UpdateLeaderboard();
         }
 
-   
+      
 
 
-        void Start()
+       /* void Start()
         {
             // Đăng ký HardwareRig để nhận callback từ NetworkRunner
             NetworkManager.Instance.Runner.AddCallbacks(this);
             //hpText = hpCanvas.transform.Find("HpText").GetComponent<TextMeshProUGUI>();
 
-        }
+        }*/
 
         #region INetworkRunnerCallbacks
 

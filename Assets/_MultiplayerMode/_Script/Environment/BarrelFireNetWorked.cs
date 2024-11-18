@@ -10,6 +10,18 @@ public class BarrelFireNetWorked : NetworkBehaviour, IEnvironmentInteractable
     [Networked(OnChanged = nameof(OnFireStatusChanged))] // Theo dõi thay đổi của biến
     private bool isFire { get; set; } // Biến được đồng bộ hóa
 
+    public override void Spawned()
+    {
+        if(isFire)
+        {
+            if (fireVFX != null)
+            {
+                if (!Object.HasStateAuthority) return;
+                // Bật hiệu ứng lửa
+                fireVFX.SetActive(true);
+            }
+        }
+    }
     // Hàm này sẽ được gọi khi đối tượng bị bắn
     public void TriggerFire()
     {
@@ -32,11 +44,12 @@ public class BarrelFireNetWorked : NetworkBehaviour, IEnvironmentInteractable
         {
             if (fireVFX != null)
             {
-                if(!Object.HasStateAuthority) return;
+                
                 // Bật hiệu ứng lửa
                 fireVFX.SetActive(true);
+                
                 // Bắt đầu coroutine để tắt lửa sau 30 giây
-                StartCoroutine(DisableFireAfterTime(5f));
+                StartCoroutine(DisableFireAfterTime(30f));
             }
             else
             {
@@ -57,6 +70,7 @@ public class BarrelFireNetWorked : NetworkBehaviour, IEnvironmentInteractable
     private IEnumerator DisableFireAfterTime(float delay)
     {
         yield return new WaitForSeconds(delay);
+        if (!Object.HasStateAuthority) yield break;
 
         // Đặt lại biến `isFire` để tắt hiệu ứng lửa
         isFire = false;

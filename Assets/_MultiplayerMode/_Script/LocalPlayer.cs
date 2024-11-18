@@ -162,11 +162,16 @@ public class LocalPlayer : MonoBehaviour
     // Thêm hàm xử lý nhảy
     void HandleJump()
     {
-        if ((OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)) && _rigidbody.velocity.y <= 2f)
+        if ((OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)))
         {
+            // Đặt lại vận tốc của Rigidbody về 0 trên tất cả các trục trước khi nhảy
+            _rigidbody.velocity = Vector3.zero;
+
+            // Áp dụng lực nhảy
             _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         }
+
     }
 
-   
+
 }
