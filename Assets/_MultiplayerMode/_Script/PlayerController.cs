@@ -156,12 +156,15 @@ namespace multiplayerMode
                     Debug.Log("No object found with the specified tag.");
                 }
             }
-            
-            if (NetworkManager.Instance.TeamID != null)
+            if(!NetworkManager.Instance.IsTeamMode)
             {
-                Invoke("SetupPlayerNameColor", 1f);
+                if (NetworkManager.Instance.TeamID != null)
+                {
+                    Invoke("SetupPlayerNameColor", 1f);
 
+                }
             }
+            
            // Invoke("OnQuitButtonClick", 5f);
         }
         void SetupAttribute()

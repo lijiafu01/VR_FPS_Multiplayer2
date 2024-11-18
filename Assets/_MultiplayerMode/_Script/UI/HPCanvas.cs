@@ -4,7 +4,8 @@ public class HPCanvas : MonoBehaviour
 {
     public Transform cameraTransform;
     public float distanceFromCamera = 5f; // Khoảng cách từ Canvas tới camera trên mặt phẳng XZ
-    private float fixedY; // Tọa độ Y cố định của Canvas
+    private float verticalOffset = -1.5f; // Độ dịch chuyển thẳng đứng để đẩy Canvas xuống
+    private float initialYOffset; // Độ chênh lệch Y giữa Canvas và camera
 
     void Start()
     {
@@ -14,8 +15,8 @@ public class HPCanvas : MonoBehaviour
             cameraTransform = Camera.main.transform;
         }
 
-        // Lưu lại tọa độ Y ban đầu của Canvas
-        fixedY = transform.position.y;
+        // Lưu lại độ chênh lệch Y ban đầu giữa Canvas và camera
+        initialYOffset = transform.position.y - cameraTransform.position.y;
     }
 
     void Update()
@@ -27,7 +28,7 @@ public class HPCanvas : MonoBehaviour
 
         // Vị trí mới của Canvas
         Vector3 newPosition = cameraTransform.position + directionToCamera * distanceFromCamera;
-        newPosition.y = fixedY; // Giữ nguyên chiều cao ban đầu
+        newPosition.y = cameraTransform.position.y + initialYOffset + verticalOffset; // Thêm độ dịch chuyển thẳng đứng
 
         // Cập nhật vị trí của Canvas
         transform.position = newPosition;

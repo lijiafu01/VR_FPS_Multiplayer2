@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2255357735513480745}
   - component: {fileID: 5397649408613406276}
   - component: {fileID: 3046270257641708291}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: BarrelFire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 19122300717972447}
   - component: {fileID: 2424127819765454635}
   - component: {fileID: 1679909742159117493}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DarkSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5033,7 +5033,7 @@ GameObject:
   - component: {fileID: 6793966886428059698}
   - component: {fileID: 7851033710184998376}
   - component: {fileID: 1227836287940632138}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Barrel_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5136,7 +5136,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4813106748525885441}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5174,7 +5174,7 @@ GameObject:
   - component: {fileID: 7184519944210987845}
   - component: {fileID: 7102867749416960974}
   - component: {fileID: 4120661429269599426}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SparksLong
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10081,7 +10081,7 @@ GameObject:
   - component: {fileID: 1345166822087646919}
   - component: {fileID: 1496547657786259805}
   - component: {fileID: 2368285817764961359}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Flameshrower (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14990,7 +14990,7 @@ GameObject:
   - component: {fileID: 6778497230376552209}
   - component: {fileID: 1821178616448944661}
   - component: {fileID: 7827711823048405803}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SparksLong
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19897,7 +19897,7 @@ GameObject:
   - component: {fileID: 3980555807039448776}
   - component: {fileID: 5008924123717295877}
   - component: {fileID: 740624431575844305}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DarkSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24793,7 +24793,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4430294036385048612}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: FireVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24827,7 +24827,7 @@ GameObject:
   - component: {fileID: 6054916736198148984}
   - component: {fileID: 9146169289255480219}
   - component: {fileID: 4818192485239085932}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SparksLong
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29734,7 +29734,7 @@ GameObject:
   - component: {fileID: 5530384736753050147}
   - component: {fileID: 6483616256534498109}
   - component: {fileID: 3037327456176582513}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DarkSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34632,7 +34632,7 @@ GameObject:
   - component: {fileID: 4081735838715432029}
   - component: {fileID: 2640399610209825303}
   - component: {fileID: 1398185318700898867}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SparksLong
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39539,7 +39539,7 @@ GameObject:
   - component: {fileID: 5082544357842057880}
   - component: {fileID: 1779701883622096674}
   - component: {fileID: 6671620893635267724}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DarkSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44437,7 +44437,7 @@ GameObject:
   - component: {fileID: 3096375866689124090}
   - component: {fileID: 4312523850334242153}
   - component: {fileID: 5032570602524529692}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SparksLong
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49344,7 +49344,7 @@ GameObject:
   - component: {fileID: 3326185236001535603}
   - component: {fileID: 8066043362356713799}
   - component: {fileID: 2441248227523910238}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Flameshrower (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54251,7 +54251,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2694759891703240748}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54285,7 +54285,7 @@ GameObject:
   - component: {fileID: 375724156654318208}
   - component: {fileID: 8303174339723328647}
   - component: {fileID: 8185769180794715083}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DarkSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59183,7 +59183,7 @@ GameObject:
   - component: {fileID: 6311542940682079120}
   - component: {fileID: 7094804956304007229}
   - component: {fileID: 8015265145917306503}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Flameshrower (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64092,7 +64092,7 @@ GameObject:
   - component: {fileID: 3110293594979278288}
   - component: {fileID: 6690942341623741325}
   - component: {fileID: 3781473294485852008}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Flameshrower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69001,7 +69001,7 @@ GameObject:
   - component: {fileID: 46732667999983462}
   - component: {fileID: 7992084172273458409}
   - component: {fileID: 4205955593571946471}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Flameshrower (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

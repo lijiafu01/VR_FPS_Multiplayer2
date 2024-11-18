@@ -3,7 +3,6 @@ using multiplayerMode;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Fusion.NetworkCharacterController;
 namespace multiplayerMode
 {
     public class CardProjectileNetworked : NetworkBehaviour
@@ -33,6 +32,7 @@ namespace multiplayerMode
         {
             if(Object.HasStateAuthority)
             {
+                
                 // Lấy vị trí va chạm (hit point)
                 Vector3 hitPoint = other.ClosestPoint(transform.position);
                 // Tính toán pháp tuyến (normal)
@@ -41,38 +41,42 @@ namespace multiplayerMode
                 {
                     string playerName = GameManager.Instance.PlayerData.playerName;
                     if (health.playerName == playerName) return;
-                   
-                    Instantiate(hitVFX, transform.position, Quaternion.identity);
                     if (health != null)
                     {
-                        
-                        
-                        // Gọi hàm TakeDamage_RPC với thông tin mới
                         health.TakeDamage_RPC(_damage, hitPoint, hitNormal, playerName);
-
                     }
+                    GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+                    Destroy(vfx, 1f);
                     Runner.Despawn(Object);
 
 
                 }
-                if (other.gameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
+                else if (other.gameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
                 {
                     string playerName = GameManager.Instance.PlayerData.playerName;
 
                     hitBossNetworked.TakeDamage(_damage, hitPoint, hitNormal, playerName, NetworkManager.Instance.TeamID);
+                    GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+                    Destroy(vfx, 1f);
+                    Runner.Despawn(Object);
                 }
+                else if (other.gameObject.TryGetComponent<IEnvironmentInteractable>(out var hitIEnvironmentInteractable))
+                {
+
+                    hitIEnvironmentInteractable.OnHitByWeapon();
+                    GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+                    Destroy(vfx, 1f);
+                    Runner.Despawn(Object);
+                }
+               
             }
-            if (other.gameObject.tag == "Ground")
+            /*if (other.gameObject.tag == "Ground")
             {
                 Instantiate(hitVFX, transform.position, Quaternion.identity);
 
                 Runner.Despawn(Object);
-            }
-            if (other.gameObject.TryGetComponent<IEnvironmentInteractable>(out var hitIEnvironmentInteractable))
-            {
-
-                hitIEnvironmentInteractable.OnHitByWeapon();
-            }
+            }*/
+           
         }
 
            

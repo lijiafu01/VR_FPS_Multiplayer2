@@ -34,6 +34,7 @@ namespace multiplayerMode
         private Rigidbody rb;
         private void Start()
         {
+            
             NetworkManager.Instance.Runner.AddCallbacks(this);
         }
        

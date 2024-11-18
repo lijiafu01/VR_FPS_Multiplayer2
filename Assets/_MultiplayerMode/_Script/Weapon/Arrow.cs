@@ -6,7 +6,7 @@ namespace multiplayerMode
     
     public class Arrow : NetworkBehaviour
     {
-       
+        public GameObject hitVFX;
         [Networked] private NetworkBehaviourId hitObjectId { get; set; }
         private Transform hitTransform;
         private Vector3 localPosition;
@@ -67,13 +67,13 @@ namespace multiplayerMode
 
         public override void FixedUpdateNetwork()
         {
-            if (rb != null && !rb.isKinematic && rb.velocity != Vector3.zero)
+           /* if (rb != null && !rb.isKinematic && rb.velocity != Vector3.zero)
             {
                 lastVelocity = rb.velocity;  // Lưu lại vận tốc thực sự, không chỉ hướng
 
                 // Thực hiện raycast để kiểm tra va chạm với người chơi
                 RaycastForPlayerHit();
-            }
+            }*/
 
             // Kiểm tra thời gian hủy mũi tên
             if (DestroyTimer.Expired(Runner))
@@ -94,11 +94,11 @@ namespace multiplayerMode
                     hitOptions))
             {
                 // Xử lý va chạm với người chơi
-                ProcessPlayerHit(hit);
+                //ProcessPlayerHit(hit);
             }
         }
-        bool isShoot = false;
-        private void ProcessPlayerHit(LagCompensatedHit hit)
+        //bool isShoot = false;
+        /*private void ProcessPlayerHit(LagCompensatedHit hit)
         {
             Destroy(rb);
 
@@ -148,8 +148,8 @@ namespace multiplayerMode
                 if (hit.GameObject.tag == "BatEnemy")
                 {
                     Runner.Despawn(Object);
-                   /* SmallBatEnemy smallBatEnemy = hit.GameObject.GetComponent<SmallBatEnemy>();
-                   transform.SetParent(smallBatEnemy.ArrowPos);*/
+                   *//* SmallBatEnemy smallBatEnemy = hit.GameObject.GetComponent<SmallBatEnemy>();
+                   transform.SetParent(smallBatEnemy.ArrowPos);*//*
                 }
                 else
                 {
@@ -171,16 +171,81 @@ namespace multiplayerMode
                 // Đặt mũi tên làm con của người chơi để nó dính vào người chơi
                 transform.SetParent(hit.GameObject.transform);
             }
-        }
-        
-     
+        }*/
 
+        private void OnTriggerEnter(Collider other)
+        {
+           
+            Vector3 hitPoint = other.ClosestPoint(transform.position);
+            Vector3 hitNormal = (transform.position - hitPoint).normalized;
+            
+            if (Object.HasStateAuthority && other.gameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
+            {
+                if (NetworkManager.Instance.IsTeamMode)
+                {
+                    PlayerTeamSetup ePlayerTeamSetup = hitPlayerController.gameObject.GetComponent<PlayerTeamSetup>();
+
+                    PlayerTeamSetup myPlayerTeamSetup = GetComponent<PlayerTeamSetup>();
+                    if (myPlayerTeamSetup.teamID != null)
+                    {
+                        if (myPlayerTeamSetup.teamID == ePlayerTeamSetup.teamID)
+                        {
+                            return;
+                        }
+                    }
+                }
+                string playerName = GameManager.Instance.PlayerData.playerName;
+                if (hitPlayerController.playerName == playerName)
+                {
+                    return;
+                }
+                /*GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+                Destroy(vfx, 1f);*/
+                hitPlayerController.TakeDamage_RPC(damage, hitPoint, hitNormal, playerName);
+                //Runner.Despawn(Object);
+                SethitVFX_RPC(other.gameObject.transform.position);
+
+
+            }
+            else if (Object.HasStateAuthority && other.gameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
+            {
+
+                string playerName = GameManager.Instance.PlayerData.playerName;
+
+                hitBossNetworked.TakeDamage(damage, hitPoint, hitNormal, playerName, NetworkManager.Instance.TeamID);
+                /* GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+                 Destroy(vfx, 1f);*/
+                //Runner.Despawn(Object);
+                SethitVFX_RPC(other.gameObject.transform.position);
+
+            }
+            else if (Object.HasStateAuthority && other.gameObject.TryGetComponent<IEnvironmentInteractable>(out var hitIEnvironmentInteractable))
+            {
+
+                hitIEnvironmentInteractable.OnHitByWeapon();
+                /* GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+                 Destroy(vfx, 1f);*/
+                //Runner.Despawn(Object);
+                SethitVFX_RPC(other.gameObject.transform.position);
+            }
+
+        }
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        void SethitVFX_RPC(Vector3 posititon)
+        {
+            GameObject vfx = Instantiate(hitVFX, posititon, Quaternion.identity);
+            Destroy(vfx, 1f);
+            if(Object.HasInputAuthority)
+            {
+                Runner.Despawn(Object);
+            }
+        }
         private void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag("BowCenter"))
+            /*if (other.CompareTag("BowCenter"))
             {
                 bowCollider.isTrigger = false;  // Khi mũi tên rời khỏi BowCenter, dừng trigger
-            }
+            }*/
         }
     }
 }

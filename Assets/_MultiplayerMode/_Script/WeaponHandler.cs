@@ -6,6 +6,7 @@ namespace multiplayerMode
    
     public class WeaponHandler : NetworkBehaviour
     {
+        public GameObject hitVFX;
         [SerializeField]
         private int damage = 10;
         [SerializeField]
@@ -71,6 +72,8 @@ namespace multiplayerMode
                         string playerName = GameManager.Instance.PlayerData.playerName;
                         // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
                         hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
+                        /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                        Destroy(vfx, 1f);*/
                 }
                 if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
                 {
@@ -80,13 +83,24 @@ namespace multiplayerMode
                         string playerName = GameManager.Instance.PlayerData.playerName;
 
                         hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName,NetworkManager.Instance.TeamID);
+                   /* GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                    Destroy(vfx, 1f);*/
                 }
                 if (hit.GameObject.TryGetComponent<IEnvironmentInteractable>(out var hitIEnvironmentInteractable))
                 {
 
                     hitIEnvironmentInteractable.OnHitByWeapon();
+                    /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                    Destroy(vfx, 1f);*/
                 }
+                SethitVFX_RPC(hit.Point);
             }
+        }
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        void SethitVFX_RPC(Vector3 posititon)
+        {
+            GameObject vfx = Instantiate(hitVFX, posititon, Quaternion.identity);
+            Destroy(vfx, 1f);          
         }
         public void PistolLeftFire()
         {
@@ -118,6 +132,8 @@ namespace multiplayerMode
                         string playerName = GameManager.Instance.PlayerData.playerName;
                         // Sử dụng RPC để thông báo cho client của người bị bắn gọi hàm TakeDamage và truyền vị trí va chạm
                         hitPlayerController.TakeDamage_RPC(damage, hit.Point, hit.Normal, playerName);
+                   /* GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                    Destroy(vfx, 1f);*/
                 }
                 if (hit.GameObject.TryGetComponent<IDamageable>(out var hitBossNetworked))
                 {
@@ -125,12 +141,17 @@ namespace multiplayerMode
                     string playerName = GameManager.Instance.PlayerData.playerName;
 
                     hitBossNetworked.TakeDamage(damage, hit.Point, hit.Normal, playerName, NetworkManager.Instance.TeamID);
+                    /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                    Destroy(vfx, 1f);*/
                 }
                 if (hit.GameObject.TryGetComponent<IEnvironmentInteractable>(out var hitIEnvironmentInteractable))
                 {
 
                     hitIEnvironmentInteractable.OnHitByWeapon();
+                    /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                    Destroy(vfx, 1f);*/
                 }
+                SethitVFX_RPC(hit.Point);
             }
         }
 

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8553716694878348566}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1981294693741470229}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SmokeVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8708633804488632509}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 9096003958694572609}
   - component: {fileID: 2764066665647966479}
   - component: {fileID: 3561463176214650882}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Extinguisher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 2442880201980007737}
   - component: {fileID: 9217095544768913620}
   - component: {fileID: 964838101624351717}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Extinguisher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -316,7 +316,7 @@ GameObject:
   - component: {fileID: 8241224043743105719}
   - component: {fileID: 2589576321618195895}
   - component: {fileID: 8198939686588876951}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Polygon smoke 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -1,9 +1,22 @@
-﻿using Oculus.Interaction;
+﻿using Fusion;
+using multiplayerMode;
+using Oculus.Interaction;
 using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LocalPlayer : MonoBehaviour
 {
+    [SerializeField] private int maxMana = 100; // Lượng mana tối đa
+    [SerializeField] private int currentMana; // Lượng mana hiện tại
+    [SerializeField] private int manaRegenRate = 50; // Lượng mana hồi mỗi 5 giây
+    [SerializeField] private int manaCostPerJump = 10; // Lượng mana trừ mỗi lần nhảy
+    [SerializeField] private float regenInterval = 5f; // Thời gian hồi mana (5 giây)
+    [SerializeField] private Slider manaSlider; // Slider để hiển thị mana
+    [SerializeField] private TextMeshProUGUI manaText; // Text để hiển thị lượng mana
+
+    public NetworkObject jumpVFX;
     public bool EnableLinearMovement = true;
     public bool EnableRotation = true;
     public bool HMDRotatesPlayer = true;
@@ -43,8 +56,30 @@ public class LocalPlayer : MonoBehaviour
     void Start()
     {
         SetupAttribute();
+        currentMana = maxMana;
+        UpdateManaUI();
+        InvokeRepeating(nameof(RegenerateMana), regenInterval, regenInterval);
     }
+    private void RegenerateMana()
+    {
+        if (currentMana < maxMana)
+        {
+            currentMana = Mathf.Min(currentMana + manaRegenRate, maxMana);
+            UpdateManaUI();
+        }
+    }
+    private void UpdateManaUI()
+    {
+        if (manaSlider != null)
+        {
+            manaSlider.value = (float)currentMana / maxMana;
+        }
 
+        if (manaText != null)
+        {
+            manaText.text = $"Mana:{currentMana}/{maxMana}";
+        }
+    }
     private void FixedUpdate()
     {
         if (CameraUpdated != null) CameraUpdated();
@@ -158,19 +193,26 @@ public class LocalPlayer : MonoBehaviour
             ReadyToSnapTurn = true;
         }
     }
-
+   
     // Thêm hàm xử lý nhảy
     void HandleJump()
     {
-        if ((OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)))
+        if ((OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)) && currentMana >= manaCostPerJump)
         {
+            // Trừ mana và cập nhật UI
+            currentMana -= manaCostPerJump;
+            UpdateManaUI();
             // Đặt lại vận tốc của Rigidbody về 0 trên tất cả các trục trước khi nhảy
             _rigidbody.velocity = Vector3.zero;
-
+            NetworkManager.Instance.Runner.Spawn(jumpVFX,transform.position,Quaternion.identity);
             // Áp dụng lực nhảy
             _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+           
         }
-
+        else if (currentMana < manaCostPerJump)
+        {
+            Debug.Log("Không đủ mana để nhảy!");
+        }
     }
 
 

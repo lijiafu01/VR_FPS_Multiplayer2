@@ -79113,7 +79113,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!4 &1771091764020020926
 Transform:
@@ -88331,7 +88331,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5519807743168779236}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 847d8b0d968d4a14c89d7508f54c0db7, type: 3}
   m_Name: 
@@ -88341,7 +88341,7 @@ MonoBehaviour:
   HMDRotatesPlayer: 1
   RotationEitherThumbstick: 0
   RotationAngle: 45
-  Speed: 1
+  Speed: 0
   CameraRig: {fileID: 0}
 --- !u!114 &6573283048988727992
 MonoBehaviour:
