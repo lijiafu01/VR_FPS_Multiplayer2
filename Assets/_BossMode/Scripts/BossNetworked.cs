@@ -7,6 +7,8 @@ using System.Collections;
 using System.ComponentModel;
 public class BossNetworked : NetworkBehaviour
 {
+
+
     public Transform spawnRubyPos;
     private TickTimer _FakeBodylifeTimer;
 

@@ -115,6 +115,12 @@ namespace multiplayerMode
             previousVelocity = currentVelocity;
         }
 
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        void SetSFX_RPC()
+        {
+            audioSource.Play();
+
+        }
         bool _isShooting = false;
 
         void SpawnCard(float swingForce)
@@ -123,7 +129,7 @@ namespace multiplayerMode
             _CardModel.SetActive(false);
             _isShooting = true;
             Invoke("SetShootActive", 0.5f);
-            audioSource.Play();
+            SetSFX_RPC();
             NetworkObject cardInstance = Runner.Spawn(cardPrefab, handAnchor.position, handAnchor.rotation);
             CardProjectileNetworked cardProjectileNetworked = cardInstance.GetComponent<CardProjectileNetworked>();
             cardProjectileNetworked.Init(damage);

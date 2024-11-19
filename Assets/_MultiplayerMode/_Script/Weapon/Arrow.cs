@@ -240,12 +240,14 @@ namespace multiplayerMode
                 Runner.Despawn(Object);
             }
         }
+        public AudioSource shootSFX;
         private void OnTriggerExit(Collider other)
         {
-            /*if (other.CompareTag("BowCenter"))
+
+            if (other.CompareTag("BowCenter"))
             {
-                bowCollider.isTrigger = false;  // Khi mũi tên rời khỏi BowCenter, dừng trigger
-            }*/
+                shootSFX.Play();
+            }
         }
     }
 }

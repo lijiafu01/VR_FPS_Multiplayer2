@@ -51,8 +51,7 @@ namespace multiplayerMode
 
         private HardwareRig hardwareRig;
         [SerializeField]
-        private AudioClip _fireSound;
-        private AudioSource _audioSource;
+        public AudioSource _audioSource;
         // Thêm biến cho ParticleSystem
         [SerializeField]
         private ParticleSystem _muzzleFlash;
@@ -137,8 +136,7 @@ namespace multiplayerMode
                 SetUpPlayerEquipmentOther(_playerModelName);
             }
             SetupAttribute();
-            _audioSource = gameObject.AddComponent<AudioSource>();
-            _audioSource.clip = _fireSound;
+            
         }
         private Transform[] spawnPos;
         private void Start()
@@ -638,7 +636,7 @@ namespace multiplayerMode
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         private void PistolRightFireEffects_RPC()
         {
-            if (_audioSource != null && _fireSound != null)
+            if (_audioSource != null)
             {
                 _audioSource.Play();
             }
@@ -648,7 +646,7 @@ namespace multiplayerMode
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         private void PistolLeftFireEffects_RPC()
         {
-            if (_audioSource != null && _fireSound != null)
+            if (_audioSource != null )
             {
                 _audioSource.Play();
             }

@@ -95,7 +95,7 @@ namespace multiplayerMode
                 healthSlider.value = (float)hp / maxHP;
             }
 
-            string displayHP = "HP : " + hp.ToString() + " / " + maxHP;
+            string displayHP = hp.ToString() + "/" + maxHP;
             hpText.text = displayHP;
         }
 

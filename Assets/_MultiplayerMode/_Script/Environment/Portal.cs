@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
+    public AudioSource portalSFX;
     private PortalManager manager;
     private Coroutine collisionCoroutine;
     private bool isColliding = false;
@@ -20,6 +21,7 @@ public class Portal : MonoBehaviour
             // Chỉ bắt đầu Coroutine nếu chưa có va chạm đang diễn ra
             if (!isColliding)
             {
+                portalSFX.Play();
                 isColliding = true;
                 collisionCoroutine = StartCoroutine(CheckContinuousCollision(other, hitLocalPlayer));
             }
@@ -31,6 +33,7 @@ public class Portal : MonoBehaviour
         // Dừng Coroutine nếu đối tượng rời khỏi vùng va chạm
         if (collisionCoroutine != null)
         {
+            portalSFX.Stop();
             StopCoroutine(collisionCoroutine);
             collisionCoroutine = null;
             isColliding = false;

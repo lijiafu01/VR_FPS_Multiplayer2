@@ -21,7 +21,7 @@ namespace multiplayerMode
         [SerializeField] private float pullStrengthMultiplier = 1500f; // Nhân số để tính lực bắn dựa trên độ kéo
 
         [SerializeField] private AudioSource drawSound;    // Âm thanh khi kéo dây cung
-        [SerializeField] private AudioSource shootSound;   // Âm thanh khi bắn mũi tên
+        //[SerializeField] private AudioSource shootSound;   // Âm thanh khi bắn mũi tên
 
         private GameObject currentArrow;
         private bool isStringPulled = false;
@@ -34,19 +34,10 @@ namespace multiplayerMode
         protected void Start()
         {
             ResetString();
+            
         }
-        /*public bool GetTriggerPressed()
-        {
-            // Lấy giá trị nút trigger bên trái
-            //float leftTrigger = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch);
-
-            // Lấy giá trị nút trigger bên phải
-            float rightTrigger = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
-
-            // Kiểm tra xem có nút trigger nào được nhấn qua một ngưỡng nhất định không
-            // Ví dụ, sử dụng ngưỡng 0.1f để coi như là nhấn nút
-            return rightTrigger > 0.1f;
-        }*/      
+        
+        
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
@@ -203,7 +194,7 @@ namespace multiplayerMode
                 rb.AddForce(transform.forward * pullDistance * pullStrengthMultiplier);
 
                 currentArrow = null;
-                shootSound.Play();  // Phát âm thanh bắn mũi tên
+                //shootSound.Play();  // Phát âm thanh bắn mũi tên
             }
             else
             {

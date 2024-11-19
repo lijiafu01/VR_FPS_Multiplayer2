@@ -1,6 +1,5 @@
 ﻿using Fusion;
 using multiplayerMode;
-using Oculus.Interaction;
 using System;
 using TMPro;
 using UnityEngine;
@@ -34,11 +33,30 @@ public class LocalPlayer : MonoBehaviour
     // Thêm biến cho lực nhảy và kiểm tra trạng thái đứng trên mặt đất
     public float jumpForce = 5f; // Lực nhảy
     private bool isGrounded = true; // Kiểm tra nhân vật đang đứng trên mặt đất
+    private RigidbodyConstraints originalConstraints; // Lưu trạng thái constraints ban đầu
 
+   
+    private void UnlockConstraints()
+    {
+        // Mở khóa và phục hồi lại trạng thái constraints ban đầu
+        _rigidbody.constraints = originalConstraints;
+    }
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
         if (CameraRig == null) CameraRig = GetComponentInChildren<OVRCameraRig>();
+        // Lấy thành phần Rigidbody
+        _rigidbody = GetComponent<Rigidbody>();
+
+        // Lưu lại trạng thái constraints ban đầu
+        originalConstraints = _rigidbody.constraints;
+
+        // Khóa tất cả các trục chuyển động và xoay
+        _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+
+        // Gọi hàm mở khóa sau 3 giây
+        Invoke(nameof(UnlockConstraints), 3f);
+
     }
 
     void SetupAttribute()
@@ -77,7 +95,7 @@ public class LocalPlayer : MonoBehaviour
 
         if (manaText != null)
         {
-            manaText.text = $"Mana:{currentMana}/{maxMana}";
+            manaText.text = $"{currentMana}/{maxMana}";
         }
     }
     private bool jumpRequested = false;
@@ -207,27 +225,31 @@ public class LocalPlayer : MonoBehaviour
             ReadyToSnapTurn = true;
         }
     }
-   
+
     // Thêm hàm xử lý nhảy
     void HandleJump()
     {
-        if ((OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)) && currentMana >= manaCostPerJump)
+        if (currentMana >= manaCostPerJump)
         {
             // Trừ mana và cập nhật UI
             currentMana -= manaCostPerJump;
             UpdateManaUI();
+
             // Đặt lại vận tốc của Rigidbody về 0 trên tất cả các trục trước khi nhảy
             _rigidbody.velocity = Vector3.zero;
-            NetworkManager.Instance.Runner.Spawn(jumpVFX,transform.position,Quaternion.identity);
+
+            // Sinh hiệu ứng nhảy
+            NetworkManager.Instance.Runner.Spawn(jumpVFX, transform.position, Quaternion.identity);
+
             // Áp dụng lực nhảy
             _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
-           
         }
-        else if (currentMana < manaCostPerJump)
+        else
         {
             Debug.Log("Không đủ mana để nhảy!");
         }
     }
+
 
 
 }

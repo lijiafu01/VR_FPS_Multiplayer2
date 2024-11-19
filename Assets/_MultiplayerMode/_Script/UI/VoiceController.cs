@@ -87,4 +87,38 @@ public class VoiceController : MonoBehaviour
             NetworkManager.Instance.RecorderScr.TransmitEnabled = true;
         }
     }
+    //==================================================Game sound ==================================
+    [SerializeField] private Slider volumeSlider; // Tham chiếu đến Slider UI
+
+    private void Start()
+    {
+        // Kiểm tra nếu volumeSlider chưa được gán
+        if (volumeSlider == null)
+        {
+            Debug.LogError("MasterVolumeController: Slider chưa được gán.");
+            return;
+        }
+
+        // Đặt giá trị mặc định cho slider từ âm lượng hiện tại
+        volumeSlider.value = AudioListener.volume;
+
+        // Thêm listener để thay đổi âm lượng khi kéo slider
+        volumeSlider.onValueChanged.AddListener(SetMasterVolume);
+    }
+
+    // Hàm điều chỉnh âm lượng toàn bộ game
+    private void SetMasterVolume(float volume)
+    {
+        AudioListener.volume = volume;
+        Debug.Log("Âm lượng toàn bộ game hiện tại: " + volume);
+    }
+
+    // Hàm để gỡ bỏ listener khi script hoặc object bị hủy
+    private void OnDestroy()
+    {
+        if (volumeSlider != null)
+        {
+            volumeSlider.onValueChanged.RemoveListener(SetMasterVolume);
+        }
+    }
 }
