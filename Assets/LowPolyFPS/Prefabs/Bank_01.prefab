@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 7272595018365325183}
   - component: {fileID: 7272595018364325311}
   - component: {fileID: 7862015295894708381}
-  m_Layer: 0
+  - component: {fileID: 7570734033650738008}
+  m_Layer: 10
   m_Name: Bank_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,3 +106,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 11.98113, y: 20.000006, z: 11.981131}
   m_Center: {x: 0, y: 10.000001, z: 0.000006914139}
+--- !u!114 &7570734033650738008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7272595018362327935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32f1252c3e8e5cd4ca3d7b63d465982f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  evmVFX: {fileID: 3750417630137122857, guid: de57f8ce55d679e44b0fe1d1c84ae385, type: 3}

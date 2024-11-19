@@ -3,6 +3,7 @@ using multiplayerMode;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Fusion.NetworkCharacterController;
 namespace multiplayerMode
 {
     public class CardProjectileNetworked : NetworkBehaviour
@@ -64,11 +65,19 @@ namespace multiplayerMode
                 {
 
                     hitIEnvironmentInteractable.OnHitByWeapon();
+
                     GameObject vfx = Instantiate(hitVFX, other.gameObject.transform.position, Quaternion.identity);
                     Destroy(vfx, 1f);
                     Runner.Despawn(Object);
                 }
-               
+                if (other.gameObject.TryGetComponent<IstatisEvm>(out var hitIEnvironment))
+                {
+                    hitIEnvironment.StaticEVM(hitPoint, hitNormal);
+                    return;
+                    /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                    Destroy(vfx, 1f);*/
+                }
+
             }
             /*if (other.gameObject.tag == "Ground")
             {

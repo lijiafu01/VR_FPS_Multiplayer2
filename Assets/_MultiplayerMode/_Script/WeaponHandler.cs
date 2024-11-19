@@ -88,8 +88,16 @@ namespace multiplayerMode
                 }
                 if (hit.GameObject.TryGetComponent<IEnvironmentInteractable>(out var hitIEnvironmentInteractable))
                 {
-
+                    Debug.Log("IEnvironmentInteractable:sung luc");
                     hitIEnvironmentInteractable.OnHitByWeapon();
+
+                    /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                    Destroy(vfx, 1f);*/
+                }
+                if (hit.GameObject.TryGetComponent<IstatisEvm>(out var hitIEnvironment))
+                {
+                    hitIEnvironment.StaticEVM(hit.Point, hit.Normal);
+                    return;
                     /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
                     Destroy(vfx, 1f);*/
                 }
@@ -146,11 +154,20 @@ namespace multiplayerMode
                 }
                 if (hit.GameObject.TryGetComponent<IEnvironmentInteractable>(out var hitIEnvironmentInteractable))
                 {
+                    Debug.Log("IEnvironmentInteractable:sung luc");
 
                     hitIEnvironmentInteractable.OnHitByWeapon();
                     /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
                     Destroy(vfx, 1f);*/
                 }
+                if (hit.GameObject.TryGetComponent<IstatisEvm>(out var hitIEnvironment))
+                {
+                    hitIEnvironment.StaticEVM(hit.Point, hit.Normal);
+                    return;
+                    /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                    Destroy(vfx, 1f);*/
+                }
+
                 SethitVFX_RPC(hit.Point);
             }
         }

@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 368620174750423495}
   - component: {fileID: 368620174751554311}
   - component: {fileID: 6900534698019340251}
-  m_Layer: 0
+  - component: {fileID: 1875972533630764229}
+  m_Layer: 10
   m_Name: AutoService_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,6 +108,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 8.929677, y: 5.23728, z: 7.1067715}
   m_Center: {x: -0.007428646, y: 2.618638, z: 0.024671078}
+--- !u!114 &1875972533630764229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 368620174753482183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32f1252c3e8e5cd4ca3d7b63d465982f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  evmVFX: {fileID: 3750417630137122857, guid: de57f8ce55d679e44b0fe1d1c84ae385, type: 3}
 --- !u!1001 &368620175380906984
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -118,6 +132,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 9209810447712e145b4621520c481b46, type: 3}
       propertyPath: m_Name
       value: AutoService_01_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 9209810447712e145b4621520c481b46, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 9209810447712e145b4621520c481b46, type: 3}
       propertyPath: m_RootOrder
@@ -218,6 +236,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 9209810447712e145b4621520c481b46, type: 3}
       propertyPath: m_Name
       value: AutoService_01_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 9209810447712e145b4621520c481b46, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 9209810447712e145b4621520c481b46, type: 3}
       propertyPath: m_RootOrder

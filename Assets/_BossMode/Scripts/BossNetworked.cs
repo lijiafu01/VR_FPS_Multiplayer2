@@ -7,7 +7,9 @@ using System.Collections;
 using System.ComponentModel;
 public class BossNetworked : NetworkBehaviour
 {
-
+    // Biến mới để theo dõi thời gian không có người chơi tấn công
+    private float timeSinceLastPlayerDetected = 0f; // Thời gian đã trôi qua từ lần cuối tìm thấy người chơi
+    private float regenTimeThreshold = 15f; // Thời gian cần thiết để hồi HP (15 giây)
 
     public Transform spawnRubyPos;
     private TickTimer _FakeBodylifeTimer;
@@ -265,7 +267,8 @@ public class BossNetworked : NetworkBehaviour
 
                     if (targetPlayer != null)
                     {
-
+                        // Đặt lại thời gian đếm khi tìm thấy người chơi
+                        timeSinceLastPlayerDetected = 0f; // CODE MỚI
                         // Xoay boss về phía người chơi
                         RotateTowards(targetPlayer.position);
 
@@ -275,6 +278,25 @@ public class BossNetworked : NetworkBehaviour
                         // Đặt lại skillTimer
                         skillTimer = TickTimer.CreateFromSeconds(Runner, 5f);
                        
+                    }
+                    else
+                    {
+                        // Không tìm thấy người chơi, tăng thời gian đã trôi qua
+                        timeSinceLastPlayerDetected += Runner.DeltaTime; // CODE MỚI
+
+                        // Nếu thời gian đã trôi qua vượt quá ngưỡng, hồi đầy HP cho boss
+                        if (timeSinceLastPlayerDetected >= regenTimeThreshold) // CODE MỚI
+                        {
+                            if(Object.HasStateAuthority)
+                            {
+                                CurrentHealth = MaxHealth; // Hồi đầy HP cho boss
+                                //UpdateHealthUI(); // Cập nhật UI
+                                
+                            }
+                            // Reset thời gian đếm
+                            timeSinceLastPlayerDetected = 0f; // CODE MỚI
+
+                        }
                     }
                 }
             }

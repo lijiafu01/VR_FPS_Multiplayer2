@@ -267,7 +267,8 @@ namespace multiplayerMode
         }
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
-            Debug.Log("menu_roi di");
+
+            Debug.Log("OnPlayerLeft:"+player);
             //boss lobby
             if(SceneManager.GetActiveScene().name == "Menu")
             {
@@ -279,10 +280,33 @@ namespace multiplayerMode
                     Debug.Log("menu_a1");
                 }
             }
-          
+            
+
             //----
             Debug.Log("dev_player_left id:1111 "+player);
         }
+       /* private void DestroyNetworkObjetc(PlayerRef playerRef)
+        {
+
+            if (Runner != null)
+            {
+                // Duyệt qua tất cả các `NetworkObject` trong phiên
+                foreach (var networkObject in Runner.SceneObjects)
+                {
+                    // Kiểm tra nếu `networkObject` thuộc về `playerRef` cần tìm
+                    if (networkObject.Owner == playerRef)
+                    {
+                        Debug.Log("NetworkObject found for PlayerRef: " + playerRef);
+                        Runner.Despawn(networkObject);
+                        break; // Dừng vòng lặp sau khi tìm thấy và hủy đối tượng
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("NetworkRunner not found!");
+            }
+        }*/
         public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
             Debug.Log("dev_OnShutdown11111");
@@ -312,7 +336,9 @@ namespace multiplayerMode
         }
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
         public void OnConnectedToServer(NetworkRunner runner) { }
-        public void OnDisconnectedFromServer(NetworkRunner runner) { }
+        public void OnDisconnectedFromServer(NetworkRunner runner) {
+
+        }
         public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
         public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
         public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }

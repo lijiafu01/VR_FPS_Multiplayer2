@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 6835897090640275273}
   - component: {fileID: 6835897090639144329}
   - component: {fileID: 7993512858963881393}
-  m_Layer: 0
+  - component: {fileID: 2387607988418530638}
+  m_Layer: 10
   m_Name: House_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,3 +107,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 7.071109, y: 3.4226048, z: 6.2322598}
   m_Center: {x: 0.3228283, y: 1.711285, z: -0.088131905}
+--- !u!114 &2387607988418530638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6835897090637216585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32f1252c3e8e5cd4ca3d7b63d465982f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  evmVFX: {fileID: 3750417630137122857, guid: de57f8ce55d679e44b0fe1d1c84ae385, type: 3}

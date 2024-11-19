@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 6228962234870051224}
   - component: {fileID: 6228962234871182168}
   - component: {fileID: 5380560489144550192}
-  m_Layer: 0
+  - component: {fileID: -3786910962528861771}
+  m_Layer: 10
   m_Name: RoadPart_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,3 +107,16 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: d4b40a14ff57d5a468d350113e223c33, type: 3}
+--- !u!114 &-3786910962528861771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6228962234873376152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32f1252c3e8e5cd4ca3d7b63d465982f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  evmVFX: {fileID: 3750417630137122857, guid: de57f8ce55d679e44b0fe1d1c84ae385, type: 3}

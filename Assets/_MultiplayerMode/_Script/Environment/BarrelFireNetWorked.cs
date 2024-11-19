@@ -27,6 +27,10 @@ public class BarrelFireNetWorked : NetworkBehaviour, IEnvironmentInteractable
             }
         }
     }
+    public void StaticEVM(Vector3 spawnPoint, Vector3 hitNormal)
+    {
+
+    }
     // Hàm này sẽ được gọi khi đối tượng bị bắn
     public void TriggerFire()
     {

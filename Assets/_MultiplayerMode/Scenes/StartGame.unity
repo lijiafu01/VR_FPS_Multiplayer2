@@ -2097,7 +2097,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &50169406
 Transform:
   m_ObjectHideFlags: 0
@@ -4035,6 +4035,10 @@ PrefabInstance:
     - target: {fileID: 4462121445690340801, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
       propertyPath: m_Name
       value: CherryBlossom_flower_roadside_1 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4462121445690340801, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5785758180951553706, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
       propertyPath: m_Size
@@ -7229,7 +7233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &209747016
 Transform:
   m_ObjectHideFlags: 0
@@ -12396,6 +12400,10 @@ PrefabInstance:
     - target: {fileID: 8738186846440851921, guid: e0c6bb344ef2a0d4c9507b2f0f980472, type: 3}
       propertyPath: m_Name
       value: CherryBlossom_flower_roadside_2 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8738186846440851921, guid: e0c6bb344ef2a0d4c9507b2f0f980472, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -19402,6 +19410,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CherryBlossom_flower_roadside_2 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8738186846440851921, guid: e0c6bb344ef2a0d4c9507b2f0f980472, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -25049,6 +25061,10 @@ PrefabInstance:
     - target: {fileID: 8738186846440851921, guid: e0c6bb344ef2a0d4c9507b2f0f980472, type: 3}
       propertyPath: m_Name
       value: CherryBlossom_flower_roadside_2 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8738186846440851921, guid: e0c6bb344ef2a0d4c9507b2f0f980472, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -46634,6 +46650,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CherryBlossom_flower_roadside_1 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4462121445690340801, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5785758180951553706, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
       propertyPath: m_Size
       value: 1
@@ -57201,6 +57221,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CherryBlossom_flower_roadside_2
       objectReference: {fileID: 0}
+    - target: {fileID: 8738186846440851921, guid: e0c6bb344ef2a0d4c9507b2f0f980472, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -62884,6 +62908,10 @@ PrefabInstance:
     - target: {fileID: 4462121445690340801, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
       propertyPath: m_Name
       value: CherryBlossom_flower_roadside_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4462121445690340801, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5785758180951553706, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
       propertyPath: m_Size

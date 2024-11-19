@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Fusion;
+using static Fusion.NetworkCharacterController;
 
 namespace multiplayerMode
 {
@@ -227,6 +228,13 @@ namespace multiplayerMode
                  Destroy(vfx, 1f);*/
                 //Runner.Despawn(Object);
                 SethitVFX_RPC(other.gameObject.transform.position);
+            }
+            if (other.gameObject.TryGetComponent<IstatisEvm>(out var hitIEnvironment))
+            {
+                hitIEnvironment.StaticEVM(hitPoint, hitNormal);
+                return;
+                /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                Destroy(vfx, 1f);*/
             }
 
         }
