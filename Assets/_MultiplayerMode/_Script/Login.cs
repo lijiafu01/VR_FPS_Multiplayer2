@@ -11,6 +11,7 @@ namespace multiplayerMode
 {
     public class Login : MonoBehaviour
     {
+        public NoticeText _noticeText;
         private string _displayName;
         public TMP_InputField usernameInput;
         public TMP_InputField passwordInput;
@@ -18,17 +19,18 @@ namespace multiplayerMode
         //private GameObject virtualKeyBoard;
         private KeyboardManager keyboardManager; // Đảm bảo KeyboardManager được khai báo và hoạt động trong dự án của bạn
 
-       /* private void Start()
-        {
-            //virtualKeyBoard.SetActive(false);
+       
+        /* private void Start()
+         {
+             //virtualKeyBoard.SetActive(false);
 
-            // Đăng ký sự kiện khi trường nhập được chọn
-            usernameInput.onSelect.AddListener(delegate { HandleInputSelected(usernameInput); });
-            passwordInput.onSelect.AddListener(delegate { HandleInputSelected(passwordInput); });
-        }*/
+             // Đăng ký sự kiện khi trường nhập được chọn
+             usernameInput.onSelect.AddListener(delegate { HandleInputSelected(usernameInput); });
+             passwordInput.onSelect.AddListener(delegate { HandleInputSelected(passwordInput); });
+         }*/
         public void SwitchAccount()
         {
-            usernameInput.text = "jack4@gmail.com";
+            usernameInput.text = "mike@gmail.com";
         }
         /*private void HandleInputSelected(TMP_InputField selectedInputField)
         {
@@ -84,6 +86,7 @@ namespace multiplayerMode
 
         private void OnLoginFailure(PlayFabError error)
         {
+            _noticeText.DisplayText("Login failed!");
             Debug.LogError("Đăng nhập thất bại: " + error.GenerateErrorReport());
         }
 
@@ -103,6 +106,11 @@ namespace multiplayerMode
         private void OnRegisterSuccess(RegisterPlayFabUserResult result)
         {
             Debug.Log("Đăng ký thành công!");
+            _noticeText.DisplayText("Registration successful!");
+
+            /*_noticeText.gameObject.SetActive(false);
+            _noticeText.gameObject.SetActive(true);
+            _noticeText.text = "Registration successful!";*/
 
             // Lấy tên người dùng từ email (loại bỏ phần sau @)
             string username = usernameInput.text.Split('@')[0];
@@ -140,6 +148,7 @@ namespace multiplayerMode
 
         private void OnRegisterFailure(PlayFabError error)
         {
+            _noticeText.DisplayText("Registration failed!");
             Debug.LogError("Đăng ký thất bại: " + error.GenerateErrorReport());
         }
 

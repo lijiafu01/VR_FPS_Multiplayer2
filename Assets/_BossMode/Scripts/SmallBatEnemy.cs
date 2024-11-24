@@ -12,14 +12,14 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
     // Thêm biến cho hiệu ứng máu
     [SerializeField]
     private ParticleSystem _bloodEffect;
-    [SerializeField]
-    private Slider healthSlider;
+    /*[SerializeField]
+    private Slider healthSlider;*/
     // Biến đếm thời gian giữa các lần gây sát thương
     private float damageCooldownTimer = 0f;
 
-    public int MaxHealth { get; set; } = 50;
+    public int MaxHealth { get; set; } = 1;
 
-    [Networked(OnChanged = nameof(OnHealthChanged))]
+    //[Networked(OnChanged = nameof(OnHealthChanged))]
     public int CurrentHealth { get; set; }
 
     [SerializeField]
@@ -56,10 +56,10 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
 
     public static void OnHealthChanged(Changed<SmallBatEnemy> changed)
     {
-        changed.Behaviour.UpdateHealthUI();
+        //changed.Behaviour.UpdateHealthUI();
     }
 
-    void UpdateHealthUI()
+  /*  void UpdateHealthUI()
     {
         if (healthSlider != null)
         {
@@ -69,7 +69,7 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
         {
             Debug.Log("boss8_5 healthSlider is null");
         }
-    }
+    }*/
 
     public override void Spawned()
     {

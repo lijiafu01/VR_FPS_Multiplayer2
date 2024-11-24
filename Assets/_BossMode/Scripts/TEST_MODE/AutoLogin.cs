@@ -23,13 +23,13 @@ public class AutoLogin : MonoBehaviour
     }*/
     public void LoginPC()
     {
-        login.usernameInput.text = "jack5@gmail.com";
+        login.usernameInput.text = "mike@gmail.com";
         login.passwordInput.text = "aaaaaa";
         login.LoginBtn();
     }
     public void LoginQuest()
     {
-        login.usernameInput.text = "jack4@gmail.com";
+        login.usernameInput.text = "trump1@gmail.com";
         login.passwordInput.text = "aaaaaa";
         login.LoginBtn();
     }

@@ -150,9 +150,9 @@ namespace multiplayerMode
             PlayerAttributes = new Dictionary<string, AttributeData>();
 
             // Thêm các nhân vật mặc định với thuộc tính ban đầu
-            PlayerAttributes.Add("Police", new AttributeData(0, 0, 0,500,50,50));
-            PlayerAttributes.Add("Angel", new AttributeData(0, 0, 0, 500, 100, 45));
-            PlayerAttributes.Add("Mage", new AttributeData(0, 0, 0, 600, 150, 45));
+            PlayerAttributes.Add("Police", new AttributeData(0, 0, 0,500,40,50));
+            PlayerAttributes.Add("Angel", new AttributeData(0, 0, 0, 500, 150, 45));
+            PlayerAttributes.Add("Mage", new AttributeData(0, 0, 0, 600, 200, 50));
             //PlayerAttributes.Add("Hero2", new AttributeData(1, 1, 1, 120, 40, 12));
             // Thêm các nhân vật khác nếu cần
         }

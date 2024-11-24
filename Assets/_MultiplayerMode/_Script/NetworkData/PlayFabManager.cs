@@ -1,4 +1,7 @@
 ﻿using multiplayerMode;
+using PlayFab.ClientModels;
+using PlayFab;
+using System;
 using UnityEngine;
 
 public class PlayFabManager : MonoBehaviour
@@ -42,5 +45,22 @@ public class PlayFabManager : MonoBehaviour
     void Update()
     {
         // Code cần thực hiện mỗi frame
+    }
+    /// <summary>
+    /// Lấy thời gian hiện tại từ PlayFab
+    /// </summary>
+    /// <param name="onTimeReceived">Callback nhận thời gian</param>
+    public void GetPlayFabTime(Action<DateTime> onTimeReceived)
+    {
+        PlayFabClientAPI.GetTime(new GetTimeRequest(), result =>
+        {
+            Debug.Log($"dev2_Thời gian hiện tại trên PlayFab: {result.Time}");
+            onTimeReceived?.Invoke(result.Time); // Trả về thời gian qua callback
+        },
+        error =>
+        {
+            Debug.LogError($"dev2_Lỗi khi lấy thời gian từ PlayFab: {error.GenerateErrorReport()}");
+            onTimeReceived?.Invoke(DateTime.MinValue); // Trả về giá trị mặc định nếu có lỗi
+        });
     }
 }

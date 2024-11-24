@@ -27,6 +27,10 @@ public class Hovl_Laser : MonoBehaviour
     private ParticleSystem[] Effects;
     private ParticleSystem[] Hit;
 
+    private void Awake()
+    {
+        this.gameObject.SetActive(false);
+    }
     void Start ()
     {
         //Get LineRender and ParticleSystem components from current prefab;  

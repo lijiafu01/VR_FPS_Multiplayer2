@@ -8,7 +8,7 @@ public class PlayFabCurrencyManager : MonoBehaviour
     private bool isLoggedIn = false; // Kiểm tra trạng thái đăng nhập
     private int coinsToAdd = 0;      // Số coin cần thêm khi đăng nhập thành công
     private int coinsToSubtract = 0; // Số coin cần trừ khi đăng nhập thành công
-    private const int MaxCoinsPerDay = 500; // Số coin tối đa nhận mỗi ngày
+    private const int MaxCoinsPerDay = 300; // Số coin tối đa nhận mỗi ngày
     private bool isMaxCoinReached = false;
 
     // Hàm đăng nhập người dùng

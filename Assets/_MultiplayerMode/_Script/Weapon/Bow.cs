@@ -156,6 +156,8 @@ namespace multiplayerMode
                 Debug.Log("dev16: OnTriggerEnter detected non-RightHand object.");
             }
         }
+        public AudioSource shootSFX;
+
         // Xử lý khi tay phải rời khỏi cung
         private void OnTriggerExit(Collider other)
         {
@@ -166,6 +168,10 @@ namespace multiplayerMode
             else
             {
                 Debug.Log("dev16: OnTriggerExit detected non-RightHand object.");
+            }
+            if (other.CompareTag("bullet"))
+            {
+                shootSFX.Play();
             }
         }
         // Bắn mũi tên
@@ -211,5 +217,6 @@ namespace multiplayerMode
             }
             bowHandle.position = bowstringCenter.position;
         }
+       
     }
 }

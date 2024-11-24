@@ -52,6 +52,10 @@ public class SmashVFXNetworked : NetworkBehaviour
             {
                 if (!playerNames.Contains(health.playerName))
                 {
+                   /* Vector3 impactDirection = (other.transform.position - transform.position).normalized;
+                    // Gọi ReceiveImpact với hướng và cường độ lực
+                    health.ReceiveImpact(impactDirection, 6);*/
+
                     Debug.Log("boss2_ gây sát thương cho " + health.playerName);
                     playerNames.Add(health.playerName);
                     health.TakeDamage_Boss(damageAmount);

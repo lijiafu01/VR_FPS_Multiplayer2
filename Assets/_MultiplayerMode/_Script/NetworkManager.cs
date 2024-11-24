@@ -36,8 +36,14 @@ namespace multiplayerMode
         {
             TeamID = newName;
         }
+        public int GenerateRandomSixDigitNumber()
+        {
+            // Số nguyên ngẫu nhiên từ 100000 đến 999999
+            return UnityEngine.Random.Range(100000, 1000000);
+        }
         private void Awake()
         {
+
             // Đảm bảo chỉ có một thể hiện duy nhất của NetworkManager
             if (Instance != null && Instance != this)
             {             
@@ -49,6 +55,7 @@ namespace multiplayerMode
                 
                 DontDestroyOnLoad(this.gameObject); // Không hủy đối tượng khi tải scene mới
             }
+            TeamID = GenerateRandomSixDigitNumber().ToString();
         }
 
         private void Start()

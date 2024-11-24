@@ -72,6 +72,7 @@ namespace multiplayerMode
         public NetworkDictionary<PlayerRef, NetworkObject> _PlayerDict => default;
         public override void Spawned()
         {
+           
             _playerRef = Object.InputAuthority;
             if (!PlayerNames.ContainsKey(_playerRef))
             {
@@ -441,36 +442,40 @@ namespace multiplayerMode
         }
         void RewardAndExitBoss()
         {
+            Debug.Log("testboss1024_RewardAndExitBoss");
+
             PlayFabManager.Instance.CurrencyManager.AddGoldCoin(15, (int coinsAdded) =>
             {
+                Debug.Log("testboss1024_RewardAndExitBoss222");
+
                 rewardCanvas.SetActive(true);
                 _rewardPanel.SpawnRewardItem(ItemRewardType.Coin, coinsAdded);
-                if (RubyNum > 0)
-                {
-                    rewardCanvas.SetActive(true);
-                    if (NetworkManager.Instance.BossName == "Boss1")
-                    {
-                        _rewardPanel.SpawnRewardItem(ItemRewardType.Amethyst, RubyNum);
-                        Item newItem = new Item("Amethyst", ItemType.Ruby, RubyNum);
-                        UserEquipmentData.Instance.AddItem(newItem);
-                    }
-                    else if (NetworkManager.Instance.BossName == "Boss2")
-                    {
-                        _rewardPanel.SpawnRewardItem(ItemRewardType.Emerald, RubyNum);
-                        Item newItem = new Item("Emerald", ItemType.Ruby, RubyNum);
-                        UserEquipmentData.Instance.AddItem(newItem);
-                    }
-                    else if (NetworkManager.Instance.BossName == "Boss3")
-                    {
-                        _rewardPanel.SpawnRewardItem(ItemRewardType.Sapphire, RubyNum);
-                        Item newItem = new Item("Sapphire", ItemType.Ruby, RubyNum);
-                        UserEquipmentData.Instance.AddItem(newItem);
-                    }
 
-                }
             });
 
+            if (RubyNum > 0)
+            {
+                rewardCanvas.SetActive(true);
+                if (NetworkManager.Instance.BossName == "Boss1")
+                {
+                    _rewardPanel.SpawnRewardItem(ItemRewardType.Amethyst, RubyNum);
+                    Item newItem = new Item("Amethyst", ItemType.Ruby, RubyNum);
+                    UserEquipmentData.Instance.AddItem(newItem);
+                }
+                else if (NetworkManager.Instance.BossName == "Boss2")
+                {
+                    _rewardPanel.SpawnRewardItem(ItemRewardType.Emerald, RubyNum);
+                    Item newItem = new Item("Emerald", ItemType.Ruby, RubyNum);
+                    UserEquipmentData.Instance.AddItem(newItem);
+                }
+                else if (NetworkManager.Instance.BossName == "Boss3")
+                {
+                    _rewardPanel.SpawnRewardItem(ItemRewardType.Sapphire, RubyNum);
+                    Item newItem = new Item("Sapphire", ItemType.Ruby, RubyNum);
+                    UserEquipmentData.Instance.AddItem(newItem);
+                }
 
+            }
             StartCoroutine(QuitCountdown());
         }
         public void ExitBoss()
@@ -534,8 +539,9 @@ namespace multiplayerMode
                 if (_currentHp <= 0)
                 {
                     _currentHp = 0;
-                    Dead();
-                    Invoke("SetInitHp", 1f);
+                    LocalManager.Instance.LoadStartGameScene();
+                    /*Dead();
+                    Invoke("SetInitHp", 1f);*/
                 }
             }
         }

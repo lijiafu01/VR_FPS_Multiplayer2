@@ -31,13 +31,14 @@ namespace multiplayerMode
         }
         private void OnTriggerEnter(Collider other)
         {
-            if(Object.HasStateAuthority)
+            // Lấy vị trí va chạm (hit point)
+            Vector3 hitPoint = other.ClosestPoint(transform.position);
+            // Tính toán pháp tuyến (normal)
+            Vector3 hitNormal = (transform.position - hitPoint).normalized;
+            if (Object.HasStateAuthority)
             {
                 
-                // Lấy vị trí va chạm (hit point)
-                Vector3 hitPoint = other.ClosestPoint(transform.position);
-                // Tính toán pháp tuyến (normal)
-                Vector3 hitNormal = (transform.position - hitPoint).normalized;
+              
                 if (other.TryGetComponent<PlayerController>(out var health))
                 {
                     string playerName = GameManager.Instance.PlayerData.playerName;
@@ -70,14 +71,16 @@ namespace multiplayerMode
                     Destroy(vfx, 1f);
                     Runner.Despawn(Object);
                 }
-                if (other.gameObject.TryGetComponent<IstatisEvm>(out var hitIEnvironment))
-                {
-                    hitIEnvironment.StaticEVM(hitPoint, hitNormal);
-                    return;
-                    /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
-                    Destroy(vfx, 1f);*/
-                }
+                
 
+            }
+            if (other.gameObject.TryGetComponent<IstatisEvm>(out var hitIEnvironment))
+            {
+                hitIEnvironment.StaticEVM(hitPoint, hitNormal);
+                Runner.Despawn(Object);
+                return;
+                /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
+                Destroy(vfx, 1f);*/
             }
             /*if (other.gameObject.tag == "Ground")
             {
@@ -85,7 +88,7 @@ namespace multiplayerMode
 
                 Runner.Despawn(Object);
             }*/
-           
+
         }
 
            

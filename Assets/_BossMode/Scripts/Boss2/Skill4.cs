@@ -5,7 +5,7 @@ public class Skill4 : NetworkBehaviour, IBossSkill
 {
     [SerializeField] private AudioSource audioSource;
 
-    [SerializeField] private float _BuffHPPercent = 0.3f;
+    [SerializeField] private float _BuffHPPercent = 0.05f;
     [SerializeField] BossNetworked _BossNetworked;
     [SerializeField] private Transform skill4ActionPoint;
     [SerializeField] private NetworkObject _HpBuffVFX;
@@ -84,6 +84,10 @@ public class Skill4 : NetworkBehaviour, IBossSkill
             int maxHealth = _BossNetworked.MaxHealth;
             int tenPercentOfMaxHealth = Mathf.RoundToInt(maxHealth * _BuffHPPercent);
             _BossNetworked.CurrentHealth += tenPercentOfMaxHealth;
+            if(_BossNetworked.CurrentHealth > maxHealth)
+            {
+                _BossNetworked.CurrentHealth = maxHealth;
+            }
         }
 
     }

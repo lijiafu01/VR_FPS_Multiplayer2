@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Fusion;
-using static Fusion.NetworkCharacterController;
 
 namespace multiplayerMode
 {
@@ -232,6 +231,7 @@ namespace multiplayerMode
             if (other.gameObject.TryGetComponent<IstatisEvm>(out var hitIEnvironment))
             {
                 hitIEnvironment.StaticEVM(hitPoint, hitNormal);
+                Runner.Despawn(Object);
                 return;
                 /*GameObject vfx = Instantiate(hitVFX, hit.Point, Quaternion.identity);
                 Destroy(vfx, 1f);*/
@@ -243,19 +243,11 @@ namespace multiplayerMode
         {
             GameObject vfx = Instantiate(hitVFX, posititon, Quaternion.identity);
             Destroy(vfx, 1f);
-            if(Object.HasInputAuthority)
+            if(Object.HasStateAuthority)
             {
                 Runner.Despawn(Object);
             }
         }
-        public AudioSource shootSFX;
-        private void OnTriggerExit(Collider other)
-        {
-
-            if (other.CompareTag("BowCenter"))
-            {
-                shootSFX.Play();
-            }
-        }
+        
     }
 }

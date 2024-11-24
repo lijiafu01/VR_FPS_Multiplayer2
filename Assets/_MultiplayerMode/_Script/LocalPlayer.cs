@@ -3,6 +3,7 @@ using multiplayerMode;
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LocalPlayer : MonoBehaviour
@@ -35,7 +36,7 @@ public class LocalPlayer : MonoBehaviour
     private bool isGrounded = true; // Kiểm tra nhân vật đang đứng trên mặt đất
     private RigidbodyConstraints originalConstraints; // Lưu trạng thái constraints ban đầu
 
-   
+    public bool  isMainGame = false;
     private void UnlockConstraints()
     {
         // Mở khóa và phục hồi lại trạng thái constraints ban đầu
@@ -43,7 +44,12 @@ public class LocalPlayer : MonoBehaviour
     }
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody>();
+        if(SceneManager.GetActiveScene().name == "MainGame")
+        {
+            isMainGame = true;
+
+        }
+            _rigidbody = GetComponent<Rigidbody>();
         if (CameraRig == null) CameraRig = GetComponentInChildren<OVRCameraRig>();
         // Lấy thành phần Rigidbody
         _rigidbody = GetComponent<Rigidbody>();
@@ -103,7 +109,7 @@ public class LocalPlayer : MonoBehaviour
     private void Update()
     {
         // Kiểm tra nếu người chơi nhấn nút nhảy
-        if (OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V))
+        if ((OVRInput.GetDown(OVRInput.Button.One) || Input.GetKeyDown(KeyCode.V)) && isMainGame)
         {
             jumpRequested = true;
         }
