@@ -1,5 +1,4 @@
 ﻿using Fusion;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using multiplayerMode;
@@ -9,27 +8,14 @@ public class SmashVFXNetworked : NetworkBehaviour
     public AudioSource audioSource;
     [SerializeField]
     private float damageRadius = 5f;
-
     [SerializeField]
     private int damageAmount = 20;
-
-
     private TickTimer lifeTimer;
-
     public override void Spawned()
     {
-        //audioSource.time = 0.35f;
         audioSource.Play();
         // Khởi tạo TickTimer để hủy đối tượng sau 2 giây
         lifeTimer = TickTimer.CreateFromSeconds(Runner, 3f);
-        // Gây sát thương ngay khi vụ nổ được sinh ra
-       /* if(Object.HasInputAuthority)
-        {
-            ApplyDamage();
-
-        }*/
-
-
     }
     public override void FixedUpdateNetwork()
     {
@@ -46,17 +32,10 @@ public class SmashVFXNetworked : NetworkBehaviour
         if(Object == null) { return; }
         if (other.TryGetComponent<PlayerController>(out var health))
         {
-            Debug.Log("boss2_ st");
-
             if (health != null)
             {
                 if (!playerNames.Contains(health.playerName))
                 {
-                   /* Vector3 impactDirection = (other.transform.position - transform.position).normalized;
-                    // Gọi ReceiveImpact với hướng và cường độ lực
-                    health.ReceiveImpact(impactDirection, 6);*/
-
-                    Debug.Log("boss2_ gây sát thương cho " + health.playerName);
                     playerNames.Add(health.playerName);
                     health.TakeDamage_Boss(damageAmount);
                 }
@@ -64,13 +43,11 @@ public class SmashVFXNetworked : NetworkBehaviour
         }
         if (other.gameObject.tag == "LocalPlayer")
         {
-            Debug.Log("boss2_va cham vat ly");
             Rigidbody rb = other.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 Vector3 hitPosition = other.ClosestPoint(transform.position);
                 rb.AddExplosionForce(6, hitPosition, 15, 10, ForceMode.Impulse);
-
             }
         }
     }

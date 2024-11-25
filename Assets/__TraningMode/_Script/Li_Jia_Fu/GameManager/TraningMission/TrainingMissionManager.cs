@@ -14,7 +14,6 @@ public class TrainingMissionManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            //DontDestroyOnLoad(gameObject); // Optional: Makes the object not be destroyed automatically when loading a new scene.
         }
         else
         {
@@ -45,8 +44,6 @@ public class TrainingMissionManager : MonoBehaviour
             }
         }
     }
-
-
     public void CompleteTraining(WeaponType weaponType, int missionId)
     {
         WeaponTraining training = System.Array.Find(weaponTrainings, w => w.weaponType == weaponType);

@@ -13,35 +13,22 @@ public class BossLobbyManager : MonoBehaviour
     }
     [SerializeField]
     private GameObject _menuPanel;
-
     [SerializeField]
     private GameObject _roomPanel;
-
-
     private string _playerName;
-
     [SerializeField]
     private TMP_InputField _roomNameInputField;
-
     [SerializeField]
     private Button _createBtn;
-
     [SerializeField]
     private Button _joinBtn;
-
     [SerializeField]
     private Button _startBtn;
-
-
     [SerializeField]
     private GameObject _playerListContent;
-
-
     [SerializeField]
     private PlayerListCell _playerListCell;
-
     private List<PlayerListCell> _existingCells = new List<PlayerListCell>();
-
     public void UpdatePlayerList(List<string> playerNames)
     {
         foreach (var cell in _existingCells)
@@ -49,7 +36,6 @@ public class BossLobbyManager : MonoBehaviour
             Destroy(cell.gameObject);
         }
         _existingCells.Clear();
-
         foreach (var playerName in playerNames)
         {
             var cell = Instantiate(_playerListCell, _playerListContent.transform);
@@ -58,14 +44,12 @@ public class BossLobbyManager : MonoBehaviour
             _existingCells.Add(cell);
         }
     }
-
     private void Start()
     {
         _createBtn.onClick.AddListener(OnCreateBtnClicked);
         _joinBtn.onClick.AddListener(OnJoinBtnClicked);
         _startBtn.onClick.AddListener(OnStartBtnClicked);
         _playerName = PlayFabManager.Instance.UserData.DisplayName;
-        
     }
     private void OnDestroy()
     {
@@ -73,21 +57,18 @@ public class BossLobbyManager : MonoBehaviour
         _joinBtn.onClick.RemoveAllListeners();
         _startBtn.onClick.RemoveAllListeners();
     }
-
     private async void OnCreateBtnClicked()
     {
         NetworkManager.Instance.PlayerName = _playerName;
         NetworkManager.Instance.RoomName = _roomNameInputField.text;
         await NetworkManager.Instance.CreateRoom();
     }
-
     private async void OnJoinBtnClicked()
     {
         NetworkManager.Instance.PlayerName = _playerName;
         NetworkManager.Instance.RoomName = _roomNameInputField.text;
         await NetworkManager.Instance.JoinRoom();
     }
-
     private void OnStartBtnClicked()
     {
         NetworkManager.Instance.StartGame();
@@ -96,7 +77,6 @@ public class BossLobbyManager : MonoBehaviour
     {
         _startBtn.gameObject.SetActive(isVisible);
     }
-
     public void SwitchMenuType(MenuType menuType)
     {
         switch (menuType)
@@ -113,5 +93,4 @@ public class BossLobbyManager : MonoBehaviour
                 break;
         }
     }
-
 }

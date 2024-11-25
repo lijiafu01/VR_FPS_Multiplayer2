@@ -12,9 +12,7 @@ public class watermelonTarget : MonoBehaviour
     public bool isMoving; // Kiểm soát việc di chuyển
     public bool isRotating; // Kiểm soát việc quay
     public bool isMovingAndRotating; // Kiểm soát việc vừa quay vừa di chuyển
-
     private Vector3 startPosition; // Lưu vị trí khởi đầu để tính toán di chuyển
-
     void Start()
     {
         startPosition = transform.position; // Cập nhật điểm khởi đầu từ vị trí hiện tại của đối tượng
@@ -39,7 +37,6 @@ public class watermelonTarget : MonoBehaviour
             }
         }
     }
-
     private void HandleMovement()
     {
         // Tính toán góc dựa trên vị trí hiện tại và tốc độ

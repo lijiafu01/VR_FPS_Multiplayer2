@@ -6,19 +6,15 @@ using TraningMode;
 public class TraningArea : MonoBehaviour
 {
     public float radius = 5f; // Bán kính của khu vực kiểm tra
-
     void Start()
     {
         Invoke("CheckAndRemoveObjects", 1f);
-        //CheckAndRemoveObjects();
     }
-
     void CheckAndRemoveObjects()
     {
         // Sử dụng OverlapSphere để lấy tất cả colliders xung quanh vị trí này với bán kính đã cho
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius);
         int i = 0;
-
         // Duyệt qua tất cả colliders
         while (i < hitColliders.Length)
         {
@@ -31,7 +27,6 @@ public class TraningArea : MonoBehaviour
             i++;
         }
     }
-
     // Hàm hữu ích để vẽ gizmo trong Editor, giúp bạn dễ hình dung vùng kiểm tra
     void OnDrawGizmosSelected()
     {

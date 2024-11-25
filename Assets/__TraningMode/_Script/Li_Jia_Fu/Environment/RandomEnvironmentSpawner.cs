@@ -11,8 +11,6 @@ public class RandomEnvironmentSpawner : MonoBehaviour
     public float depth = 5; // Độ sâu phạm vi
     public int spawnCount = 10; // Số lượng object sinh ra tổng cộng
     public Vector2 scaleRange = new Vector2(0.5f, 2f); // Phạm vi scale của object
-
-
     [System.Serializable] // Đảm bảo Unity có thể hiển thị cấu trúc này trong Inspector
     public class SpawnableObject
     {
@@ -23,7 +21,6 @@ public class RandomEnvironmentSpawner : MonoBehaviour
     {
         SpawnObjects();
     }
-
     void SpawnObjects()
     {
         for (int i = 0; i < spawnCount; i++)
@@ -50,7 +47,6 @@ public class RandomEnvironmentSpawner : MonoBehaviour
             }
         }
     }
-
     void SpawnObject(SpawnableObject spawnableObject)
     {
         Vector3 spawnPosition = new Vector3(Random.Range(-width, width), 0, Random.Range(-depth, depth));
@@ -59,6 +55,5 @@ public class RandomEnvironmentSpawner : MonoBehaviour
 
         GameObject spawnedObject = Instantiate(spawnableObject.gameObject, spawnPosition, spawnRotation,this.transform);
         spawnedObject.transform.localScale = new Vector3(scale, scale, scale);
-        //spawnableObject.gameObject.transform.SetParent(this.gameObject.transform);
     }
 }

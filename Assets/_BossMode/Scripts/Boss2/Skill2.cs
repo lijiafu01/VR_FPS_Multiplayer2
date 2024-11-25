@@ -3,58 +3,38 @@ using UnityEngine;
 public class SKill2 : NetworkBehaviour, IBossSkill
 {
     [SerializeField] private AudioSource audioSource;
-
     [SerializeField] private NetworkObject _spikeVFX;
-
     [SerializeField] private float spawnRadius;
     [SerializeField] private NetworkObject _spikePrefab;
-    // Tên của kỹ năng
     public string SkillName => "Skill2";
-
     // Thời gian hồi chiêu (cooldown) của kỹ năng
     [SerializeField]
     private float cooldown = 15f;
     public float Cooldown => cooldown;
-
     // Thời gian thi triển kỹ năng (casting duration)
     [SerializeField]
     private float castingDuration = 2f;
     public float CastingDuration => castingDuration;
-
     // Các biến mạng để đồng bộ hóa thời gian hồi chiêu và thi triển
     [Networked]
     private TickTimer cooldownTimer { get; set; }
-
     [Networked]
     private TickTimer castingTimer { get; set; }
-
     // Biến mạng để đồng bộ trạng thái đang thi triển kỹ năng
     [Networked]
     private NetworkBool isCastingNetworked { get; set; }
-
     public bool IsCasting => isCastingNetworked;
-
     public bool IsOnCooldown => !cooldownTimer.ExpiredOrNotRunning(Runner);
-
     // Sự kiện khi kỹ năng bắt đầu và kết thúc
     public event System.Action OnSkillStart;
     public event System.Action OnSkillEnd;
-
     // Tham chiếu đến Animator của boss (nếu cần)
     private Animator animator;
-
-    // Các biến khác cần thiết cho logic của kỹ năng
-    // Ví dụ:
-    // [SerializeField]
-    // private GameObject effectPrefab;
-
     void Awake()
     {
         // Khởi tạo các thành phần cần thiết
         animator = GetComponentInParent<Animator>();
-        // Khởi tạo các biến khác (nếu cần)
     }
-
     public void ActivateSkill(Transform target)
     {
         // Kiểm tra quyền điều khiển và trạng thái kỹ năng
@@ -68,9 +48,6 @@ public class SKill2 : NetworkBehaviour, IBossSkill
             OnSkillStart?.Invoke();
             SetAnimator_RPC();
             Invoke("SpawnObject", 2f);
-            
-            
-
         }
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
@@ -78,7 +55,6 @@ public class SKill2 : NetworkBehaviour, IBossSkill
     {
         animator.SetTrigger("Skill2");
         Invoke("PlaySound", 2.1f);
-
     }
     void PlaySound()
     {
@@ -91,19 +67,14 @@ public class SKill2 : NetworkBehaviour, IBossSkill
     public void SpawnSpike()
     {
         if (!Object.HasStateAuthority) return;
-
         for (int i = 1; i <= 30; i++)
         {
             // Lấy vị trí ngẫu nhiên trong một vòng tròn (x, z) với bán kính đã chỉ định
             Vector2 randomPos = Random.insideUnitCircle * spawnRadius;
-
             // Lấy vị trí của parent làm tâm
             Vector3 parentPosition = transform.position;
-
             // Thiết lập vị trí với x và z từ vòng tròn ngẫu nhiên cộng với vị trí parent, y cố định ở -3.5
             Vector3 spawnPosition = new Vector3(parentPosition.x + randomPos.x, -0.5f, parentPosition.z + randomPos.y);
-
-
             // Kiểm tra nếu khoảng cách từ spawnPosition tới tâm (0, 0, 0) vượt quá radius cho phép
             float distanceFromCenter = Vector3.Distance(spawnPosition, Vector3.zero);
             if (distanceFromCenter > 45f)
@@ -111,7 +82,6 @@ public class SKill2 : NetworkBehaviour, IBossSkill
                 // Nếu vị trí vượt quá phạm vi, bỏ qua lần sinh này và tiếp tục vòng lặp
                 continue;
             }
-
             // Sinh ra đối tượng _spikePrefab tại vị trí spawnPosition
             Runner.Spawn(_spikePrefab, spawnPosition, Quaternion.identity);
             Runner.Spawn(_spikeVFX, spawnPosition, Quaternion.identity);

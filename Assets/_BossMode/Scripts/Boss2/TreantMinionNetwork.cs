@@ -1,9 +1,6 @@
 ﻿using Fusion;
 using multiplayerMode;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static Fusion.NetworkCharacterController;
 
 public class TreantMinionNetwork : NetworkBehaviour, IDamageable
 {
@@ -20,18 +17,14 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
     private Animator _Animator;
     [SerializeField]
     private float _moveSpeed = 5f;
-
     [SerializeField]
     private float detectionRadius = 100f; // Bán kính tìm kiếm
     [SerializeField]
     private float stopDistance = 2f; // Khoảng cách dừng lại
-
     [SerializeField]
     private LayerMask playerLayerMask; // LayerMask cho Layer của người chơi
-
     private Transform targetPlayer; // Người chơi mục tiêu
     private TickTimer lifeTimer;
-
     // Cờ để kiểm soát trạng thái hiện tại
     private bool isMoving = true;
     private bool canAttack = true;
@@ -54,11 +47,9 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, 0.1f));
         }
-
         // Giữ góc xoay cố định trên trục X và Z
         rb.rotation = Quaternion.Euler(0, rb.rotation.eulerAngles.y, 0);
     }
-
     public override void FixedUpdateNetwork()
     {
         if(!isDie)
@@ -91,8 +82,6 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
                         // Hướng boss về phía người chơi mục tiêu
                         Quaternion targetRotation = Quaternion.LookRotation(direction);
                         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 0.1f);
-
-
                     }
                     else
                     {
@@ -129,53 +118,34 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
         canAttack = true;
         isMoving = true;
     }
-   
-
-   
-    
     private void OnTriggerEnter(Collider other)
     {
-        /*Debug.Log("checkquyenhan_HasInputAuthority_treanMinion : " + Object.HasInputAuthority + " " );
-        Debug.Log("checkquyenhan_HasStateAuthority_treanMinion : " + Object.HasStateAuthority + " " );*/
         if (other.TryGetComponent<PlayerController>(out var health))
         {
-
             if (health != null)
             {
                 health.TakeDamage_Boss(damageAmount);
                 _boxCollider.enabled = false;
             }
         }
-
-
         if (other.CompareTag("LocalPlayer"))
         {
-            Debug.Log("boss2_va cham vat ly");
             Rigidbody rb = other.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 // Tính vector hướng từ boss đến người chơi
                 Vector3 directionToPlayer = (other.transform.position - transform.position).normalized;
-
                 // Đặt y thành 0 để chỉ có lực tác động trên trục x và z (ngang)
                 directionToPlayer.y = 0;
-
                 // Áp dụng lực đẩy về phía sau với ForceMode.Impulse
-
                 rb.AddForce(directionToPlayer * forceStrength, ForceMode.Impulse);
-
-                //_boxCollider.enabled = false;
-
             }
         }
-
     }
-
     Transform FindRandomPlayer()
     {
         // Tìm tất cả các đối tượng trong bán kính phát hiện thuộc lớp người chơi
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayerMask);
-
         // Kiểm tra nếu có bất kỳ đối tượng nào được tìm thấy
         if (hits.Length > 0)
         {
@@ -183,7 +153,6 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
             int randomIndex = Random.Range(0, hits.Length);
             return hits[randomIndex].transform;
         }
-
         // Nếu không tìm thấy đối tượng nào, trả về null
         return null;
     }
@@ -196,20 +165,17 @@ public class TreantMinionNetwork : NetworkBehaviour, IDamageable
             Runner.Spawn(_HitTreeVFX, hitPosition, Quaternion.LookRotation(hitNormal));
             SetAnimationDie_RPC();
             Invoke("DestroyObject", 1.2f);
-
         }
     }
     public void TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName, string teamID)
     {
         // Gửi RPC tới máy có State Authority
         RPC_TakeDamage(damage, hitPosition, hitNormal, shooterName, teamID);
-        
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void SetAnimationDie_RPC()
     {
         _Animator.SetTrigger("Die");
-
     }
     void DestroyObject()
     {

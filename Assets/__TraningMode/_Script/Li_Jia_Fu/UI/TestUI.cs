@@ -6,6 +6,5 @@ public class TestUI : MonoBehaviour
 {
     public void checkUI()
     {
-        Debug.Log("dev_haha1");
     }
 }

@@ -39,12 +39,7 @@ public class Bowstring : MonoBehaviour
             return;
         }
     }
-   /* private void Start()
-    {
-        Vector3 newpos = new Vector3(bowstringTarget.position.x,bowstringTarget.position.y,bowstringTarget.position.z-0.3f);
-        bowstringTarget.position = newpos;
-    }*/
-
+   
     void LateUpdate()
     {
         Vector3 centerLocalSpace = this.transform.InverseTransformPoint(bowstringTarget.transform.position);

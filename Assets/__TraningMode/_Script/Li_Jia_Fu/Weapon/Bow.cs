@@ -116,11 +116,7 @@ public class Bow : WeaponBehaviour
 
         }
     }
-    /*private void SetBowCollider()
-    {
-        currentArrow.GetComponent<CapsuleCollider>().isTrigger = false;
-        currentArrow = null;
-    }*/
+   
     private void ResetString()
     {
         bowHandle.position = bowstringCenter.position;

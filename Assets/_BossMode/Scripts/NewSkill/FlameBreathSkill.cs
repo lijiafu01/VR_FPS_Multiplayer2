@@ -1,69 +1,46 @@
 ﻿using Fusion;
 using multiplayerMode;
 using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
-
 public class FlameBreathSkill : NetworkBehaviour, IBossSkill
 {
     [SerializeField]
     private AudioSource _dragonRoar;
-
     public string SkillName => "Flame Breath";
-
     [SerializeField]
     private float cooldown = 15f;
     public float Cooldown => cooldown;
-
     [SerializeField]
     private float castingDuration = 2f;
     public float CastingDuration => castingDuration;
-
     [Networked]
     private TickTimer cooldownTimer { get; set; }
-
     [Networked]
     private TickTimer castingTimer { get; set; }
-
     [Networked]
     private NetworkBool isCastingNetworked { get; set; }
-
     public bool IsCasting => isCastingNetworked;
-
     public bool IsOnCooldown => !cooldownTimer.ExpiredOrNotRunning(Runner);
-
     public event System.Action OnSkillStart;
     public event System.Action OnSkillEnd;
-
     [SerializeField]
     private GameObject flameBreathObject; // Object con (tia laser)
-
     [SerializeField]
     private Transform raycastOrigin; // Điểm xuất phát của tia raycast
-
     [SerializeField]
     private float rayLength = 10f; // Độ dài của tia raycast
-
     [SerializeField]
     private int damageAmount = 10; // Lượng sát thương gây ra cho người chơi
-
     [SerializeField]
     private float rotationSpeed = 90f; // Tốc độ quay (độ mỗi giây)
-
     [Networked(OnChanged = nameof(OnCurrentRotationChanged))]
     private Quaternion currentRotation { get; set; }
-
     private Animator animator;
-
     private bool canStateStart = false;
-
-    // Dictionary để lưu trữ thời gian gây sát thương cuối cùng cho mỗi người chơi
-   // private Dictionary<PlayerController, float> damagedPlayers = new Dictionary<PlayerController, float>();
     private static void OnCurrentRotationChanged(Changed<FlameBreathSkill> changed)
     {
         changed.Behaviour.UpdateParentRotation();
     }
-
     private void UpdateParentRotation()
     {
         if (Object.HasStateAuthority) return;
@@ -72,7 +49,6 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
     void Awake()
     {
         animator = GetComponentInParent<Animator>();
-
         // Đảm bảo object con (tia laser) ban đầu bị tắt
         if (flameBreathObject != null)
         {
@@ -80,7 +56,6 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
         }
         _dragonRoar.pitch = 0.8f;
     }
-
     public void ActivateSkill(Transform target)
     {
         // Đặt giá trị ban đầu cho currentRotation
@@ -90,16 +65,10 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             isCastingNetworked = true;
             castingTimer = TickTimer.CreateFromSeconds(Runner, CastingDuration);
             cooldownTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
-         
-            
-
             OnSkillStart?.Invoke();
-            
-
             RPC_StartFlameBreath();
         }
     }
-
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void RPC_StartFlameBreath()
     {
@@ -120,20 +89,15 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             {
                 RPC_EndFlameBreath();
                 isCastingNetworked = false;
-                
-
                 OnSkillEnd?.Invoke();
             }
-
             if (isCastingNetworked && canStateStart)
             {
                 // Tính toán góc quay mới dựa trên tốc độ và thời gian giữa các frame
                 float rotationStep = rotationSpeed * Runner.DeltaTime;
                 Quaternion deltaRotation = Quaternion.Euler(0f, rotationStep, 0f);
-
                 // Cập nhật góc quay
                 currentRotation *= deltaRotation;
-
                 // Áp dụng góc quay mới cho object
                 transform.parent.rotation = currentRotation;
                 PerformRaycast_RPC();
@@ -157,16 +121,13 @@ public class FlameBreathSkill : NetworkBehaviour, IBossSkill
             canStateStart = false;
         }
     }
-
     void PerformRaycast()
     {
         if (raycastOrigin == null)
             return;
-
         // Tạo tia ray từ điểm xuất phát theo hướng forward của nó
         Ray ray = new Ray(raycastOrigin.position, raycastOrigin.forward);
         RaycastHit hit;
-
         // Thực hiện raycast
         if (Runner.GetPhysicsScene().Raycast(ray.origin, ray.direction, out hit, rayLength))
         {

@@ -60,5 +60,4 @@ public class TraningMissionUI : MonoBehaviour
         // Logic để ẩn main menu
     }
 
-    // Ví dụ: UpdateScore, ShowGameOverScreen, v.v.
 }

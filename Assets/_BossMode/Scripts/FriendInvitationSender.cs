@@ -1,9 +1,7 @@
 ﻿using PlayFab;
 using PlayFab.ClientModels;
-using PlayFab.EconomyModels;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class FriendInvitationSender : MonoBehaviour
 {
     private List<FriendInfo> friendsList = new List<FriendInfo>();
@@ -13,7 +11,6 @@ public class FriendInvitationSender : MonoBehaviour
     private string playerDisplayName; // Lưu trữ DisplayName của người chơi
     private string friendID;
     private string USerID;
-   
     private void OnEnable()
     {
         _bossLobbyManager = FindObjectOfType<BossLobbyManager>();
@@ -29,7 +26,6 @@ public class FriendInvitationSender : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-
         // Tạo các mục mới cho danh sách bạn bè
         foreach (var friend in friendsList)
         {
@@ -41,10 +37,7 @@ public class FriendInvitationSender : MonoBehaviour
     }
     public void InviteFriend(string id)
     {
-        Debug.Log("Playfab_information_MyID:" + USerID + " friendID:" + friendID + "myname" + playerDisplayName);
-
         SendInvitation(id,_bossLobbyManager.RoomName);
-
     }
     private void GetFriends()
     {
@@ -65,13 +58,10 @@ public class FriendInvitationSender : MonoBehaviour
     // Gửi lời mời cho bạn bè
     public void SendInvitation(string recipientPlayFabId, string sessionName)
     {
-        Debug.Log("Friend1013_" + recipientPlayFabId + "_" + sessionName);
         if (string.IsNullOrEmpty(playerDisplayName))
         {
-            Debug.LogError("Player DisplayName is not set.");
             return;
         }
-
         var request = new ExecuteCloudScriptRequest
         {
             FunctionName = "SendInvitation",
@@ -86,12 +76,10 @@ public class FriendInvitationSender : MonoBehaviour
         };
         PlayFabClientAPI.ExecuteCloudScript(request, OnSendInvitationSuccess, OnSendInvitationFailure);
     }
-
     void OnSendInvitationSuccess(ExecuteCloudScriptResult result)
     {
         Debug.Log("Playfab_ Invitation sent successfully!");
     }
-
     void OnSendInvitationFailure(PlayFabError error)
     {
         Debug.LogError("Playfab_Failed to send invitation: " + error.GenerateErrorReport());

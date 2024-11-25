@@ -1,10 +1,6 @@
 ﻿using Fusion;
 using multiplayerMode;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-
 [RequireComponent(typeof(NetworkTransform))]
 public class SmallBatEnemy : NetworkBehaviour, IDamageable
 {
@@ -12,65 +8,34 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
     // Thêm biến cho hiệu ứng máu
     [SerializeField]
     private ParticleSystem _bloodEffect;
-    /*[SerializeField]
-    private Slider healthSlider;*/
     // Biến đếm thời gian giữa các lần gây sát thương
     private float damageCooldownTimer = 0f;
-
     public int MaxHealth { get; set; } = 1;
-
-    //[Networked(OnChanged = nameof(OnHealthChanged))]
     public int CurrentHealth { get; set; }
-
     [SerializeField]
     private Animator _animator;
-
     [SerializeField]
     private float detectionRadius = 30f; // Bán kính tìm kiếm
-
     [SerializeField]
     private LayerMask playerLayerMask; // LayerMask cho Layer của người chơi
-
     [SerializeField]
     private float stopDistance = 1f; // Khoảng cách để dừng lại
-
     [SerializeField]
     private float moveSpeed = 5f; // Tốc độ di chuyển của quái
-
     [SerializeField]
     private float lifespan = 15f; // Thời gian sống
-
     [Networked]
     private TickTimer lifeTimer { get; set; } // Bộ đếm thời gian sống
-
     private Transform targetPlayer; // Người chơi mục tiêu
-
     private float targetSearchInterval = 1f; // Khoảng thời gian giữa các lần tìm kiếm mục tiêu
     private float targetSearchTimer = 0f;
-
     // Biến lưu trữ trạng thái di chuyển hiện tại
     private bool isMoving = false;
-
     [SerializeField]
     private float heightOffset = -1.0f; // Độ lệch theo trục Y so với mục tiêu (âm nghĩa là thấp hơn)
-
     public static void OnHealthChanged(Changed<SmallBatEnemy> changed)
     {
-        //changed.Behaviour.UpdateHealthUI();
     }
-
-  /*  void UpdateHealthUI()
-    {
-        if (healthSlider != null)
-        {
-            healthSlider.value = (float)CurrentHealth / MaxHealth;
-        }
-        else
-        {
-            Debug.Log("boss8_5 healthSlider is null");
-        }
-    }*/
-
     public override void Spawned()
     {
         if (Object.HasStateAuthority)
@@ -153,7 +118,6 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
                 Runner.Despawn(Object);
                 return;
             }
-
             // Cập nhật bộ đếm thời gian tìm kiếm mục tiêu
             targetSearchTimer -= Runner.DeltaTime;
             if (targetSearchTimer <= 0f)
@@ -161,11 +125,9 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
                 targetSearchTimer = targetSearchInterval;
                 FindAndSetRandomPlayer();
             }
-
             if (targetPlayer != null)
             {
                 float distance = Vector3.Distance(transform.position, targetPlayer.position);
-
                 if (distance > stopDistance)
                 {
                     // Di chuyển về phía người chơi
@@ -185,7 +147,6 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             }
         }
     }
-
     void FindAndSetRandomPlayer()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, playerLayerMask);
@@ -200,7 +161,6 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             targetPlayer = null;
         }
     }
-
     void MoveTowards(Vector3 targetPosition)
     {
         // Nếu chưa ở trạng thái di chuyển, kích hoạt animation "Walk"
@@ -213,27 +173,22 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
                 _animator.SetTrigger("Walk");
             }
         }
-
         // Tính toán hướng tới mục tiêu, bỏ qua trục Y
         Vector3 direction = targetPosition - transform.position;
         direction.y = 0; // Loại bỏ thành phần Y
         direction = direction.normalized;
-
         // Xoay hướng về phía người chơi (chỉ xoay quanh trục Y)
         if (direction != Vector3.zero)
         {
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Runner.DeltaTime * 5f);
         }
-
         // Điều chỉnh vị trí Y của quái nhỏ
         Vector3 newPosition = transform.position + direction * moveSpeed * Runner.DeltaTime;
         newPosition.y = targetPlayer.position.y + heightOffset; // Điều chỉnh độ cao so với mục tiêu
-
         // Cập nhật vị trí của quái nhỏ
         transform.position = newPosition;
     }
-
     void StopMoving()
     {
         // Nếu đang di chuyển, chuyển sang trạng thái dừng và kích hoạt animation "Attack"
@@ -246,7 +201,6 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
                 _animator.SetTrigger("Attack");
             }
         }
-
         // Giữ nguyên vị trí Y của quái nhỏ
         if (targetPlayer != null)
         {
@@ -254,7 +208,6 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
             position.y = targetPlayer.position.y + heightOffset;
             transform.position = position;
         }
-
         // Thực hiện các hành động khác khi dừng lại, nếu cần
     }
     private void OnTriggerStay(Collider other)
@@ -262,7 +215,6 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
         if (Runner == null) return;
         if (!Object.HasStateAuthority)
             return;
-
         // Chỉ kiểm tra va chạm khi quái vật đã dừng lại
         if (!isMoving)
         {
@@ -272,11 +224,9 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
                 // Chỉ gây sát thương khi damageCooldownTimer <= 0
                 if (damageCooldownTimer <= 0f)
                 {
-                    Debug.Log("Bossfixbug_ " + player.playerName);
                     // Gây sát thương cho người chơi
                     ApplyDamageToPlayer(player);
                     RPC_TriggerAttackAnimation();
-
                     // Reset bộ đếm thời gian về 2 giây
                     damageCooldownTimer = 2f;
                 }
@@ -286,7 +236,6 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     void RPC_TriggerAttackAnimation()
     {
-
         if (_animator != null)
         {
             _animator.ResetTrigger("Walk");
@@ -298,8 +247,6 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
     {
         if (player != null)
         {
-            Debug.Log("Bossfixbug_ 2_" + player.playerName);
-
             player.RPC_TakeDamage(Damage);
         }
     }

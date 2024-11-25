@@ -11,13 +11,11 @@ public class RubyNetworked : NetworkBehaviour
         {
             if (other.gameObject.TryGetComponent<PlayerController>(out var hitPlayerController))
             {
-                Debug.Log("Pickup_ "+ hitPlayerController.playerName);
                 hitPlayerController.RubyNum++;
                 Runner.Despawn(Object);
             }
         }
     }
-
     private TickTimer lifeTimer;
     public override void Spawned()
     {       

@@ -20,8 +20,6 @@ public class TrainingMission : MonoBehaviour
         if (_hitTargetNum == targetTotal)
         {
             TraningMissionUI.Instance.trainerUI.UpdateCurrentMission(missionId,false);
-            /*WeaponTraining weaponTraining = transform.GetComponentInParent<WeaponTraining>();
-            weaponTraining.CompleteMission(missionId);*/
         }
         TraningMissionUI.Instance.ShowMissionProgress(targetTotal, 1);
     }

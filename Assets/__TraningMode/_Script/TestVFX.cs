@@ -18,10 +18,6 @@ public class TestVFX : MonoBehaviour
 
     void FirePrefab()
     {
-        /*GameObject spawnedPrefab2 = Instantiate(flashVFX, spawnPos.position, transform.rotation);
-        Destroy(spawnedPrefab2, 0.3f);*/
-
-        // Tạo một instance của prefab tại vị trí và hướng của đối tượng giữ script
         GameObject spawnedPrefab = Instantiate(prefabToFire, spawnPos.position, transform.rotation);
 
         // Lấy thành phần Rigidbody của prefab để áp dụng lực

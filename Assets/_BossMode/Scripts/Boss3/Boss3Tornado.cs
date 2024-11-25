@@ -1,20 +1,14 @@
 ﻿using Fusion;
 using multiplayerMode;
 using UnityEngine;
-
 public class Boss3Tornado : NetworkBehaviour
 {
     [SerializeField] private float impactForce = 2f;
-
     [SerializeField] private int damageAmount = 15;
     [SerializeField]
     private float speed = 5f; // Tốc độ di chuyển của Tornado
-
-
     private Vector3 direction; // Hướng di chuyển của Tornado
-
     private TickTimer lifeTimer;
-
     public override void Spawned()
     {
         if (Object.HasStateAuthority)
@@ -24,10 +18,8 @@ public class Boss3Tornado : NetworkBehaviour
             direction = Quaternion.Euler(0, angle, 0) * Vector3.forward;
             direction = direction.normalized;
         }
-
         lifeTimer = TickTimer.CreateFromSeconds(Runner, 10f);
     }
-
     public override void FixedUpdateNetwork()
     {
         // Kiểm tra nếu TickTimer đã hết hạn
@@ -40,7 +32,6 @@ public class Boss3Tornado : NetworkBehaviour
             }
             return;
         }
-
         if (Object.HasStateAuthority)
         {
             // Di chuyển đối tượng theo hướng đã chọn
@@ -49,7 +40,6 @@ public class Boss3Tornado : NetworkBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-
         if (other.gameObject.TryGetComponent<PlayerController>(out var health))
         {
             if (health != null)
@@ -58,11 +48,7 @@ public class Boss3Tornado : NetworkBehaviour
                 // Gọi ReceiveImpact với hướng và cường độ lực
                 health.ReceiveImpact(impactDirection, impactForce);
                 health.TakeDamage_Boss(damageAmount);
-                // Tính toán hướng từ BossNetworkedScript đến PlayerController
-                       
             }
         }
-
-
     }
 }

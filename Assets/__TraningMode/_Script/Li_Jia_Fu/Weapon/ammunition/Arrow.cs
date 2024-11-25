@@ -45,13 +45,7 @@ public class Arrow : MonoBehaviour
             lastVelocity = rb.velocity.normalized; // Cập nhật hướng của mũi tên
         }
     }
-   /* private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("BowStringHandle"))
-        {
-            transform.position = other.transform.position;
-        }
-    }*/
+  
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("BowCenter"))
@@ -64,7 +58,6 @@ public class Arrow : MonoBehaviour
     private void ReturnObjectPool()
     {
        Destroy(gameObject);
-        //ObjectPoolManager.Instance.ReturnToPool("arrow", gameObject);
     }
 
     void OnCollisionEnter(Collision collision)
