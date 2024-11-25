@@ -6,6 +6,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
 {
+    [SerializeField] private int damage =15;
     [SerializeField]
     private AudioSource _jumpStartSFX;
 
@@ -227,7 +228,7 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
             if (playerController != null)
             {
                 
-               playerController.TakeDamage_Boss(15);
+               playerController.TakeDamage_Boss(damage);
             }
             if(hit.gameObject.tag == "LocalPlayer")
             {

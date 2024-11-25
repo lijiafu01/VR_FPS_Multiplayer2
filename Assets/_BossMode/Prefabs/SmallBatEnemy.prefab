@@ -1994,7 +1994,7 @@ MonoBehaviour:
   moveSpeed: 3
   lifespan: 15
   heightOffset: -0.6
-  Damage: 1
+  Damage: 5
 --- !u!135 &1733936002925122323
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -6,46 +6,86 @@ using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine.SceneManagement;
 using Keyboard;
+using UnityEngine.UI;
 
 namespace multiplayerMode
 {
     public class Login : MonoBehaviour
     {
+      
+
         public NoticeText _noticeText;
         private string _displayName;
-        public TMP_InputField usernameInput;
-        public TMP_InputField passwordInput;
-        [SerializeField]
-        //private GameObject virtualKeyBoard;
-        private KeyboardManager keyboardManager; // Đảm bảo KeyboardManager được khai báo và hoạt động trong dự án của bạn
+        [SerializeField] private Toggle toggle; // Tham chiếu đến Toggle trong Inspector
+        public TMP_InputField usernameInput;    // InputField cho tài khoản
+        public TMP_InputField passwordInput;    // InputField cho mật khẩu
 
-       
-        /* private void Start()
-         {
-             //virtualKeyBoard.SetActive(false);
+        private bool toggleState = true;        // Giá trị khởi đầu là true
 
-             // Đăng ký sự kiện khi trường nhập được chọn
-             usernameInput.onSelect.AddListener(delegate { HandleInputSelected(usernameInput); });
-             passwordInput.onSelect.AddListener(delegate { HandleInputSelected(passwordInput); });
-         }*/
-        public void SwitchAccount()
+        private void Start()
         {
-            usernameInput.text = "mike@gmail.com";
-        }
-        /*private void HandleInputSelected(TMP_InputField selectedInputField)
-        {
-            //virtualKeyBoard.SetActive(true);
-            keyboardManager = virtualKeyBoard.GetComponent<KeyboardManager>();
-            if (keyboardManager != null)
+            // Kiểm tra nếu Toggle và InputField đã được gán
+            if (toggle == null || usernameInput == null || passwordInput == null)
             {
-                keyboardManager.PlayerChooseInput(selectedInputField);
+                Debug.LogError("Missing references in the Inspector.");
+                return;
+            }
+
+            // Lấy dữ liệu đã lưu nếu có
+            if (PlayerPrefs.HasKey("ToggleState"))
+            {
+                toggleState = PlayerPrefs.GetInt("ToggleState") == 1; // Lấy trạng thái Toggle
+                toggle.isOn = toggleState;
+
+                if (toggleState)
+                {
+                    usernameInput.text = PlayerPrefs.GetString("SavedUsername", "");
+                    passwordInput.text = PlayerPrefs.GetString("SavedPassword", "");
+                }
+            }
+
+            // Đăng ký sự kiện thay đổi trạng thái Toggle
+            toggle.onValueChanged.AddListener(OnToggleValueChanged);
+        }
+
+        private void OnToggleValueChanged(bool isOn)
+        {
+            toggleState = isOn; // Cập nhật trạng thái Toggle
+        }
+        void SaveAccount()
+        {
+            // Lưu trạng thái Toggle
+            PlayerPrefs.SetInt("ToggleState", toggleState ? 1 : 0);
+
+            if (toggleState)
+            {
+                // Lưu tài khoản và mật khẩu nếu Toggle đang bật
+                PlayerPrefs.SetString("SavedUsername", usernameInput.text);
+                PlayerPrefs.SetString("SavedPassword", passwordInput.text);
             }
             else
             {
-                Debug.LogError("KeyboardManager not assigned or not found in the project");
+                // Xóa tài khoản và mật khẩu nếu Toggle tắt
+                PlayerPrefs.DeleteKey("SavedUsername");
+                PlayerPrefs.DeleteKey("SavedPassword");
             }
-        }*/
 
+            PlayerPrefs.Save(); // Lưu lại toàn bộ dữ liệu
+        }
+        private void OnDestroy()
+        {
+            // Hủy đăng ký sự kiện khi đối tượng bị phá hủy
+            if (toggle != null)
+            {
+                toggle.onValueChanged.RemoveListener(OnToggleValueChanged);
+            }
+        }
+        public void SwitchAccount()
+        {
+            usernameInput.text = "mike@gmail.com";
+            passwordInput.text = "aaaaaa";
+        }
+       
         // Hàm xử lý nút đăng nhập
         public void LoginBtn()
         {
@@ -64,6 +104,7 @@ namespace multiplayerMode
 
         private void OnLoginSuccess(LoginResult result)
         {
+            SaveAccount();
             // Lấy _displayName từ kết quả đăng nhập
             _displayName = result.InfoResultPayload.PlayerProfile.DisplayName;
             PlayFabManager.Instance.UserData.Email = usernameInput.text;

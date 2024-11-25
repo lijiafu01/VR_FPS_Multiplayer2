@@ -268,4 +268,4 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _spikeVFX: {fileID: 3644790545964562164, guid: 718ed3903d4551a4c9807ecb13f97ac6, type: 3}
   audioSource: {fileID: 0}
-  damageAmount: 15
+  damageAmount: 25

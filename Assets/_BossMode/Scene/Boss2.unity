@@ -11560,7 +11560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   audioSource: {fileID: 897153247}
-  _BuffHPPercent: 0.3
+  _BuffHPPercent: 0.1
   _BossNetworked: {fileID: 1577759232}
   skill4ActionPoint: {fileID: 772334335}
   _HpBuffVFX: {fileID: 4515147569691071060, guid: 93e795ce16f78d6498f463da7380ec5a, type: 3}
@@ -25365,9 +25365,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   audioSource: {fileID: 2135066652}
-  spawnNum: 5
+  spawnNum: 6
   _spawnVFX: {fileID: 2745387684381791733, guid: ffe6d7e727aff0f408c6e82387f94e26, type: 3}
-  spawnRadius: 10
+  spawnRadius: 5
   _treantMinionPrefab: {fileID: 2744414086044543581, guid: 01e9b3a0bde4bd94a87fb6aad692d212, type: 3}
   cooldown: 20
   castingDuration: 2

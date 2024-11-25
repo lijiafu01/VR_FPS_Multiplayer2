@@ -11190,7 +11190,7 @@ MonoBehaviour:
   castingDuration: 2
   minionPrefab:
     RawGuidValue: d463bfe1498fb304baef798357316f2e
-  minionCount: 3
+  minionCount: 6
   summonRadius: 5
 --- !u!4 &894885380
 Transform:
@@ -70202,6 +70202,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  damage: 30
   _jumpStartSFX: {fileID: 4839191199003507347}
   _jumpEndSFX: {fileID: 4839191199003507346}
   _jumpFlySFX: {fileID: 4839191199003507345}
@@ -89965,7 +89966,7 @@ MonoBehaviour:
   flameBreathObject: {fileID: 1979739825366883}
   raycastOrigin: {fileID: 18299060}
   rayLength: 30
-  damageAmount: 30
+  damageAmount: 20
   rotationSpeed: 90
 --- !u!82 &9124946201285256486
 AudioSource:
