@@ -1,30 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 [Serializable]
 public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiver
 {
     [SerializeField]
     private List<TKey> keys = new List<TKey>();
-
     [SerializeField]
     private List<TValue> values = new List<TValue>();
-
     private Dictionary<TKey, TValue> target = new Dictionary<TKey, TValue>();
-
     public SerializableDictionary() { }
-
     public SerializableDictionary(Dictionary<TKey, TValue> dict)
     {
         target = dict;
     }
-
     public Dictionary<TKey, TValue> ToDictionary()
     {
         return target;
     }
-
     public void OnBeforeSerialize()
     {
         keys.Clear();
@@ -36,7 +29,6 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
             values.Add(kvp.Value);
         }
     }
-
     public void OnAfterDeserialize()
     {
         target = new Dictionary<TKey, TValue>();

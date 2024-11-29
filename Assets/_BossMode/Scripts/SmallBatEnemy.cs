@@ -60,12 +60,9 @@ public class SmallBatEnemy : NetworkBehaviour, IDamageable
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     void RPC_TakeDamage(int damage, Vector3 hitPosition, Vector3 hitNormal, string shooterName, string teamID)
     {
-        Debug.Log("boss1takedamage_boss bi ban 111");
-
         if (Object.HasStateAuthority)
         {
             PlayBloodEffect_RPC(hitPosition, hitNormal);
-            Debug.Log("boss1takedamage_boss bi ban 222");
             CurrentHealth -= damage;
             if (CurrentHealth <= 0)
             {

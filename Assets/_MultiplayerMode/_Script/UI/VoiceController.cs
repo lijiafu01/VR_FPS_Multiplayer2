@@ -2,8 +2,6 @@
 using Photon.Voice.Unity;
 using multiplayerMode;
 using UnityEngine.UI;
-using UnityEngine.Audio;
-
 public class VoiceController : MonoBehaviour
 {
     private bool _isMute = false;
@@ -22,7 +20,6 @@ public class VoiceController : MonoBehaviour
             }
         }
     }
-
     public void UnmuteAllPlayers()
     {
         Speaker[] speakers = FindObjectsOfType<Speaker>();
@@ -67,7 +64,6 @@ public class VoiceController : MonoBehaviour
             micImage.color = Color.red; // Đặt màu đen khi mic được bật
         }
     }
-
     public void DisableVoice()
     {
         if (NetworkManager.Instance.RecorderScr != null)
@@ -79,7 +75,6 @@ public class VoiceController : MonoBehaviour
             Debug.LogWarning("DisableVoice: Recorder là null - Không thể tắt mic vì không tìm thấy Recorder");
         }
     }
-
     public void EnableVoice()
     {
         if (NetworkManager.Instance.RecorderScr != null)
@@ -89,7 +84,6 @@ public class VoiceController : MonoBehaviour
     }
     //==================================================Game sound ==================================
     [SerializeField] private Slider volumeSlider; // Tham chiếu đến Slider UI
-
     private void Start()
     {
         // Kiểm tra nếu volumeSlider chưa được gán
@@ -98,21 +92,17 @@ public class VoiceController : MonoBehaviour
             Debug.LogError("MasterVolumeController: Slider chưa được gán.");
             return;
         }
-
         // Đặt giá trị mặc định cho slider từ âm lượng hiện tại
         volumeSlider.value = AudioListener.volume;
-
         // Thêm listener để thay đổi âm lượng khi kéo slider
         volumeSlider.onValueChanged.AddListener(SetMasterVolume);
     }
-
     // Hàm điều chỉnh âm lượng toàn bộ game
     private void SetMasterVolume(float volume)
     {
         AudioListener.volume = volume;
         Debug.Log("Âm lượng toàn bộ game hiện tại: " + volume);
     }
-
     // Hàm để gỡ bỏ listener khi script hoặc object bị hủy
     private void OnDestroy()
     {

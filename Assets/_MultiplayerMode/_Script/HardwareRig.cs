@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
 using System;
 using System.Linq;
 using TMPro;
-using System.Xml;
-using multiplayerMode;
 using UnityEngine.UI;
 namespace multiplayerMode
 {
@@ -26,7 +23,6 @@ namespace multiplayerMode
         public Transform headTransform;
         public Transform leftHandTransform;
         public Transform rightHandTransform;
-
         public GameObject Content;
         public GameObject Template;
         // Từ điển để lưu trữ tên người chơi và điểm số
@@ -34,10 +30,8 @@ namespace multiplayerMode
         private Rigidbody rb;
         private void Start()
         {
-            
             NetworkManager.Instance.Runner.AddCallbacks(this);
         }
-       
         public void Death(Vector3 spawnPoint)
         {
             rb.velocity = Vector3.zero;
@@ -54,22 +48,17 @@ namespace multiplayerMode
             rb.velocity = Vector3.zero;
             // Tính toán vector lực theo hướng và cường độ
             Vector3 impactForce = direction.normalized * force;
-
             // Áp dụng lực vào Rigidbody
             rb.AddForce(impactForce, ForceMode.Impulse);
         }
-
         public void ReceiveImpact(Vector3 direction, float force)
         {
             // Đảm bảo đối tượng có Rigidbody trước khi nhận lực
             if (rb == null) return;
-
             // Đặt y của hướng về 0 nếu bạn muốn lực chỉ theo trục x và z
             direction.y = 0;
-
             // Tính toán vector lực theo hướng và cường độ
             Vector3 impactForce = direction.normalized * force;
-
             // Áp dụng lực vào Rigidbody
             rb.AddForce(impactForce, ForceMode.Impulse);
         }
@@ -87,18 +76,15 @@ namespace multiplayerMode
                 return 0; // Trả về 0 nếu người chơi không có trong từ điển
             }
         }
-
         public void UpdateHP(int hp,int maxHP)
         {
             if (healthSlider != null)
             {
                 healthSlider.value = (float)hp / maxHP;
             }
-
             string displayHP = hp.ToString() + "/" + maxHP;
             hpText.text = displayHP;
         }
-
         public void RemovePlayerFromLeaderboard(string playerName)
         {
             // Kiểm tra xem người chơi có tồn tại trong từ điển hay không
@@ -106,18 +92,14 @@ namespace multiplayerMode
             {
                 // Xóa người chơi khỏi từ điển
                 _playerScores.Remove(playerName);
-
                 // Cập nhật lại bảng xếp hạng sau khi xóa người chơi
                 UpdateLeaderboard();
-
-                Debug.Log($"Player {playerName} has been removed from the leaderboard.");
             }
             else
             {
                 Debug.LogWarning($"Player {playerName} not found in the leaderboard.");
             }
         }
-
         // Hàm để thêm hoặc cập nhật người chơi trên bảng xếp hạng
         public void AddOrUpdatePlayerOnLeaderboard(string playerName)
         {
@@ -130,14 +112,9 @@ namespace multiplayerMode
             {
                 _playerScores.Add(playerName, 0);  // Thêm người chơi mới với điểm số 0
             }
-
-        
-
             // Cập nhật bảng xếp hạng
             UpdateLeaderboard();
         }
-
-
         // Hàm để cập nhật bảng xếp hạng
         public void UpdateLeaderboard()
         {
@@ -146,7 +123,6 @@ namespace multiplayerMode
             {
                 Destroy(child.gameObject);
             }
-
             // Sắp xếp danh sách người chơi theo điểm số giảm dần, và nếu điểm số bằng nhau thì sắp xếp theo tên
             var sortedPlayers = _playerScores
                 .OrderByDescending(p => p.Value) // Sắp xếp theo điểm số giảm dần
@@ -170,11 +146,9 @@ namespace multiplayerMode
                 {
                     Debug.LogError("TMP_Text component not found in template");
                 }
-
                 rank++;
             }
         }
-
         public void AddOrUpdatePlayerOnLeaderboardWithScore(string playerName, int playerScore)
         {
             // Thêm hoặc cập nhật điểm số của người chơi trong từ điển
@@ -186,29 +160,14 @@ namespace multiplayerMode
             {
                 _playerScores.Add(playerName, playerScore);  // Thêm người chơi mới với điểm số cụ thể
             }
-
             // Cập nhật bảng xếp hạng
             UpdateLeaderboard();
         }
-
-      
-
-
-       /* void Start()
-        {
-            // Đăng ký HardwareRig để nhận callback từ NetworkRunner
-            NetworkManager.Instance.Runner.AddCallbacks(this);
-            //hpText = hpCanvas.transform.Find("HpText").GetComponent<TextMeshProUGUI>();
-
-        }*/
-
         #region INetworkRunnerCallbacks
-
         void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input)
         {
             // Tạo một đối tượng RigState để chứa trạng thái hiện tại
             RigState xrRigState = new RigState();
-
             // Kiểm tra null cho từng phần tử trước khi truy cập thuộc tính của chúng
             if (headTransform != null)
             {
@@ -219,7 +178,6 @@ namespace multiplayerMode
             {
                 Debug.LogWarning("headTransform is null or has been destroyed.");
             }
-
             if (playerTransform != null)
             {
                 xrRigState.PlayerPosition = playerTransform.position;
@@ -239,7 +197,6 @@ namespace multiplayerMode
             {
                 Debug.LogWarning("leftHandTransform is null or has been destroyed.");
             }
-
             if (rightHandTransform != null)
             {
                 xrRigState.RightHandPosition = rightHandTransform.position;
@@ -249,35 +206,17 @@ namespace multiplayerMode
             {
                 Debug.LogWarning("rightHandTransform is null or has been destroyed.");
             }
-
             xrRigState.ForceControllerLeft = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
             // Ghi nhận trạng thái vào NetworkInput để truyền qua mạng
             xrRigState.Button.Set(InputButton.Fire, OVRInputState.Instance.TriggerPressed);
             xrRigState.Button.Set(InputButton.Fire2, OVRInputState.Instance.LeftTriggerPressed);
             xrRigState.Button.Set(InputButton.Bow, OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch));
-
-                //xrRigState.Button.Set(InputButton.Jump, OVRInputState.Instance.AButtonPressed);
-
             input.Set(xrRigState);
         }
-          /*  bool isPulled = false;
-         void Update()
-         {
-                if (OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
-                {
-                    isPulled = true;
-                }
-                else
-                {
-                    isPulled = false;
-                }
-         }*/
             #endregion
-
             #region Unused INetworkRunnerCallbacks
-
             // Các phương thức callback khác, chưa được sử dụng, có thể được mở rộng sau này
-            void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner) { }
+        void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner) { }
         void INetworkRunnerCallbacks.OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
         void INetworkRunnerCallbacks.OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
         void INetworkRunnerCallbacks.OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }

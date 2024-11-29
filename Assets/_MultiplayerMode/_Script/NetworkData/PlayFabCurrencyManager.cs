@@ -2,7 +2,6 @@
 using PlayFab.ClientModels;
 using UnityEngine;
 using System;
-
 public class PlayFabCurrencyManager : MonoBehaviour
 {
     private bool isLoggedIn = false; // Kiểm tra trạng thái đăng nhập
@@ -10,41 +9,31 @@ public class PlayFabCurrencyManager : MonoBehaviour
     private int coinsToSubtract = 0; // Số coin cần trừ khi đăng nhập thành công
     private const int MaxCoinsPerDay = 300; // Số coin tối đa nhận mỗi ngày
     private bool isMaxCoinReached = false;
-
     // Hàm đăng nhập người dùng
     private void LoginUser(Action onLoginSuccessCallback)
     {
-        Debug.Log("dev3_Attempting to login with email and password");
-
         string _email = PlayFabManager.Instance.UserData.Email;
         string _password = PlayFabManager.Instance.UserData.Password;
-
         var request = new LoginWithEmailAddressRequest
         {
             Email = _email,
             Password = _password
         };
-
         PlayFabClientAPI.LoginWithEmailAddress(request, result =>
         {
             OnLoginSuccess(onLoginSuccessCallback);
         }, OnLoginFailure);
     }
-
     private void OnLoginSuccess(Action onLoginSuccessCallback)
     {
-        Debug.Log("dev3_Đăng nhập thành công!");
         isLoggedIn = true;
-
         // Gọi callback sau khi đăng nhập thành công
         onLoginSuccessCallback?.Invoke();
     }
-
     private void OnLoginFailure(PlayFabError error)
     {
         Debug.LogError("dev3_Đăng nhập thất bại: " + error.GenerateErrorReport());
     }
-
     // Hàm để thêm số coin từ lớp ngoài và trả về số coin đã thêm thực tế
     public void AddGoldCoin(int coinNum, Action<int> onCoinAddedCallback)
     {
@@ -54,7 +43,6 @@ public class PlayFabCurrencyManager : MonoBehaviour
             onCoinAddedCallback(0);  // Đã đạt giới hạn, không thêm coin
             return;
         }
-
         if (isLoggedIn)
         {
             CheckDailyLimit(coinNum, onCoinAddedCallback);
@@ -65,7 +53,6 @@ public class PlayFabCurrencyManager : MonoBehaviour
             LoginUser(() => CheckDailyLimit(coinsToAdd, onCoinAddedCallback));
         }
     }
-
     // Kiểm tra số coin nhận trong ngày trước khi thêm và trả về số coin thực tế đã thêm
     private void CheckDailyLimit(int coinNum, Action<int> onCoinAddedCallback)
     {
@@ -86,9 +73,7 @@ public class PlayFabCurrencyManager : MonoBehaviour
                     coinsReceivedToday = int.Parse(result.Data["CoinsReceivedToday"].Value);
                 }
             }
-
             DateTime currentDate = DateTime.Now;
-
             // Kiểm tra xem đã chuyển sang ngày mới chưa
             if (lastReceivedDate.Date != currentDate.Date)
             {
@@ -96,10 +81,8 @@ public class PlayFabCurrencyManager : MonoBehaviour
                 coinsReceivedToday = 0;
                 isMaxCoinReached = false; // Reset trạng thái giới hạn coin
             }
-
             // Kiểm tra nếu số coin nhận đã vượt quá giới hạn
             int coinsThatCanBeAdded = Math.Min(coinNum, MaxCoinsPerDay - coinsReceivedToday);
-
             if (coinsThatCanBeAdded <= 0)
             {
                 Debug.LogError("dev3_Giới hạn coin hàng ngày đã đạt đến giới hạn!");
@@ -120,7 +103,6 @@ public class PlayFabCurrencyManager : MonoBehaviour
             onCoinAddedCallback(0); // Nếu có lỗi, trả về 0 coin
         });
     }
-
     // Cập nhật số coin đã nhận trong ngày và ngày nhận gần nhất
     private void UpdateUserDailyData(DateTime currentDate, int coinsReceivedToday)
     {
@@ -132,21 +114,16 @@ public class PlayFabCurrencyManager : MonoBehaviour
                 {"CoinsReceivedToday", coinsReceivedToday.ToString()}
             }
         };
-
         PlayFabClientAPI.UpdateUserData(request, result =>
         {
-            Debug.Log("dev3_Dữ liệu coin hàng ngày đã được cập nhật.");
         }, error =>
         {
             Debug.LogError("dev3_Failed to update user data: " + error.GenerateErrorReport());
         });
     }
-
     // Hàm để thêm tiền tệ
     public void AddCurrency(string currencyCode, int amount)
     {
-        Debug.Log($"dev3_AddCurrency called, Currency: {currencyCode}, Amount: {amount}");
-
         var request = new AddUserVirtualCurrencyRequest
         {
             VirtualCurrency = currencyCode,
@@ -155,18 +132,13 @@ public class PlayFabCurrencyManager : MonoBehaviour
 
         PlayFabClientAPI.AddUserVirtualCurrency(request, OnAddCurrencySuccess, OnAddCurrencyFailure);
     }
-
     private void OnAddCurrencySuccess(ModifyUserVirtualCurrencyResult result)
     {
-        Debug.Log($"dev3_Tăng tiền tệ thành công! Số tiền hiện tại: {result.Balance}");
     }
-
     private void OnAddCurrencyFailure(PlayFabError error)
     {
         Debug.LogError($"dev3_Tăng tiền tệ thất bại: {error.GenerateErrorReport()}");
     }
-
-   
     // Hàm để trừ số coin từ lớp ngoài và trả về số coin đã trừ thực tế
     public void SubtractGoldCoin(int coinNum, Action<int> onCoinSubtractedCallback)
     {
@@ -193,7 +165,6 @@ public class PlayFabCurrencyManager : MonoBehaviour
             LoginUser(() => GetCurrencyBalance("GC", onBalanceReceivedCallback));
         }
     }
-
     // Hàm hỗ trợ để lấy số dư tiền tệ cụ thể
     private void GetCurrencyBalance(string currencyCode, Action<int> onBalanceReceivedCallback)
     {
@@ -204,7 +175,6 @@ public class PlayFabCurrencyManager : MonoBehaviour
             {
                 balance = result.VirtualCurrency[currencyCode];
             }
-            Debug.Log($"dev3_Số dư {currencyCode} hiện tại: {balance}");
             onBalanceReceivedCallback(balance);
         }, error =>
         {
@@ -223,7 +193,6 @@ public class PlayFabCurrencyManager : MonoBehaviour
             {
                 currentBalance = result.VirtualCurrency[currencyCode];
             }
-
             if (currentBalance >= amount)
             {
                 var request = new SubtractUserVirtualCurrencyRequest
@@ -231,10 +200,8 @@ public class PlayFabCurrencyManager : MonoBehaviour
                     VirtualCurrency = currencyCode,
                     Amount = amount
                 };
-
                 PlayFabClientAPI.SubtractUserVirtualCurrency(request, subResult =>
                 {
-                    Debug.Log($"dev3_Trừ tiền tệ thành công! Số tiền hiện tại: {subResult.Balance}");
                     onCurrencySubtractedCallback(subResult.Balance);
                 }, error =>
                 {

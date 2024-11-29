@@ -1,10 +1,7 @@
 ﻿using Fusion;
-using OculusSampleFramework;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using multiplayerMode;
 using System.Collections;
 using UnityEngine.SceneManagement;
 namespace multiplayerMode
@@ -12,7 +9,6 @@ namespace multiplayerMode
     public class PlayerController : NetworkBehaviour
     {
         [Networked] public string BossName { get; set; }
-
         [Networked]
         public int RubyNum {  get; set; }
         [SerializeField]
@@ -25,22 +21,15 @@ namespace multiplayerMode
         [SerializeField] private Transform _modelParentObject;
         [Networked]
         private string _playerModelName { get; set; }
-
         //UI
         [SerializeField] private GameObject rewardCanvas;
         [SerializeField] private TMP_Text quitTimeCountText;
         [SerializeField] private RewardPanel _rewardPanel;
-
         // Biến mạng để lưu trữ vũ khí hiện tại
         [Networked(OnChanged = nameof(OnWeaponChanged))]
         public Weapon CurrentWeapon { get; set; }
-
-        /* private TextMeshProUGUI hpText;
-         [SerializeField]
-         private GameObject hpCanvas;*/
         public GameObject menuPanel;
         [SerializeField] private TMP_Text _playerNameText;
-        //[Networked] public NetworkString<_16> NickName { get; set; }
         [SerializeField]
         private int _maxHp = 100;
         [Networked(OnChanged = nameof(OnHpChanged))]
@@ -48,14 +37,12 @@ namespace multiplayerMode
         [SerializeField]
         private WeaponHandler _weaponHandler;
         private NetworkButtons _previousButton { get; set; }
-
         private HardwareRig hardwareRig;
         [SerializeField]
         public AudioSource _audioSource;
         // Thêm biến cho ParticleSystem
         [SerializeField]
         private ParticleSystem _muzzleFlash;
-
         [SerializeField]
         private ParticleSystem _leftMuzzleFlash;
         [Networked]
@@ -63,7 +50,6 @@ namespace multiplayerMode
         // Thêm biến cho hiệu ứng máu
         [SerializeField]
         private ParticleSystem _bloodEffect;
-
         private PlayerData _playerData;
         private PlayerRef _playerRef;
         [Networked, Capacity(30)]
@@ -72,7 +58,6 @@ namespace multiplayerMode
         public NetworkDictionary<PlayerRef, NetworkObject> _PlayerDict => default;
         public override void Spawned()
         {
-           
             _playerRef = Object.InputAuthority;
             if (!PlayerNames.ContainsKey(_playerRef))
             {
@@ -85,10 +70,8 @@ namespace multiplayerMode
 
                 _playerNameText.text = playerName;
             }
-            Debug.Log("dev14_1xxxxx" + playerName);
             if (!Object.HasStateAuthority)
             {
-                Debug.Log("dev14_2xxxxx" + playerName);
                 hardwareRig = FindObjectOfType<HardwareRig>();
                 Dictionary<string, int> playerScores = hardwareRig._playerScores;
                 // Gọi RPC để gửi thông tin người chơi tới tất cả người chơi
@@ -99,12 +82,8 @@ namespace multiplayerMode
             }
             if (Object.HasStateAuthority)
             {
-
                 _PlayerDict.Add(_playerRef, NetworkManager.Instance.PlayerSpawnerScript._networkPlayerObject);
-
-                //----------------------------------------------------------------
                 hardwareRig = FindObjectOfType<HardwareRig>();
-                
                 //cap nhat leaderboard
                 GameManager.Instance.PlayerData.playerRef = _playerRef;
                 _playerData = GameManager.Instance.PlayerData;
@@ -115,13 +94,11 @@ namespace multiplayerMode
                     RPC_SendTeamID(NetworkManager.Instance.TeamID);
                 }
                 UpdateLeaderboard_RPC(_playerData.playerName);
-                //-------------------------------------------------------
             }
             if (Object.HasInputAuthority)
             {
                 _playerModelName = UserEquipmentData.Instance.CurrentModelId;
                 SetUpPlayerEquipment_RPC(_playerModelName);
-
                 if (NetworkManager.Instance.BossName != null)
                 {
                     BossName = NetworkManager.Instance.BossName;
@@ -137,7 +114,6 @@ namespace multiplayerMode
                 SetUpPlayerEquipmentOther(_playerModelName);
             }
             SetupAttribute();
-            
         }
         private Transform[] spawnPos;
         private void Start()
@@ -150,21 +126,14 @@ namespace multiplayerMode
                     Intermediary intermediary = obj.GetComponent<Intermediary>();
                     spawnPos = intermediary.spawnPostions;
                 }
-                else
-                {
-                    Debug.Log("No object found with the specified tag.");
-                }
             }
             if(NetworkManager.Instance.IsTeamMode)
             {
                 if (NetworkManager.Instance.TeamID != null)
                 {
                     Invoke("SetupPlayerNameColor", 1f);
-
                 }
             }
-            
-           // Invoke("OnQuitButtonClick", 5f);
         }
         void SetupAttribute()
         {
@@ -177,7 +146,6 @@ namespace multiplayerMode
                     _currentHp = _maxHp;
                 }
             }
-           
         }
         void SetupPlayerNameColor()
         {
@@ -186,8 +154,6 @@ namespace multiplayerMode
         }
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
-            Debug.Log($"dev10_2OnPlayerLeft {_PlayerDict.Count}");
-            
             if (Object.HasStateAuthority)
             {
                 // Xóa người chơi khỏi danh sách PlayerNames
@@ -197,28 +163,22 @@ namespace multiplayerMode
                     if (_PlayerDict.ContainsKey(_playerRef))
                     {
                         NetworkObject networkObject = _PlayerDict[_playerRef];
-                        
                     }
                 }
             }
             if (Object.HasStateAuthority) return;
-            Debug.Log("dev3_co cap nhat lai BXH");
             HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
             if (hardwareRig != null)
             {
                 // Gọi hàm cập nhật BXH với thông tin của player
                 hardwareRig.RemovePlayerFromLeaderboard(playerName);
-                Debug.Log($"dev3_Player {playerName} has been removed from leaderboard.");
             }
         }
-      
-
         // Hàm callback được gọi khi CurrentWeapon thay đổi
         private static void OnWeaponChanged(Changed<PlayerController> changed)
         {
             changed.Behaviour.OnWeaponChanged();
         }
-
         private void OnWeaponChanged()
         {
             if(Object.HasStateAuthority)
@@ -226,15 +186,11 @@ namespace multiplayerMode
                 // Cập nhật vũ khí trong WeaponManager
                 //_weaponManager.SwitchWeapon(CurrentWeapon);
             }
-            
         }
         private static void OnHpChanged(Changed<PlayerController> changed)
         {
             // Lấy giá trị mới của _currentHp
             int newHp = changed.Behaviour._currentHp;
-
-            Debug.Log($"HP has changed to {newHp}");
-
             // Gọi hàm để cập nhật UI hoặc xử lý các logic khác
             changed.Behaviour.UpdateHpUI(newHp);
         }
@@ -256,13 +212,9 @@ namespace multiplayerMode
                 hardwareRig.UpdateHP(hp,_maxHp);
             }
         }
-        
-       
         private void SetUpPlayerEquipmentOther(string playerModelName)
         {
             Transform modelObject = _playerModels.Find(playerModelName);
-
-
             if (modelObject != null)
             {
                 foreach (Transform child in _playerModels)
@@ -273,19 +225,12 @@ namespace multiplayerMode
                     }
                 }
             }
-            else
-            {
-                Debug.Log("dev20_ Không tìm thấy đối tượng con 'mage'.");
-            }
         }
-       
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         private void SetUpPlayerEquipment_RPC(string playerModelName)
         {
             Debug.Log($"checkState_ playerName: {playerName} playerModelName:{playerModelName}");
             Transform modelObject = _playerModels.Find(playerModelName);
-
-            
             if (modelObject != null)
             {
                 foreach (Transform child in _playerModels)
@@ -301,16 +246,12 @@ namespace multiplayerMode
                 Debug.Log("dev20_ Không tìm thấy đối tượng con 'mage'.");
             }
         }
-
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
         public void RPC_SendTeamID(string teamID)
         {
             // Gán TeamID từ tham số truyền vào
             TeamID = teamID;
-            
-            
         }
-        
         private void Update()
         {
             if (Object.HasStateAuthority)
@@ -320,20 +261,12 @@ namespace multiplayerMode
                     menuPanel.SetActive(!menuPanel.activeSelf);
                 }
             }
-
         }
-       /* private void Start()
-        {
-            Invoke("OnQuitButtonClick", 5f);
-        }*/
         public void OnQuitButtonClick()
         {
             string currentSceneName = SceneManager.GetActiveScene().name;
-
-           
             if (Object.InputAuthority.IsValid && currentSceneName == "MainGame")
             {
-                
                 int playerScore = hardwareRig.GetPlayerScore(playerName);
                 // Gọi hàm AddGoldCoin và xử lý số coin thực tế đã thêm qua callback
                 if(playerScore != 0)
@@ -341,33 +274,24 @@ namespace multiplayerMode
                     PlayFabManager.Instance.CurrencyManager.AddGoldCoin(playerScore, (int coinsAdded) =>
                     {
                         rewardCanvas.SetActive(true);
-                       
                         _rewardPanel.SpawnRewardItem(ItemRewardType.Coin, coinsAdded);
-                        //_rankCointText.text = "+"+coinsAdded.ToString();  // Hiển thị số coin thực tế nhận được
                     });
                 }
                 else
                 {
                     rewardCanvas.SetActive(true);
                     _rewardPanel.SpawnRewardItem(ItemRewardType.Coin, 0);
-
                 }
-
-
                 StartCoroutine(QuitCountdown());
             }
             else
             {
                 StartCoroutine(QuitCountdown());
             }
-
         }
-
-
         private IEnumerator QuitCountdown()
         {
             int count = 3;
-            
             if (quitTimeCountText != null)
             {
                 // Đếm ngược và hiển thị giá trị trên TMP_Text
@@ -377,7 +301,6 @@ namespace multiplayerMode
                     yield return new WaitForSeconds(1); // Đợi 1 giây
                     count--;
                 }
-
                 // Sau khi đếm ngược kết thúc, thực hiện hành động như chuyển cảnh
                 LocalManager.Instance.LoadStartGameScene();
             }
@@ -397,13 +320,11 @@ namespace multiplayerMode
                     host = player;
                 }
             }
-
             return host;
         }
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void SendPlayerDataToAll_RPC(string playerName, int playerScore)
         {
-
             // Gọi hàm trong HardwareRig để cập nhật bảng xếp hạng
             HardwareRig hardwareRig = FindObjectOfType<HardwareRig>();
             if (hardwareRig != null)
@@ -437,22 +358,15 @@ namespace multiplayerMode
             if(Object.HasInputAuthority)
             {
                 RewardAndExitBoss();
-
             }
         }
         void RewardAndExitBoss()
         {
-            Debug.Log("testboss1024_RewardAndExitBoss");
-
             PlayFabManager.Instance.CurrencyManager.AddGoldCoin(15, (int coinsAdded) =>
             {
-                Debug.Log("testboss1024_RewardAndExitBoss222");
-
                 rewardCanvas.SetActive(true);
                 _rewardPanel.SpawnRewardItem(ItemRewardType.Coin, coinsAdded);
-
             });
-
             if (RubyNum > 0)
             {
                 rewardCanvas.SetActive(true);
@@ -474,13 +388,11 @@ namespace multiplayerMode
                     Item newItem = new Item("Sapphire", ItemType.Ruby, RubyNum);
                     UserEquipmentData.Instance.AddItem(newItem);
                 }
-
             }
             StartCoroutine(QuitCountdown());
         }
         public void ExitBoss()
         {
-            
             if(RubyNum > 0)
             {
                 rewardCanvas.SetActive(true);
@@ -502,36 +414,11 @@ namespace multiplayerMode
                     Item newItem = new Item("Sapphire", ItemType.Ruby, RubyNum);
                     UserEquipmentData.Instance.AddItem(newItem);
                 }
-               
             }
             StartCoroutine(QuitCountdown());
-
         }
-        /* [Rpc(RpcSources.All, RpcTargets.All)]
-         public void KillBossReward_RPC(string shooterName)
-         {
-
-             if (shooterName == playerName)
-             {
-                 Debug.Log("bossreward_ 6");
-                 TeamKillBossReward_RPC(TeamID);
-             }
-         }*/
-        /*[Rpc(RpcSources.All, RpcTargets.All)]
-        public void TeamKillBossReward_RPC(string teamID)
-        {
-            if(TeamID == teamID)
-            {
-                Debug.Log("bossreward_ team");
-
-            }
-        }*/
         public void TakeDamage_Boss(int damage)
         {
-           /* Debug.Log("checkquyenhan_HasInputAuthority: " + Object.HasInputAuthority +" "+playerName);
-            Debug.Log("checkquyenhan_HasStateAuthority: " + Object.HasStateAuthority + " " + playerName);
-*/
-
             if (Object.HasStateAuthority)
             {
                 _currentHp -= damage;
@@ -540,8 +427,6 @@ namespace multiplayerMode
                 {
                     _currentHp = 0;
                     LocalManager.Instance.LoadStartGameScene();
-                    /*Dead();
-                    Invoke("SetInitHp", 1f);*/
                 }
             }
         }
@@ -549,16 +434,10 @@ namespace multiplayerMode
         {
             if (Object.HasStateAuthority)
             {
-                Debug.Log("Bossfixbug_ 3_" + playerName);
                 _currentHp -= damage;
-
-                Debug.Log("Bossfixbug_ 4_" + playerName + _currentHp);
-
                 if (_currentHp <= 0)
                 {
                     _currentHp = _maxHp;
-                    /*Dead();
-                    Invoke("SetInitHp", 1f);*/
                 }
             }
         }
@@ -567,10 +446,8 @@ namespace multiplayerMode
             if (Object.HasStateAuthority)
             {
                 _currentHp -= damage;
-
                 // Hiển thị hiệu ứng máu khi bị bắn
                 PlayBloodEffect_RPC(hitPosition, hitNormal);
-
                 if (_currentHp <= 0)
                 {
                     _currentHp = _maxHp;
@@ -585,7 +462,6 @@ namespace multiplayerMode
             if(Object.HasStateAuthority)
             {
                 _currentHp = _maxHp; // Đặt lại HP khi player chết
-
             }
         }
         
@@ -628,14 +504,12 @@ namespace multiplayerMode
         private void FirePistolRight()
         {
             _weaponHandler.PistolRightFire();
-
             // Gọi hàm để chơi âm thanh và hiển thị hiệu ứng tóe lửa
             PistolRightFireEffects_RPC();
         }
         private void FirePistolLeft()
         {
             _weaponHandler.PistolLeftFire();
-
             // Gọi hàm để chơi âm thanh và hiển thị hiệu ứng tóe lửa
             PistolLeftFireEffects_RPC();
         }
@@ -698,7 +572,6 @@ namespace multiplayerMode
                 // Đặt vị trí và hướng của ParticleSystem dựa trên vị trí va chạm và pháp tuyến
                 _bloodEffect.transform.position = hitPosition;
                 _bloodEffect.transform.rotation = Quaternion.LookRotation(hitNormal);
-
                 _bloodEffect.Play();
                 Invoke(nameof(StopBloodEffect), 1f); // Dừng hiệu ứng sau 1 giây
             }

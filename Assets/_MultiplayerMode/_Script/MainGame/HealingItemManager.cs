@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
-using multiplayerMode;
 namespace multiplayerMode
 {
     public class HealingItemManager : MonoBehaviour
     {
         public GameObject[] healthPickups; // Gán các cục HP hiện có trong scene
-
         void Start()
         {
             if (NetworkManager.Instance.Runner.IsServer)

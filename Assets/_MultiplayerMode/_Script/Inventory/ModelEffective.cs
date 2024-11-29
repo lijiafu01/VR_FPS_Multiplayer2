@@ -1,14 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-
-
-
+﻿using UnityEngine;
 public class ModelEffective : MonoBehaviour, IModelObserver
 {
     private UserEquipmentData modelObserver;
-
     private void OnEnable()
     {
         modelObserver = UserEquipmentData.Instance;
@@ -18,7 +11,6 @@ public class ModelEffective : MonoBehaviour, IModelObserver
         }
         OnModelIdChanged(UserEquipmentData.Instance.CurrentModelId);
     }
-
     private void OnDisable()
     {
         if (modelObserver != null)
@@ -26,7 +18,6 @@ public class ModelEffective : MonoBehaviour, IModelObserver
             modelObserver.RemoveObserver(this); // Hủy đăng ký khi đối tượng bị vô hiệu hóa
         }
     }
-
     // Phương thức sẽ được gọi khi CurrentModelId thay đổi
     public void OnModelIdChanged(string newModelId)
     {
@@ -43,9 +34,7 @@ public class ModelEffective : MonoBehaviour, IModelObserver
             }
         }
     }
-
     public Vector3 rotationSpeed = new Vector3(0, 100, 0);
-
     void Update()
     {
         transform.Rotate(rotationSpeed * Time.deltaTime);

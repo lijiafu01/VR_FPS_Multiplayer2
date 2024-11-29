@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Fusion;
-using Oculus.Platform;
-using multiplayerMode;
 namespace multiplayerMode
 {
 public class NetworkRig : NetworkBehaviour
@@ -15,23 +11,17 @@ public class NetworkRig : NetworkBehaviour
     [SerializeField]
     private Bullet bulletPrefab;
     public bool IsLocalNetworkRig => Object.HasStateAuthority;
-
     [Header("RigComponents")]
     [SerializeField]
     private NetworkTransform playerTransform;
-
     [SerializeField]
     private NetworkTransform headTransform;
-
     [SerializeField]
     private NetworkTransform leftHandTransform;
-
     [SerializeField]
     private NetworkTransform rightHandTransform;
-
     HardwareRig hardwareRig;
     private NetworkButtons _previousButton { get; set; }
-
     [SerializeField]
     private WeaponHandler _weaponHandler;
     public override void Spawned()
@@ -60,16 +50,12 @@ public class NetworkRig : NetworkBehaviour
         if (GetInput<RigState>(out var input))
         {
             playerTransform.transform.SetPositionAndRotation(input.PlayerPosition, input.PlayerRotation);
-
             // Xử lý riêng cho rotation của head chỉ trên trục Y
             Vector3 headPosition = input.HeadsetPosition;
             Quaternion headRotation = Quaternion.Euler(0, input.HeadsetRotation.eulerAngles.y, 0);
-
             headTransform.transform.SetPositionAndRotation(headPosition, headRotation);
-
             leftHandTransform.transform.SetPositionAndRotation(input.LeftHandPosition, input.LeftHandRotation);
             rightHandTransform.transform.SetPositionAndRotation(input.RightHandPosition, input.RightHandRotation);
-
             var buttonPressed = input.Button.GetPressed(_previousButton);
             _previousButton = input.Button;      
         }

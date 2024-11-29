@@ -1,13 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 public class StoneEVM : MonoBehaviour, IstatisEvm
 {
     public GameObject evmVFX;
     public void OnHitByWeapon()
     {
-       
     }
     public void StaticEVM(Vector3 spawnPoint, Vector3 hitNormal)
     {

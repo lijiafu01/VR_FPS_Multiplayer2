@@ -1,7 +1,4 @@
 ﻿using Fusion;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class JumpVFXNetworked : NetworkBehaviour
 {
@@ -14,9 +11,7 @@ public class JumpVFXNetworked : NetworkBehaviour
             Runner.Despawn(Object);
         }
     }
-
     private TickTimer lifeTimer;
-
     public override void Spawned()
     {
         lifeTimer = TickTimer.CreateFromSeconds(Runner, 1f);

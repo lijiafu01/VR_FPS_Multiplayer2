@@ -10,14 +10,11 @@ namespace multiplayerMode
     {
         public GameObject friendTemplate;  // Template hiển thị tên bạn bè
         public Transform friendListContent;  // Content của ScrollView để hiển thị danh sách bạn bè
-
         private List<FriendInfo> _friends = new List<FriendInfo>();  // Danh sách bạn bè
-
         private void OnEnable()
         {
             GetFriends();  // Lấy danh sách bạn bè khi bắt đầu
         }
-
         // Lấy danh sách bạn bè từ PlayFab
         private void GetFriends()
         {
@@ -41,9 +38,6 @@ namespace multiplayerMode
                 Debug.LogError("Failed to get friends list: " + error.GenerateErrorReport());
             });
         }
-
-        // Hiển thị danh sách bạn bè trong giao diện
-        // Hiển thị danh sách bạn bè trong giao diện
         private void DisplayFriends()
         {
             // Xóa các mục bạn bè hiện tại để tránh trùng lặp
@@ -51,13 +45,11 @@ namespace multiplayerMode
             {
                 Destroy(child.gameObject);
             }
-
             foreach (var friend in _friends)
             {
                 // Tạo đối tượng giao diện dựa trên friendTemplate
                 GameObject newFriendEntry = Instantiate(friendTemplate, friendListContent);
                 newFriendEntry.SetActive(true);
-
                 // Cập nhật tên của bạn bè trong template
                 Transform nameTextTransform = newFriendEntry.transform.Find("NameText");
                 if (nameTextTransform != null)
@@ -80,7 +72,6 @@ namespace multiplayerMode
                 {
                     Debug.LogError("dev3_NameText transform not found in friendTemplate.");
                 }
-
                 // Xử lý nút "Xóa bạn"
                 Transform removeButtonTransform = newFriendEntry.transform.Find("RemoveButton");
                 if (removeButtonTransform != null)
@@ -101,8 +92,6 @@ namespace multiplayerMode
                 }
             }
         }
-
-
         // Hàm xóa bạn bè dựa trên PlayFabId
         private void RemoveFriend(string playFabId, GameObject friendEntry)
         {

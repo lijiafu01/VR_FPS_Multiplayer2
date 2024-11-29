@@ -1,9 +1,5 @@
-﻿using PlayFab.EconomyModels;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
-
 public class NoticeText : MonoBehaviour
 {
     public GameObject textVFX;
@@ -26,5 +22,4 @@ public class NoticeText : MonoBehaviour
     {
         OffText();
     }
-
 }

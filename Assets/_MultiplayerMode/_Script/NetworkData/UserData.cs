@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 namespace multiplayerMode
 {
     public class UserData : MonoBehaviour
     {
         // Thay vì chỉ lưu trữ một `AttributeData`, chúng ta sử dụng Dictionary
         public Dictionary<string, AttributeData> PlayerAttributes;
-
         public string UserID { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
@@ -81,36 +79,23 @@ namespace multiplayerMode
             if (result.Data != null && result.Data.ContainsKey("AttributeData"))
             {
                 string jsonAttributes = result.Data["AttributeData"].Value;
-                Debug.Log("JSON nhận được từ PlayFab: " + jsonAttributes);
-
                 // Deserialize JSON thành Dictionary<string, AttributeData>
                 PlayerAttributes = JsonUtility.FromJson<SerializableDictionary<string, AttributeData>>(jsonAttributes).ToDictionary();
-                Debug.Log("LoadAttributesFromPlayFab: Dữ liệu đã được gán vào PlayerAttributes.");
-
                 // Chuyển cảnh sau khi dữ liệu đã tải xong
                 SceneManager.LoadScene(1);
             }
             else
             {
-                Debug.Log("Không tìm thấy dữ liệu thuộc tính người chơi trên PlayFab.");
-                // Khởi tạo dữ liệu mặc định
-                //InitializeDefaultAttributes();
-
                 // Chuyển cảnh
                 SceneManager.LoadScene(1);
             }
         }
-
         private void OnDataLoadError(PlayFabError error)
         {
             Debug.LogError("Lỗi khi tải dữ liệu từ PlayFab: " + error.GenerateErrorReport());
-            // Khởi tạo dữ liệu mặc định
-            //InitializeDefaultAttributes();
-
             // Chuyển cảnh
             SceneManager.LoadScene(1);
         }
-
         // Hàm lưu dữ liệu thuộc tính lên PlayFab
         public void SaveAttributesToPlayFab()
         {
@@ -119,7 +104,6 @@ namespace multiplayerMode
                 Debug.LogError("PlayerAttributes chưa được khởi tạo.");
                 return;
             }
-
             // Chuyển đổi Dictionary thành JSON
             string jsonAttributes = JsonUtility.ToJson(new SerializableDictionary<string, AttributeData>(PlayerAttributes));
 
@@ -130,20 +114,16 @@ namespace multiplayerMode
                     { "AttributeData", jsonAttributes }
                 }
             };
-
             PlayFabClientAPI.UpdateUserData(request, OnDataSendSuccess, OnDataSendError);
         }
-
         private void OnDataSendSuccess(UpdateUserDataResult result)
         {
             Debug.Log("AttributeData: Dữ liệu thuộc tính đã được lưu lên PlayFab thành công!");
         }
-
         private void OnDataSendError(PlayFabError error)
         {
             Debug.LogError("AttributeData: Lỗi khi lưu dữ liệu lên PlayFab: " + error.GenerateErrorReport());
         }
-
         // Hàm khởi tạo dữ liệu mặc định
         public void InitializeDefaultAttributes()
         {
@@ -153,8 +133,6 @@ namespace multiplayerMode
             PlayerAttributes.Add("Police", new AttributeData(0, 0, 0,500,40,50));
             PlayerAttributes.Add("Angel", new AttributeData(0, 0, 0, 500, 150, 45));
             PlayerAttributes.Add("Mage", new AttributeData(0, 0, 0, 600, 200, 50));
-            //PlayerAttributes.Add("Hero2", new AttributeData(1, 1, 1, 120, 40, 12));
-            // Thêm các nhân vật khác nếu cần
         }
     }
 }

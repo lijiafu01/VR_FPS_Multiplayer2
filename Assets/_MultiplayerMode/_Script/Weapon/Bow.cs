@@ -1,47 +1,30 @@
-﻿/*using System.Collections;
-using System.Collections.Generic;*/
-using UnityEngine;
-/*using Oculus;
-using multiplayerMode;
-using ExitGames.Client.Photon;*/
+﻿using UnityEngine;
 using Fusion;
-/*using UnityEngine.UIElements;
-using ExitGames.Client.Photon.StructWrapping;*/
-
 namespace multiplayerMode
 {
     public class Bow : NetworkBehaviour
     {
         private NetworkButtons _previousButton { get; set; }
-
         [SerializeField] private Transform bowHandle;       // Điểm nắm giữa dây cung
         [SerializeField] private GameObject arrowPrefab;    // Prefab của mũi tên
         [SerializeField] private LineRenderer bowString;    // LineRenderer để vẽ dây cung
         [SerializeField] private float maxPullDistance = -0.8f; // Khoảng cách kéo tối đa, giá trị âm
         [SerializeField] private float pullStrengthMultiplier = 1500f; // Nhân số để tính lực bắn dựa trên độ kéo
-
         [SerializeField] private AudioSource drawSound;    // Âm thanh khi kéo dây cung
-        //[SerializeField] private AudioSource shootSound;   // Âm thanh khi bắn mũi tên
-
         private GameObject currentArrow;
         private bool isStringPulled = false;
         private Transform RightHand; // Vị trí của controller tay phải
         public Transform attackTransform; // Đảm bảo rằng bạn đã gán đúng Transform này trong Unity Editor
         public Transform bowstringCenter;
-        //private bool isPulled = false;
         private bool hasLeftCollider = false; // Biến để theo dõi khi tay rời khỏi collider
         [Networked] private bool isPulled { get; set; }
         protected void Start()
         {
             ResetString();
-            
         }
-        
-        
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
-            
             // Kiểm tra input từ hệ thống mạng
             if (GetInput<RigState>(out var input))
             {
@@ -54,7 +37,6 @@ namespace multiplayerMode
                 {
                     isPulled = false; // Nút không được nhấn giữ
                 }
-
                 // Cập nhật trạng thái nút trước đó
                 _previousButton = input.Button;
             }
@@ -68,7 +50,6 @@ namespace multiplayerMode
             // Kiểm tra khi tay phải đang kéo và nút Bow được giữ
             if (RightHand != null && isPulled)
             {
-
                 if (!isStringPulled)
                 {
                     if (Object.HasInputAuthority)
@@ -78,19 +59,14 @@ namespace multiplayerMode
                     isStringPulled = true;
                     drawSound.Play();  // Phát âm thanh kéo dây cung
                 }
-
                 // Hướng kéo từ bowStringCenter đến attackTransform
                 Vector3 pullDirection = (attackTransform.position - bowstringCenter.position).normalized;
-
                 // Khoảng cách từ tay đến bowstringCenter
                 float handDistance = Vector3.Distance(RightHand.position, bowstringCenter.position);
-
                 // Giảm khoảng cách kéo nếu vượt quá giới hạn cho phép
                 float pullDistance = Mathf.Max(0, Mathf.Min(handDistance, -maxPullDistance));
-
                 // Cập nhật vị trí của bowHandle dọc theo hướng kéo
                 bowHandle.position = bowstringCenter.position - pullDirection * pullDistance;
-
                 // Cập nhật hướng của mũi tên để luôn hướng theo attackTransform
                 if (currentArrow != null)
                 {
@@ -102,7 +78,6 @@ namespace multiplayerMode
                 // Trường hợp khi tay vẫn kéo nhưng rời khỏi cung, và nút chưa thả
                 if (hasLeftCollider)
                 {
-                    Debug.Log("dev16: Hand left the bow, but the string is still pulled. Waiting for release.");
                 }
                 else
                 {
@@ -123,14 +98,12 @@ namespace multiplayerMode
         {
             if (currentArrow == null)
             {
-
                 // Kiểm tra arrowPrefab có được gán không
                 if (arrowPrefab == null)
                 {
                     Debug.LogError("dev16: arrowPrefab is not assigned!");
                     return;
                 }
-
                 // Tạo mũi tên mới và lấy đối tượng GameObject từ NetworkObject
                 NetworkObject networkArrow = NetworkManager.Instance.Runner.Spawn(arrowPrefab, bowHandle.position, Quaternion.identity);
                 if (networkArrow == null)
@@ -138,7 +111,6 @@ namespace multiplayerMode
                     Debug.LogError("dev16: Failed to spawn arrow with NetworkRunner.");
                     return;
                 }
-
                 currentArrow = networkArrow.gameObject;  // Lấy GameObject từ NetworkObject
                 currentArrow.transform.SetParent(bowHandle);  // Đặt mũi tên là con của bowHandle
             }
@@ -153,11 +125,9 @@ namespace multiplayerMode
             }
             else
             {
-                Debug.Log("dev16: OnTriggerEnter detected non-RightHand object.");
             }
         }
         public AudioSource shootSFX;
-
         // Xử lý khi tay phải rời khỏi cung
         private void OnTriggerExit(Collider other)
         {
@@ -167,7 +137,6 @@ namespace multiplayerMode
             }
             else
             {
-                Debug.Log("dev16: OnTriggerExit detected non-RightHand object.");
             }
             if (other.CompareTag("bullet"))
             {
@@ -179,26 +148,19 @@ namespace multiplayerMode
         {
             if (currentArrow != null)
             {
-                Debug.Log("dev16: Shooting arrow.");
-
                 currentArrow.transform.SetParent(null);
                 Rigidbody rb = currentArrow.GetComponent<Rigidbody>();
-
                 if (rb == null)
                 {
                     Debug.LogError("dev16: Rigidbody is missing on arrow.");
                     return;
                 }
-
                 float pullDistance = Mathf.Abs(bowHandle.position.z - bowstringCenter.position.z);
-
                 // Đảm bảo pullDistance không nhỏ hơn khoảng cách tối thiểu (ví dụ: 0.4)
                 float minPullDistance = 0.2f; // Lực tối thiểu tương ứng với khoảng cách kéo -0.4
                 pullDistance = Mathf.Max(pullDistance, minPullDistance);
-
                 // Tính toán lực bắn mũi tên
                 rb.AddForce(transform.forward * pullDistance * pullStrengthMultiplier);
-
                 currentArrow = null;
                 //shootSound.Play();  // Phát âm thanh bắn mũi tên
             }
@@ -217,6 +179,5 @@ namespace multiplayerMode
             }
             bowHandle.position = bowstringCenter.position;
         }
-       
     }
 }

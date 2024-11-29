@@ -8,7 +8,6 @@ public class AttributeData
     public int originHP;
     public int originAttack;
     public int originMoveSpeed;
-
     public AttributeData(int hpLevel, int attackLevel, int moveSpeedLevel, int originHP, int originAttack, int originMoveSpeed)
     {
         this.HP_Level = hpLevel;

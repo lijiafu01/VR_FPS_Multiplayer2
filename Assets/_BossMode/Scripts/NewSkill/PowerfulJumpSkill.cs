@@ -129,7 +129,6 @@ public class PowerfulJumpSkill : NetworkBehaviour, IBossSkill
         {
             // Nếu effectTime >= timeOfFlight, kích hoạt hiệu ứng ngay lập tức hoặc không kích hoạt
             t_effect = 0f;
-            Debug.LogWarning("effectTime lớn hơn hoặc bằng thời gian bay. Hiệu ứng sẽ được kích hoạt ngay lập tức.");
         }
         else
         {

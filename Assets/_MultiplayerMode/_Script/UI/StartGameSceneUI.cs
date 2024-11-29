@@ -9,22 +9,15 @@ namespace multiplayerMode
 {
     public class StartGameSceneUI : MonoBehaviour
     {
-        
         public TextMeshProUGUI AvatarNameText;
         public GameObject[] componentCanvas;
         public GameObject[] menuComponents;
         public GameObject MenuPanel;
         public TMP_InputField PlayerNameInput;
         public Button _button;
-
         private void Start()
         {
             AvatarNameText.text = PlayFabManager.Instance.UserData.DisplayName;
-           // SceneManager.LoadScene("NewWeapon");
-            //JoinRoom();
-           // JoinBoss3Room();
-
-            ///JoinBossRoom();
         }
         public void NextTraningSettingRoomScene()
         {
@@ -37,7 +30,6 @@ namespace multiplayerMode
             {
                 GameManager.Instance.PlayerData = new PlayerData();
             }
-
             // Kiểm tra nếu PlayerNameInput không bị null
             if (PlayerNameInput != null)
             {
@@ -74,25 +66,11 @@ namespace multiplayerMode
 
             NetworkManager.Instance.StartBossLobby();
         }
-
-
         public void JoinRoom()
         {
             SetPlayerName();
             NetworkManager.Instance.JoinSession("a");
         }
-       /* private void OnEnable()
-        {
-           *//* if (PlayFabManager.Instance.isPC)
-            {
-                PlayerNameInput.text = "PC";
-            }
-            else
-            {
-                PlayerNameInput.text = "MetaQuestVR";
-            }*//*
-            JoinBossRoom();
-        }*/
         public void JoinBossRoom()
         {
             SetPlayerName();

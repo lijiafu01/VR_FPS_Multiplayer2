@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
-
 namespace multiplayerMode
 {
     public class MountManager : NetworkBehaviour
     {
         public GameObject[] mountsInScene;  // Các đối tượng thú cưỡi đã được đặt sẵn trong scene
         private List<GameObject> activeMounts = new List<GameObject>(); // Danh sách quản lý thú cưỡi hoạt động
-
         private void Start()
         {
             // Thêm thú cưỡi có sẵn trong scene vào danh sách quản lý
@@ -21,7 +19,6 @@ namespace multiplayerMode
                 }
             }
         }
-
         // Phương thức để bắt đầu cho thú cưỡi bay khi người chơi va chạm
         public void PlayerMount(GameObject player, GameObject mount)
         {
@@ -35,7 +32,6 @@ namespace multiplayerMode
                 }
             }
         }
-
         // Phương thức để dừng thú cưỡi khi người chơi không còn cưỡi nữa
         public void PlayerDismount(GameObject mount)
         {

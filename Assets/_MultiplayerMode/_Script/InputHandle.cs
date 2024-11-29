@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
 using System;
-using multiplayerMode;
 namespace multiplayerMode
 {
 public class InputHandle : MonoBehaviour, INetworkRunnerCallbacks

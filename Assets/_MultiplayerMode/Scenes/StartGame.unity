@@ -26693,8 +26693,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.84914863, b: 0.4377358, a: 1}
-  m_Intensity: 7
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 0.99
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -47779,6 +47779,10 @@ PrefabInstance:
     - target: {fileID: 4462121445690340801, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
       propertyPath: m_Name
       value: CherryBlossom_flower_roadside_1 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4462121445690340801, guid: fda4a7fa1cd549940aa8c8a9d967a44b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -88651,7 +88655,7 @@ Transform:
   m_GameObject: {fileID: 5519807743168779236}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.32, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

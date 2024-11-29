@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine.UI;
 using PlayFab;
 using PlayFab.ClientModels;
-
 namespace multiplayerMode
 {
     public class FriendSearchManager : MonoBehaviour
@@ -43,7 +42,6 @@ namespace multiplayerMode
                 Debug.LogWarning("dev3_Search query is empty.");
             }
         }
-
         // Hàm xóa các kết quả tìm kiếm hiện tại
         private void ClearSearchResults()
         {
@@ -52,7 +50,6 @@ namespace multiplayerMode
                 Destroy(child.gameObject);
             }
         }
-
         // Tìm kiếm bạn bè dựa trên TitleDisplayName
         private void SearchFriendByDisplayName(string displayName)
         {
@@ -72,7 +69,6 @@ namespace multiplayerMode
                 DisplayNoFriendFound();
             });
         }
-
         // Hiển thị kết quả tìm kiếm
         private void DisplaySearchResult(UserAccountInfo accountInfo)
         {
@@ -88,7 +84,6 @@ namespace multiplayerMode
             Button addButton = newFriendEntry.transform.Find("AddButton").GetComponent<Button>();
             addButton.onClick.AddListener(() => AddFriend(accountInfo.PlayFabId, newFriendEntry));
         }
-
         // Hiển thị thông báo không tìm thấy bạn bè
         private void DisplayNoFriendFound()
         {

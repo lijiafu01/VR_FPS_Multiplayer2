@@ -1,14 +1,8 @@
-﻿using Fusion;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
-using UnityEngine;
-using multiplayerMode;
+﻿using UnityEngine;
 namespace multiplayerMode
 {
     public class GameManager : MonoBehaviour
     {
-
         // public TMP_InputField PlayerNameInput;
         // Biến static để lưu thể hiện duy nhất của GameManager
         public static GameManager Instance { get; private set; }

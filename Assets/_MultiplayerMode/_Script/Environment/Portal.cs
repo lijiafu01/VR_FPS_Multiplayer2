@@ -1,19 +1,16 @@
 ﻿using multiplayerMode;
 using System.Collections;
 using UnityEngine;
-
 public class Portal : MonoBehaviour
 {
     public AudioSource portalSFX;
     private PortalManager manager;
     private Coroutine collisionCoroutine;
     private bool isColliding = false;
-
     private void Start()
     {
         manager = GetComponentInParent<PortalManager>();
     }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.TryGetComponent<LocalPlayer>(out var hitLocalPlayer))
@@ -27,7 +24,6 @@ public class Portal : MonoBehaviour
             }
         }
     }
-
     private void OnTriggerExit(Collider other)
     {
         // Dừng Coroutine nếu đối tượng rời khỏi vùng va chạm
@@ -39,7 +35,6 @@ public class Portal : MonoBehaviour
             isColliding = false;
         }
     }
-
     private IEnumerator CheckContinuousCollision(Collider other, LocalPlayer hitLocalPlayer)
     {
         float collisionTime = 0f;
@@ -56,7 +51,6 @@ public class Portal : MonoBehaviour
             collisionTime += Time.deltaTime;
             yield return null;
         }
-
         // Gọi hàm teleport sau khi va chạm liên tục trong 2 giây
         manager.TeleportObject(this.transform, hitLocalPlayer.transform);
         isColliding = false;

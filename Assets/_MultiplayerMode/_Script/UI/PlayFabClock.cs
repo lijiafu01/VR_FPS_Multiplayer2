@@ -1,13 +1,11 @@
 ﻿using System;
 using UnityEngine;
 using TMPro;
-
 public class PlayFabClock : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI timeText; // Text TMP hiển thị thời gian
     private DateTime utcTime; // Thời gian UTC từ PlayFab
     private float timeAccumulator = 0f; // Bộ đếm thời gian để cập nhật
-
     private void OnEnable()
     {
         // Đảm bảo Text TMP được gán
@@ -16,7 +14,6 @@ public class PlayFabClock : MonoBehaviour
             Debug.LogError("TextMeshProUGUI chưa được gán trong Inspector.");
             return;
         }
-
         // Lấy thời gian từ PlayFab
         PlayFabManager.Instance.GetPlayFabTime(playFabTime =>
         {
@@ -31,7 +28,6 @@ public class PlayFabClock : MonoBehaviour
             }
         });
     }
-
     private void Update()
     {
         // Tích lũy thời gian để mô phỏng đồng hồ
@@ -45,7 +41,6 @@ public class PlayFabClock : MonoBehaviour
             timeAccumulator = 0f;
         }
     }
-
     /// <summary>
     /// Cập nhật Text TMP với thời gian hiện tại
     /// </summary>
