@@ -73,6 +73,7 @@ namespace multiplayerMode
         // Hàm xử lý nút đăng nhập
         public void LoginBtn()
         {
+            
             var request = new LoginWithEmailAddressRequest
             {
                 Email = usernameInput.text,
@@ -104,6 +105,20 @@ namespace multiplayerMode
         // Hàm xử lý nút đăng ký
         public void RegisterBtn()
         {
+            string username = usernameInput.text;
+
+            // Tìm vị trí của '@' trong username
+            int atIndex = username.IndexOf('@');
+
+            // Nếu có '@', lấy độ dài chuỗi trước '@'. Nếu không có '@', dùng toàn bộ tên
+            int lengthBeforeAt = (atIndex >= 0) ? atIndex : username.Length;
+
+            if (lengthBeforeAt < 6)
+            {
+                _noticeText.DisplayText("Registration failed!");
+                return;
+            }
+
             var request = new RegisterPlayFabUserRequest
             {
                 Email = usernameInput.text,
