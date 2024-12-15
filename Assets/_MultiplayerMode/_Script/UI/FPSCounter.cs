@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 public class FPSCounter : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI FPSText; // Hiển thị số lượng
+
     private float deltaTime = 0.0f; // Tổng thời gian giữa các khung hình
     private float frameCount = 0;   // Tổng số khung hình trong khoảng thời gian
     private float timer = 0.0f;     // Bộ đếm thời gian
@@ -9,10 +12,10 @@ public class FPSCounter : MonoBehaviour
     [SerializeField]
     private float interval = 5.0f;  // Thời gian tính trung bình (mặc định 5 giây)
 
-    private void Start()
+   /* private void Start()
     {
         DontDestroyOnLoad(this.gameObject); // Đảm bảo không phá hủy đối tượng khi chuyển scene
-    }
+    }*/
 
     void Update()
     {
@@ -35,7 +38,11 @@ public class FPSCounter : MonoBehaviour
             deltaTime = 0.0f;
             frameCount = 0;
             timer = 0.0f;
-
+            if(FPSText != null)
+            {
+                FPSText.text = averageFPS.ToString("0.0");
+            }
+            
             // Ghi log FPS trung bình
             Debug.Log("Average FPS over " + interval + " seconds: " + averageFPS.ToString("0.0"));
         }
