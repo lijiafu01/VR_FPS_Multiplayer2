@@ -11211,7 +11211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _summonVFX: {fileID: 5878917339498403232, guid: 0f238bf4ccde7734f983dcd49387fa67, type: 3}
+  _summonVFX: {fileID: 8151685474296238146, guid: 779013c5fc71e6240a839891e1d91257, type: 3}
   _dragonAttack: {fileID: 894885381}
   cooldown: 20
   castingDuration: 2
